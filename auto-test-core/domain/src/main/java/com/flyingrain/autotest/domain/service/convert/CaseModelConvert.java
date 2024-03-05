@@ -15,14 +15,11 @@ public class CaseModelConvert {
         }
         Case runCase = new Case();
         runCase.setCaseStatus(autoTestCaseModel.getCaseStatus());
-        runCase.setDepCaseId(autoTestCaseModel.getDepCaseId());
         runCase.setId(autoTestCaseModel.getId());
         runCase.setCreateTime(autoTestCaseModel.getCreateTime());
         runCase.setCheckPoint(autoTestCaseModel.getCheckPoint());
         runCase.setCreator(autoTestCaseModel.getCreator());
-        runCase.setData(autoTestCaseModel.getData());
         runCase.setName(autoTestCaseModel.getName());
-        runCase.setResult(autoTestCaseModel.getResult());
         runCase.setServiceId(autoTestCaseModel.getServiceId());
         runCase.setUpdateTime(autoTestCaseModel.getUpdateTime());
         return runCase;

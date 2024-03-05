@@ -1,7 +1,7 @@
 package com.flyingrain.autotest.domain.utils;
 
-import com.flyingrain.autotest.domain.constant.AutoTestResultCodeEnum;
-import com.flyingrain.autotest.domain.exception.AutoTestException;
+import com.flyingrain.autotest.common.util.AutoTestResultCodeEnum;
+import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;

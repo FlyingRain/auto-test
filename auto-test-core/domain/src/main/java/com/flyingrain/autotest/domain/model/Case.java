@@ -1,15 +1,13 @@
 package com.flyingrain.autotest.domain.model;
 
-import com.flyingrain.autotest.facade.intf.requests.ModelTypeEnum;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author wally
  * @date 2021-12-08
  */
-public class Case implements Model{
+public class Case {
 
     private long id;
 
@@ -17,11 +15,9 @@ public class Case implements Model{
 
     private long serviceId;
 
-    private String data;
 
     private String caseStatus;
 
-    private Long depCaseId;
 
     private String result;
 
@@ -29,13 +25,10 @@ public class Case implements Model{
 
     private String creator;
 
-    private int priority;
 
     private Date createTime;
 
     private Date updateTime;
-
-    private List<Case> depCases;
 
     private Service service;
 
@@ -63,28 +56,12 @@ public class Case implements Model{
         this.serviceId = serviceId;
     }
 
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
     public String getCaseStatus() {
         return caseStatus;
     }
 
     public void setCaseStatus(String caseStatus) {
         this.caseStatus = caseStatus;
-    }
-
-    public Long getDepCaseId() {
-        return depCaseId;
-    }
-
-    public void setDepCaseId(Long depCaseId) {
-        this.depCaseId = depCaseId;
     }
 
     public String getResult() {
@@ -127,14 +104,6 @@ public class Case implements Model{
         this.updateTime = updateTime;
     }
 
-    public List<Case> getDepCases() {
-        return depCases;
-    }
-
-    public void setDepCases(List<Case> depCases) {
-        this.depCases = depCases;
-    }
-
     public Service getService() {
         return service;
     }
@@ -143,32 +112,4 @@ public class Case implements Model{
         this.service = service;
     }
 
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
-
-    @Override
-    public String toString() {
-        return "Case{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", serviceId=" + serviceId +
-                ", data='" + data + '\'' +
-                ", caseStatus='" + caseStatus + '\'' +
-                ", result='" + result + '\'' +
-                ", checkPoint='" + checkPoint + '\'' +
-                ", creator='" + creator + '\'' +
-                ", createTime=" + createTime +
-                ", updateTime=" + updateTime +
-                '}';
-    }
-
-    @Override
-    public ModelTypeEnum getModelType() {
-        return ModelTypeEnum.CASE;
-    }
 }

@@ -1,7 +1,6 @@
 package com.flyingrain.autotest.domain.model.runresult;
 
 
-import com.flyingrain.autotest.facade.intf.requests.ModelTypeEnum;
 
 import java.util.ArrayList;
 import java.util.Date;

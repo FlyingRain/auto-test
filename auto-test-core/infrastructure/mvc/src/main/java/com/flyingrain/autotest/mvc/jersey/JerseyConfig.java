@@ -1,6 +1,5 @@
 package com.flyingrain.autotest.mvc.jersey;
 
-import org.apache.commons.collections.MapUtils;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -22,14 +21,15 @@ public class JerseyConfig implements ApplicationContextAware {
         ResourceConfig resourceConfig = new ResourceConfig();
         Set<Class<?>> classes = loadResources();
         resourceConfig.registerClasses(classes);
+        resourceConfig.register(AuthFilter.class);
         return resourceConfig;
     }
 
     private Set<Class<?>> loadResources() {
         Map<String, Resource> servers = applicationContext.getBeansOfType(Resource.class);
         Set<Class<?>> classes = new HashSet<>();
-        if (!MapUtils.isEmpty(servers)) {
-            servers.forEach((k,v)->{
+        if (!servers.isEmpty()) {
+            servers.forEach((k, v) -> {
                 classes.add(v.getClass());
             });
         }

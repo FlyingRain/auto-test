@@ -1,7 +1,7 @@
 package com.flyingrain.autotest.service.ctrl;
 
-import com.flyingrain.autotest.common.util.CommonResult;
 import com.flyingrain.autotest.facade.intf.ctrl.AutoTestControl;
+import com.flyingrain.autotest.common.util.CommonResult;
 import com.flyingrain.autotest.facade.intf.requests.RunRequest;
 import com.flyingrain.autotest.facade.intf.results.RunResult;
 import org.springframework.stereotype.Component;

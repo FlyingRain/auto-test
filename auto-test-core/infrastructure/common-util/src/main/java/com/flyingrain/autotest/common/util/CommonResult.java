@@ -2,39 +2,12 @@ package com.flyingrain.autotest.common.util;
 
 public class CommonResult<T> {
 
+    private boolean success;
+
     private String code;
-
     private String message;
-
     private T data;
 
-    public CommonResult(String code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    public CommonResult(ResultCodeEnum resultCodeEnum) {
-        this.code = resultCodeEnum.getCode();
-        this.message = resultCodeEnum.getMessage();
-    }
-
-    public CommonResult() {
-    }
-
-    public CommonResult(String code, T data) {
-        this.code = code;
-        this.data = data;
-    }
-
-    public static <T> CommonResult<T> success(T data){
-        CommonResult<T> commonResult = new CommonResult<>(ResultCodeEnum.SUCCESS);
-        commonResult.setData(data);
-        return commonResult;
-    }
-
-    public static CommonResult fail(){
-        return new CommonResult(ResultCodeEnum.FAIL);
-    }
 
     public String getCode() {
         return code;
@@ -42,6 +15,30 @@ public class CommonResult<T> {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public static <T> CommonResult<T> success(T data) {
+        CommonResult<T> result = new CommonResult<>();
+        result.setSuccess(true);
+        result.setData(data);
+        result.setCode("200");
+        return result;
+    }
+
+    public static <T> CommonResult<T> fail(String code,String message) {
+        CommonResult<T> result = new CommonResult<>();
+        result.setSuccess(false);
+        result.setMessage(message);
+        result.setCode(code);
+        return result;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
     }
 
     public String getMessage() {
@@ -60,11 +57,11 @@ public class CommonResult<T> {
         this.data = data;
     }
 
-
     @Override
     public String toString() {
         return "CommonResult{" +
-                "code='" + code + '\'' +
+                "success=" + success +
+                ", code='" + code + '\'' +
                 ", message='" + message + '\'' +
                 ", data=" + data +
                 '}';

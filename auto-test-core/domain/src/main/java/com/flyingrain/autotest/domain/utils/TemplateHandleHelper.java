@@ -1,12 +1,12 @@
 package com.flyingrain.autotest.domain.utils;
 
-import com.flyingrain.autotest.domain.constant.AutoTestResultCodeEnum;
-import com.flyingrain.autotest.domain.exception.AutoTestException;
-import org.apache.commons.lang3.StringUtils;
+import com.flyingrain.autotest.common.util.AutoTestResultCodeEnum;
+import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
-import static com.flyingrain.autotest.domain.constant.AutoTestConstants.DEFAULT_TYPE;
+import static com.flyingrain.autotest.common.util.constant.AutoTestConstants.DEFAULT_TYPE;
 
 /**
  * @author wally
@@ -17,7 +17,7 @@ public class TemplateHandleHelper {
     private static Logger logger = LoggerFactory.getLogger(TemplateHandleHelper.class);
 
     public static String extractParamType(String paramName) {
-        if (StringUtils.isEmpty(paramName)) {
+        if (StringUtils.hasText(paramName)) {
             return "";
         }
         if (paramName.contains(",")) {
@@ -29,7 +29,7 @@ public class TemplateHandleHelper {
     }
 
     public static String extractParamName(String paramName) {
-        if (StringUtils.isEmpty(paramName)) {
+        if (StringUtils.hasText(paramName)) {
             return "";
         }
         if (paramName.contains(",")) {

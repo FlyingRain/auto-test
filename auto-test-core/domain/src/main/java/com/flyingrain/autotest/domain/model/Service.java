@@ -1,6 +1,5 @@
 package com.flyingrain.autotest.domain.model;
 
-import com.flyingrain.autotest.facade.intf.requests.ModelTypeEnum;
 
 import java.util.Date;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.List;
  * @author wally
  * @date 2021-12-08
  */
-public class Service implements Model{
+public class Service {
 
     private long id;
 
@@ -39,7 +38,6 @@ public class Service implements Model{
 
     private Date updateTime;
 
-    private Module module;
 
     public long getId() {
         return id;
@@ -145,13 +143,7 @@ public class Service implements Model{
         this.updateTime = updateTime;
     }
 
-    public Module getModule() {
-        return module;
-    }
 
-    public void setModule(Module module) {
-        this.module = module;
-    }
 
 
     public String getResponseDataType() {
@@ -181,8 +173,5 @@ public class Service implements Model{
                 '}';
     }
 
-    @Override
-    public ModelTypeEnum getModelType() {
-        return ModelTypeEnum.SERVICE;
-    }
+
 }

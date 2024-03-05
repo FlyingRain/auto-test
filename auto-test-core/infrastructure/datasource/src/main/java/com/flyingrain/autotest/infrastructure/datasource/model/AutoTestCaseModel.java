@@ -14,19 +14,11 @@ public class AutoTestCaseModel {
 
     private long serviceId;
 
-    private String data;
-
     private String caseStatus;
-
-    private Long depCaseId;
-
-    private String result;
 
     private String checkPoint;
 
     private String creator;
-
-    private int priority;
 
     private Date createTime;
 
@@ -56,13 +48,6 @@ public class AutoTestCaseModel {
         this.serviceId = serviceId;
     }
 
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
 
     public String getCaseStatus() {
         return caseStatus;
@@ -72,21 +57,6 @@ public class AutoTestCaseModel {
         this.caseStatus = caseStatus;
     }
 
-    public Long getDepCaseId() {
-        return depCaseId;
-    }
-
-    public void setDepCaseId(Long depCaseId) {
-        this.depCaseId = depCaseId;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
 
     public String getCheckPoint() {
         return checkPoint;
@@ -120,11 +90,4 @@ public class AutoTestCaseModel {
         this.updateTime = updateTime;
     }
 
-    public int getPriority() {
-        return priority;
-    }
-
-    public void setPriority(int priority) {
-        this.priority = priority;
-    }
 }

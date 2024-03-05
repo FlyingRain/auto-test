@@ -12,8 +12,8 @@
     <artifactId>domain</artifactId>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -25,10 +25,6 @@
         <dependency>
             <groupId>org.example</groupId>
             <artifactId>common-util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.example</groupId>
-            <artifactId>facade</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

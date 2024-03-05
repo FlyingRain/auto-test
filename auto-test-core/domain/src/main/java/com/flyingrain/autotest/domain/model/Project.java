@@ -1,19 +1,15 @@
 package com.flyingrain.autotest.domain.model;
 
-import com.flyingrain.autotest.facade.intf.requests.ModelTypeEnum;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author wally
  * @date 2021-12-08
  */
-public class Project implements Model{
+public class Project {
 
     private long id;
-
-    private List<Module> modules;
 
     private String projectCode;
 
@@ -37,13 +33,6 @@ public class Project implements Model{
         this.id = id;
     }
 
-    public List<Module> getModules() {
-        return modules;
-    }
-
-    public void setModules(List<Module> modules) {
-        this.modules = modules;
-    }
 
     public String getProjectCode() {
         return projectCode;
@@ -105,7 +94,6 @@ public class Project implements Model{
     public String toString() {
         return "Project{" +
                 "id=" + id +
-                ", modules=" + modules +
                 ", projectCode='" + projectCode + '\'' +
                 ", projectName='" + projectName + '\'' +
                 ", status='" + status + '\'' +
@@ -116,8 +104,4 @@ public class Project implements Model{
                 '}';
     }
 
-    @Override
-    public ModelTypeEnum getModelType() {
-        return ModelTypeEnum.PROJECT;
-    }
 }
