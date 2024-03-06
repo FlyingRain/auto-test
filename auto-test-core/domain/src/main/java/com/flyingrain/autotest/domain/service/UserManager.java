@@ -43,11 +43,12 @@ public class UserManager {
         autoTestLoginModel.setToken(token);
         autoTestLoginModel.setStatus(1);
         loginMapper.insertLogin(autoTestLoginModel);
+        autoTestUser.setToken(token);
         return autoTestUser;
     }
 
     public boolean register(User user) {
-        if (user == null || StringUtils.hasText(user.getUserName())) {
+        if (user == null || !StringUtils.hasText(user.getUserName())) {
             throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR);
         }
         int count = autoTestUserMapper.insertUser(UserModelConvert.convertUser(user));

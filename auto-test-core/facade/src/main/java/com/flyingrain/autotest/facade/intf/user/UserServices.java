@@ -4,9 +4,10 @@ import com.flyingrain.autotest.facade.intf.model.AutoTestUser;
 import com.flyingrain.autotest.common.util.CommonResult;
 import com.flyingrain.autotest.facade.intf.requests.ModifyPassword;
 import com.flyingrain.autotest.facade.intf.results.LoginResult;
+import com.flyingrain.autotest.mvc.jersey.AuthCheck;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 
 @Path("/autotest/user")
 @Produces(MediaType.APPLICATION_JSON)
@@ -15,8 +16,8 @@ public interface UserServices {
 
     @POST
     @Path("/login")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    CommonResult<LoginResult> login(@FormParam("userName") String userName, @FormParam("password") String password);
+    @Consumes(MediaType.APPLICATION_JSON)
+    CommonResult<LoginResult> login( AutoTestUser autoTestUser);
 
 
     @POST
@@ -26,6 +27,7 @@ public interface UserServices {
 
 
     @POST
+    @AuthCheck
     @Path("/updatePassword")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     CommonResult<Boolean> modifyPassword(ModifyPassword modifyPassword);

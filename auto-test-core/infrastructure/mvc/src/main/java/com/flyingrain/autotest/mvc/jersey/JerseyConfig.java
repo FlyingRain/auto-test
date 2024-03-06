@@ -17,11 +17,14 @@ public class JerseyConfig implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     @Bean
-    public ResourceConfig resourceConfig() {
+    public ResourceConfig resourceConfig(AuthFilter authFilter, CommonExceptionHandler commonExceptionHandler) {
         ResourceConfig resourceConfig = new ResourceConfig();
         Set<Class<?>> classes = loadResources();
         resourceConfig.registerClasses(classes);
-        resourceConfig.register(AuthFilter.class);
+//        resourceConfig.register(AuthFilter.class);
+        resourceConfig.register(commonExceptionHandler);
+        resourceConfig.register(authFilter);
+        resourceConfig.register(CorsFilter.class);
         return resourceConfig;
     }
 

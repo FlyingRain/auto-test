@@ -9,7 +9,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
-import javax.ws.rs.core.Application;
 
 @SpringBootApplication
 public class ApplicationStarter {

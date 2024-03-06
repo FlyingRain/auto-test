@@ -26,7 +26,7 @@ public interface AutoTestLoginMapper {
     AutoTestLoginModel queryByToken(@Param("token") String token);
 
 
-    @Update("update auto_test_token set status=0 where user_id = #{userId}")
+    @Update("update auto_test_login set status=0 where user_id = #{userId}")
     void expireToken(@Param("userId") int userId);
 
 }

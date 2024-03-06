@@ -1,14 +1,21 @@
 package com.flyingrain.autotest.facade.intf.model;
 
+import jakarta.ws.rs.FormParam;
+
 import java.util.Date;
 
 public class AutoTestUser {
 
     private int id;
 
+    @FormParam("userName")
     private String userName;
 
+    @FormParam("password")
+
     private String password;
+
+    @FormParam("department")
 
     private String department;
 
