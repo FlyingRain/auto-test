@@ -1,20 +1,14 @@
-package com.flyingrain.autotest.infrastructure.datasource.model;
+package com.flyingrain.autotest.domain.model;
 
 import java.util.Date;
 
-/**
- * @author wally
- * @date 2021-12-08
- */
-public class AutoTestApplicationModel {
+public class Application {
 
     private int id;
 
-    private String appCode;
-
     private String appName;
 
-    private String domain;
+    private String appCode;
 
     private String desc;
 
@@ -22,7 +16,7 @@ public class AutoTestApplicationModel {
 
     private Date createTime;
 
-    private Date  updateTime;
+    private Date updateTime;
 
     public int getId() {
         return id;
@@ -30,14 +24,6 @@ public class AutoTestApplicationModel {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getAppCode() {
-        return appCode;
-    }
-
-    public void setAppCode(String appCode) {
-        this.appCode = appCode;
     }
 
     public String getAppName() {
@@ -48,12 +34,12 @@ public class AutoTestApplicationModel {
         this.appName = appName;
     }
 
-    public String getDomain() {
-        return domain;
+    public String getAppCode() {
+        return appCode;
     }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
+    public void setAppCode(String appCode) {
+        this.appCode = appCode;
     }
 
     public String getDesc() {
@@ -86,5 +72,18 @@ public class AutoTestApplicationModel {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Override
+    public String toString() {
+        return "Application{" +
+                "id=" + id +
+                ", appName='" + appName + '\'' +
+                ", appCode='" + appCode + '\'' +
+                ", desc='" + desc + '\'' +
+                ", owner='" + owner + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }

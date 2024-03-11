@@ -49,6 +49,13 @@ public class ServiceManager {
         return ServiceModelConvert.convertServiceModel(autoTestServiceModel);
     }
 
+    public List<Service> queryByAppIds(List<Integer> appIds) {
+        logger.info("query service detail:[{}]", appIds);
+        List<AutoTestServiceModel> autoTestServiceModels = autoTestServiceMapper.queryByAppIds(appIds);
+        return autoTestServiceModels.stream().map(ServiceModelConvert::convertServiceModel).collect(Collectors.toList());
+    }
+
+
     public int addService(Service service) {
         logger.info("add service:[{}]", service);
         return autoTestServiceMapper.insertServiceModel(ServiceModelConvert.convertService(service));

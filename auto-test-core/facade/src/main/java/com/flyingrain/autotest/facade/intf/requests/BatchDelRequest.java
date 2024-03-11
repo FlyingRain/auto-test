@@ -4,20 +4,20 @@ import java.util.List;
 
 public class BatchDelRequest {
 
-    private List<Integer> serviceIds;
+    private List<Integer> ids;
 
-    public List<Integer> getServiceIds() {
-        return serviceIds;
+    public List<Integer> getIds() {
+        return ids;
     }
 
-    public void setServiceIds(List<Integer> serviceIds) {
-        this.serviceIds = serviceIds;
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
     }
 
     @Override
     public String toString() {
         return "ServiceBatchDelRequest{" +
-                "serviceIds=" + serviceIds +
+                "ids=" + ids +
                 '}';
     }
 }

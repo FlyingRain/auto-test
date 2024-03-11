@@ -53,12 +53,12 @@ public class ServiceFacadeImpl implements ServiceFacade, Resource {
 
     @Override
     public CommonResult<Integer> batchDel(BatchDelRequest serviceBatchDelRequest) {
-        if (serviceBatchDelRequest == null || CollectionUtils.isEmpty(serviceBatchDelRequest.getServiceIds())) {
+        if (serviceBatchDelRequest == null || CollectionUtils.isEmpty(serviceBatchDelRequest.getIds())) {
             logger.warn("del request is empty!");
             return CommonResult.success(0);
         }
         User user = getUserInfo();
-        int count = serviceManager.batchDelete(serviceBatchDelRequest.getServiceIds(), user.getUserName());
+        int count = serviceManager.batchDelete(serviceBatchDelRequest.getIds(), user.getUserName());
         return CommonResult.success(count);
     }
 

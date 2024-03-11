@@ -29,6 +29,6 @@ public interface AppFacade {
 
     @Path("/batchDelete")
     @POST
-    CommonResult<Boolean> batchDel(BatchDelRequest batchDelRequest);
+    CommonResult<Integer> batchDel(BatchDelRequest batchDelRequest);
 
 }

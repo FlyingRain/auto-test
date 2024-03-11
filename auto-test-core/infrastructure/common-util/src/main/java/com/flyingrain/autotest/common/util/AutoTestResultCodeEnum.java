@@ -42,6 +42,8 @@ public enum AutoTestResultCodeEnum {
 
     USER_NOT_EXIST("550", "用户不存在"),
     USER_NOT_LOGIN("551", "用户尚未登录或登录已过期"),
+
+    DEPEND_NOT_CLEAN("580","存在未清除的依赖"),
     ;
 
 

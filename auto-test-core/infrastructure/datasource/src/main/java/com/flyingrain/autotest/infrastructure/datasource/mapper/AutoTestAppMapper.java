@@ -30,10 +30,14 @@ public interface AutoTestAppMapper {
     int pageCount(@Param("pageCondition")PageQuery<AutoTestApplicationModel> query);
 
 
-    @Insert("insert into auto_test_application (app_name,app_code,desc,owner)values (#{appName},#{appCode},#{desc},#{owner})")
+    @Insert("insert into auto_test_application (app_name,app_code,`desc`,`owner`) values (#{appName},#{appCode},#{desc},#{owner})")
     int insertApp(AutoTestApplicationModel autoTestApplicationModel);
 
     @Delete("delete from auto_test_application where id in #{ids}")
     int batchDel(@Param("ids") List<Integer> ids);
+
+    @Select("select * from auto_test_application")
+    @ResultMap("appMap")
+    List<AutoTestApplicationModel> queryAll();
 
 }
