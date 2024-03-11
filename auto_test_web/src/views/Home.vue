@@ -56,23 +56,22 @@
               <i class="el-icon-house"></i>
               <span slot="title"> 首页</span>
             </el-menu-item>
-            <el-menu-item index="/app" @click="saveActiveNav('/app')">
-              <i class="el-icon-menu"></i>
-              <span slot="title">应用管理</span>
-            </el-menu-item>
             <el-menu-item index="/services" @click="saveActiveNav('/services')">
               <i class="el-icon-s-management"></i>
               <span slot="title">服务管理</span>
             </el-menu-item>
-            <el-submenu index="1">
-              <template slot="title">
-                <i class="el-icon-hot-water"></i>
-                <span>自动化测试</span>
-              </template>
-              <el-menu-item index="/scenes" @click="saveActiveNav('/autotest/app')"> 场景管理</el-menu-item>
-              <el-menu-item index="/cases" @click="saveActiveNav('/autotest/cases')"> 用例管理</el-menu-item>
-              <el-menu-item index="/report" @click="saveActiveNav('/autotest/report')"> 执行报告</el-menu-item>
-            </el-submenu>
+            <el-menu-item index="/cases" @click="saveActiveNav('/cases')">
+              <i class="el-icon-notebook-2"></i>
+              <span slot="title">用例编排</span>
+            </el-menu-item>
+            <el-menu-item index="/autotest" @click="saveActiveNav('/autotest')">
+              <i class="el-icon-hot-water"></i>
+              <span slot="title">自动化测试</span>
+            </el-menu-item>
+            <el-menu-item index="/report" @click="saveActiveNav('/report')">
+              <i class="el-icon-data-line"></i>
+              <span slot="title">执行报告</span>
+            </el-menu-item>
           </el-menu>
         </el-aside>
         <!-- 主体部分 -->

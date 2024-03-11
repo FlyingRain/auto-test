@@ -6,7 +6,7 @@
       <p class="login_title">登 陆</p>
       <p class="login_desc">欢迎登陆飞羽自动化测试平台</p>
       <el-form ref="ruleForm" :model="form" :rules="rules">
-        <el-form-item prop="userName">
+        <el-form-item prop="username">
           <el-input placeholder="请输入账号" v-model="form.userName" prefix-icon="el-icon-user"/>
         </el-form-item>
         <el-form-item prop="password">
