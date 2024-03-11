@@ -25,7 +25,7 @@ public interface AutoTestUserMapper {
     @Update("update auto_test_user set password=#{password} where user_name=#{userName}")
     int modifyPassword(String userName, String password);
 
-    @Select("select * from auto_test_user where user_id= #{userId}")
+    @Select("select * from auto_test_user where id= #{userId}")
     @ResultMap("userMap")
     AutoTestUserModel queryByUserId(@Param("userId") int userId);
 

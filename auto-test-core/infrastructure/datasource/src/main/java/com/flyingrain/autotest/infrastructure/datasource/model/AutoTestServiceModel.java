@@ -8,23 +8,23 @@ import java.util.Date;
  */
 public class AutoTestServiceModel {
 
-    private long id;
+    private int id;
 
-    private long moduleId;
+    private int appId;
+
+    private String headers;
 
     private String serviceCode;
 
-    private String name;
+    private String serviceName;
 
     private String protocolType;
 
-    private String requestUrl;
+    private String requestPath;
 
     private String requestType;
 
-    private String requestDataType;
-
-    private String requestDataModule;
+    private String requestModel;
 
     private String responseDataType;
 
@@ -34,20 +34,20 @@ public class AutoTestServiceModel {
 
     private Date updateTime;
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public long getModuleId() {
-        return moduleId;
+    public int getAppId() {
+        return appId;
     }
 
-    public void setModuleId(long moduleId) {
-        this.moduleId = moduleId;
+    public void setAppId(int appId) {
+        this.appId = appId;
     }
 
     public String getServiceCode() {
@@ -58,12 +58,12 @@ public class AutoTestServiceModel {
         this.serviceCode = serviceCode;
     }
 
-    public String getName() {
-        return name;
+    public String getServiceName() {
+        return serviceName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
     public String getProtocolType() {
@@ -74,12 +74,20 @@ public class AutoTestServiceModel {
         this.protocolType = protocolType;
     }
 
-    public String getRequestUrl() {
-        return requestUrl;
+    public String getRequestPath() {
+        return requestPath;
     }
 
-    public void setRequestUrl(String requestUrl) {
-        this.requestUrl = requestUrl;
+    public String getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(String headers) {
+        this.headers = headers;
+    }
+
+    public void setRequestPath(String requestPath) {
+        this.requestPath = requestPath;
     }
 
     public String getRequestType() {
@@ -90,20 +98,12 @@ public class AutoTestServiceModel {
         this.requestType = requestType;
     }
 
-    public String getRequestDataType() {
-        return requestDataType;
+    public String getRequestModel() {
+        return requestModel;
     }
 
-    public void setRequestDataType(String requestDataType) {
-        this.requestDataType = requestDataType;
-    }
-
-    public String getRequestDataModule() {
-        return requestDataModule;
-    }
-
-    public void setRequestDataModule(String requestDataModule) {
-        this.requestDataModule = requestDataModule;
+    public void setRequestModel(String requestModel) {
+        this.requestModel = requestModel;
     }
 
     public String getCreator() {
@@ -136,5 +136,24 @@ public class AutoTestServiceModel {
 
     public void setResponseDataType(String responseDataType) {
         this.responseDataType = responseDataType;
+    }
+
+    @Override
+    public String toString() {
+        return "AutoTestServiceModel{" +
+                "id=" + id +
+                ", appId=" + appId +
+                ", headers='" + headers + '\'' +
+                ", serviceCode='" + serviceCode + '\'' +
+                ", serviceName='" + serviceName + '\'' +
+                ", protocolType='" + protocolType + '\'' +
+                ", requestPath='" + requestPath + '\'' +
+                ", requestType='" + requestType + '\'' +
+                ", requestModel='" + requestModel + '\'' +
+                ", responseDataType='" + responseDataType + '\'' +
+                ", creator='" + creator + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }

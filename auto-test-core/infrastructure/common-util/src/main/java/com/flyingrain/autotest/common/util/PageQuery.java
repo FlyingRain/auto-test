@@ -1,4 +1,4 @@
-package com.flyingrain.autotest.facade.intf.model;
+package com.flyingrain.autotest.common.util;
 
 public class PageQuery <T>{
     private int currentPage;
@@ -6,6 +6,15 @@ public class PageQuery <T>{
     private int pageSize;
 
     private T Conditions;
+
+    public PageQuery() {
+    }
+
+    public PageQuery(int currentPage, int pageSize, T conditions) {
+        this.currentPage = currentPage;
+        this.pageSize = pageSize;
+        Conditions = conditions;
+    }
 
     public int getCurrentPage() {
         return currentPage;

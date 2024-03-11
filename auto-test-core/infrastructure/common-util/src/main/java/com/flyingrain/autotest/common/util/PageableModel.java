@@ -1,4 +1,4 @@
-package com.flyingrain.autotest.facade.intf.model;
+package com.flyingrain.autotest.common.util;
 
 import java.util.List;
 
@@ -11,6 +11,19 @@ public class PageableModel<T>{
     private int total = 0;
 
     private List<T> data;
+
+    public void copyOf(PageQuery pageQuery){
+        this.currentPage = pageQuery.getCurrentPage();
+        this.pageSize = pageQuery.getPageSize();
+    }
+
+    public static <M> PageableModel<M> copy(PageableModel target){
+        PageableModel<M> pageableModel = new PageableModel<>();
+        pageableModel.setTotal(target.getTotal());
+        pageableModel.setCurrentPage(target.getCurrentPage());
+        pageableModel.setPageSize(target.getPageSize());
+        return pageableModel;
+    }
 
     public int getCurrentPage() {
         return currentPage;

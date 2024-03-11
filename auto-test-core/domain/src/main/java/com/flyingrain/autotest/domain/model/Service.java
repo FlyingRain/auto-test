@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Service {
 
-    private long id;
+    private int id;
 
     private List<Case> cases;
 
@@ -20,6 +20,9 @@ public class Service {
 
     private String name;
 
+    private String headers;
+
+    private int appId;
     private String protocolType;
 
     private String requestUrl;
@@ -39,11 +42,11 @@ public class Service {
     private Date updateTime;
 
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -119,6 +122,14 @@ public class Service {
         this.requestDataModule = requestDataModule;
     }
 
+    public String getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(String headers) {
+        this.headers = headers;
+    }
+
     public String getCreator() {
         return creator;
     }
@@ -143,8 +154,13 @@ public class Service {
         this.updateTime = updateTime;
     }
 
+    public int getAppId() {
+        return appId;
+    }
 
-
+    public void setAppId(int appId) {
+        this.appId = appId;
+    }
 
     public String getResponseDataType() {
         return responseDataType;
@@ -162,11 +178,14 @@ public class Service {
                 ", moduleId=" + moduleId +
                 ", serviceCode='" + serviceCode + '\'' +
                 ", name='" + name + '\'' +
+                ", headers='" + headers + '\'' +
+                ", appId=" + appId +
                 ", protocolType='" + protocolType + '\'' +
                 ", requestUrl='" + requestUrl + '\'' +
                 ", requestType='" + requestType + '\'' +
                 ", requestDataType='" + requestDataType + '\'' +
                 ", requestDataModule='" + requestDataModule + '\'' +
+                ", responseDataType='" + responseDataType + '\'' +
                 ", creator='" + creator + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +

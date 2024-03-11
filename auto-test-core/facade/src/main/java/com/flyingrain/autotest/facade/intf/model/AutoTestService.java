@@ -20,7 +20,7 @@ public class AutoTestService {
 
     private String responseDataType;
 
-    private String appId;
+    private int appId;
 
     private String appName;
 
@@ -96,11 +96,11 @@ public class AutoTestService {
         this.responseDataType = responseDataType;
     }
 
-    public String getAppId() {
+    public int getAppId() {
         return appId;
     }
 
-    public void setAppId(String appId) {
+    public void setAppId(int appId) {
         this.appId = appId;
     }
 
