@@ -14,8 +14,6 @@ public class Service {
 
     private List<Case> cases;
 
-    private long moduleId;
-
     private String serviceCode;
 
     private String name;
@@ -56,14 +54,6 @@ public class Service {
 
     public void setCases(List<Case> cases) {
         this.cases = cases;
-    }
-
-    public long getModuleId() {
-        return moduleId;
-    }
-
-    public void setModuleId(long moduleId) {
-        this.moduleId = moduleId;
     }
 
     public String getServiceCode() {
@@ -175,7 +165,6 @@ public class Service {
         return "Service{" +
                 "id=" + id +
                 ", cases=" + cases +
-                ", moduleId=" + moduleId +
                 ", serviceCode='" + serviceCode + '\'' +
                 ", name='" + name + '\'' +
                 ", headers='" + headers + '\'' +

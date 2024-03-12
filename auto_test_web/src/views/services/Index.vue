@@ -12,9 +12,16 @@
             <el-input v-model.trim="searchForm.conditions.serviceCode" placeholder="请输入服务编码"/>
           </el-form-item>
           <el-form-item label="所属应用:" prop="appId">
-            <el-cascader placeholder="请选择所属应用" v-model="searchForm.conditions.appId" :options="appList"
-                         @change="handleChange"></el-cascader>
-          </el-form-item>
+            <template>
+              <el-select v-model="searchForm.conditions.appId" filterable placeholder="请选择">
+                <el-option
+                    v-for="item in appList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                </el-option>
+              </el-select>
+            </template>         </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" size="small" @click="handleSearch()">查询</el-button>
             <el-button icon="el-icon-refresh-right" size="small" @click="handleClear()">重置</el-button>
@@ -29,19 +36,21 @@
       </el-col>
 
       <!-- 表格 -->
-      <el-table ref="table" :data="tableData" border>
+      <el-table ref="table" :data="tableData" stripe border>
         <el-table-column prop="id" label="id" width="50"/>
         <el-table-column prop="serviceName" label="服务名" show-overflow-tooltip/>
         <el-table-column prop="serviceCode" label="服务编码" show-overflow-tooltip/>
         <el-table-column prop="protocolType" label="协议类型" show-overflow-tooltip/>
         <el-table-column prop="requestPath" label="请求路径" show-overflow-tooltip/>
         <el-table-column prop="appName" label="归属应用" show-overflow-tooltip/>
+        <el-table-column prop="creator" label="创建人" show-overflow-tooltip/>
         <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip/>
-        <el-table-column label="操作" width="360">
-          <template v-slot="{row}">
-            <el-button type="success" size="small" @click="changeView('/service/update')">编辑</el-button>
-            <el-button type="danger" size="small" @click="deletecourse(row.id)"> 删除</el-button>
-            <el-button type="primary" size="small" @click="managercases(row.id)"> 管理用例</el-button>
+        <el-table-column label="操作" width="250">
+          <template v-slot="row">
+            <el-button type="success" size="small" @click="changeView('/service/update',{id:row.row.id})">编辑
+            </el-button>
+            <el-button type="primary" size="small" @click="detail(row.row.id)"> 详情</el-button>
+            <el-button type="danger" size="small" @click="deleteService(row.row.id)"> 删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -86,7 +95,16 @@ export default {
     async getPageList() {
       const result = await this.$axios.post('/service/list', this.searchForm)
       if (result.data.success) {
-        this.tableData = result.data.data.records
+        this.tableData = result.data.data.data
+        for (let item of this.tableData) {
+          if (item.appId) {
+            for (let a of this.appList) {
+              if (a.value === item.appId) {
+                item.appName = a.label
+              }
+            }
+          }
+        }
         this.total = result.data.data.total
       } else {
         this.$message.error(result.data.message)
@@ -125,6 +143,28 @@ export default {
       } else {
         this.$message.error(result.data.message)
       }
+    },
+    printData(data) {
+      console.log(data)
+      console.log(JSON.stringify(data))
+    },
+    deleteService(id) {
+      this.$confirm('确认删除磁条信息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post('/service/delete', {ids: [id]}).then((res) => {
+          if (res.data.success) {
+            this.$message.success('删除成功')
+            this.$router.push('/services')
+          } else {
+            this.$message.error(res.data.message)
+          }
+        }).catch((reason) => {
+          this.$message.error(reason)
+        })
+      })
     }
   }
 

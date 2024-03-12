@@ -19,7 +19,7 @@ public class ServiceModelConvert {
         service.setCreator(autoTestServiceModel.getCreator());
         service.setId(autoTestServiceModel.getId());
         service.setCreateTime(autoTestServiceModel.getCreateTime());
-        service.setModuleId(autoTestServiceModel.getAppId());
+        service.setAppId(autoTestServiceModel.getAppId());
         service.setName(autoTestServiceModel.getServiceName());
         service.setProtocolType(autoTestServiceModel.getProtocolType());
         service.setRequestDataModule(autoTestServiceModel.getRequestModel());

@@ -24,7 +24,7 @@ public interface AutoTestServiceMapper {
             @Result(property = "protocolType", column = "protocol_type"),
             @Result(property = "requestPath", column = "request_path"),
             @Result(property = "requestType", column = "request_type"),
-            @Result(property = "hearders", column = "hearders"),
+            @Result(property = "headers", column = "headers"),
             @Result(property = "requestModel", column = "request_module"),
             @Result(property = "responseDataType", column = "response_data_type"),
             @Result(property = "creator", column = "creator"),
@@ -48,7 +48,7 @@ public interface AutoTestServiceMapper {
 
 
     @Insert("insert into auto_test_service(service_name,service_code,protocol_type,request_path,headers,request_type,response_data_type,app_id,creator) " +
-            "values(#{serviceName},#{serviceCode},#{protocolType},#{requestPath},#{headers},#{requestType},#{respnseDataType},#{appId},#{creator})")
+            "values(#{serviceName},#{serviceCode},#{protocolType},#{requestPath},#{headers},#{requestType},#{responseDataType},#{appId},#{creator})")
     int insertServiceModel(AutoTestServiceModel autoTestServiceModel);
 
 
@@ -56,6 +56,6 @@ public interface AutoTestServiceMapper {
     int updateServiceById(@Param("service") AutoTestServiceModel autoTestServiceModel);
 
 
-    @Delete("delete from auto_test_service where id in #{ids}")
+    @Delete({"<script>delete from auto_test_service where id in <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>"})
     int batchDelete(@Param("ids") List<Integer> serviceIds);
 }

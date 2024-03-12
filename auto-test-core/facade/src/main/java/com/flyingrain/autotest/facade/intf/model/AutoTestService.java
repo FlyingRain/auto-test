@@ -14,7 +14,7 @@ public class AutoTestService {
 
     private String protocolType;
 
-    private String hearders;
+    private String headers;
 
     private String requestType;
 
@@ -72,12 +72,12 @@ public class AutoTestService {
         this.protocolType = protocolType;
     }
 
-    public String getHearders() {
-        return hearders;
+    public String getHeaders() {
+        return headers;
     }
 
-    public void setHearders(String hearders) {
-        this.hearders = hearders;
+    public void setHeaders(String headers) {
+        this.headers = headers;
     }
 
     public String getRequestType() {
@@ -152,7 +152,7 @@ public class AutoTestService {
                 ", serviceCode='" + serviceCode + '\'' +
                 ", requestPath='" + requestPath + '\'' +
                 ", protocolType='" + protocolType + '\'' +
-                ", hearders='" + hearders + '\'' +
+                ", hearders='" + headers + '\'' +
                 ", requestType='" + requestType + '\'' +
                 ", responseDataType='" + responseDataType + '\'' +
                 ", appId='" + appId + '\'' +

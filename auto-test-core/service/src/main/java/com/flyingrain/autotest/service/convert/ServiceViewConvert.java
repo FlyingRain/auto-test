@@ -15,6 +15,8 @@ public class ServiceViewConvert {
         service.setServiceCode(autoTestService.getServiceCode());
         service.setName(autoTestService.getServiceName());
         service.setCreator(autoTestService.getCreator());
+        service.setHeaders(autoTestService.getHeaders());
+        service.setAppId(autoTestService.getAppId());
         service.setProtocolType(autoTestService.getProtocolType());
         service.setRequestDataModule(autoTestService.getRequestModel());
         service.setRequestDataType(autoTestService.getResponseDataType());
@@ -36,7 +38,7 @@ public class ServiceViewConvert {
         autoTestService.setCreator(service.getCreator());
         autoTestService.setAppId(service.getAppId());
         autoTestService.setRequestModel(service.getRequestDataModule());
-        autoTestService.setHearders(service.getHeaders());
+        autoTestService.setHeaders(service.getHeaders());
         autoTestService.setCreateTime(service.getCreateTime());
         autoTestService.setUpdateTime(service.getUpdateTime());
         autoTestService.setProtocolType(service.getProtocolType());

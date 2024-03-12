@@ -6,9 +6,7 @@ import com.flyingrain.autotest.common.util.PageQuery;
 import com.flyingrain.autotest.common.util.PageableModel;
 import com.flyingrain.autotest.facade.intf.requests.BatchDelRequest;
 import com.flyingrain.autotest.mvc.jersey.AuthCheck;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 @Path("/autotest/service")
@@ -37,5 +35,9 @@ public interface ServiceFacade {
     @AuthCheck
     @Path("/update")
     CommonResult<Boolean> updateService(AutoTestService autoTestService);
+
+    @GET
+    @Path("/detail")
+    CommonResult<AutoTestService> getDetail(@QueryParam("id") Integer id);
 
 }

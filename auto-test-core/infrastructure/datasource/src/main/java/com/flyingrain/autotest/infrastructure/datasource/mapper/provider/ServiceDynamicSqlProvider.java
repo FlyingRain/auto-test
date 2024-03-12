@@ -84,6 +84,9 @@ public class ServiceDynamicSqlProvider {
         if (StringUtils.isNotBlank(autoTestServiceModel.getResponseDataType())) {
             sql.SET("response_data_type=#{service.responseDataType}");
         }
+        if (autoTestServiceModel.getAppId()!=0) {
+            sql.SET("app_id=#{service.appId}");
+        }
         sql.WHERE("id = #{service.id}");
         logger.info("update service sql:[{}]", sql);
         return sql.toString();

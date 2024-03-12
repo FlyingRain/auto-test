@@ -43,6 +43,13 @@ const router = new Router({
           component: () => import('@/views/services/Add.vue')
         },
         {
+          path: '/service/update',
+          meta: {
+            title: '修改服务'
+          },
+          component: () => import('@/views/services/Add.vue')
+        },
+        {
           path: '/autotest',
           meta: {
             title: '自动化测试'

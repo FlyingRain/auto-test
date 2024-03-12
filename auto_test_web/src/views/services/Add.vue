@@ -27,8 +27,8 @@
           <el-form-item label="请求路径:" prop="requestPath">
             <el-input v-model="service.requestPath" placeholder="请输入请求路径"></el-input>
           </el-form-item>
-          <el-form-item label="请求协议:" prop="protocol">
-            <el-cascader placeholder="请选择协议类型" v-model="service.protocol"
+          <el-form-item label="请求协议:" prop="protocolType">
+            <el-cascader placeholder="请选择协议类型" v-model="service.protocolType"
                          :options="protocolList"
                          @change="handleChange"></el-cascader>
 
@@ -77,7 +77,7 @@
       <el-card class="box-card">
         <div class="footer">
           <el-form-item>
-            <el-button type="primary" @click="onSubmit('form')">保 存</el-button>
+            <el-button type="primary" @click="onSubmit('service_from')">保 存</el-button>
             <el-button @click="$router.back()">取 消</el-button>
           </el-form-item>
         </div>
@@ -92,10 +92,12 @@ export default {
   data() {
     return {
       service: {
+        id: '',
         serviceName: '',
         serviceCode: '',
         requestType: '',
-        appId: 1,
+        protocolType: '',
+        appId: 0,
         requestPath: '',
         responseDataType: '',
         headers: [
@@ -105,10 +107,6 @@ export default {
 
       },
       appList: [
-        {
-          value: 1,
-          label: '通用'
-        }
       ],
       responseType: [
         {
@@ -155,18 +153,34 @@ export default {
   },
   created() {
     this.getAppList()
+    if (this.$route.query.id) {
+      this.getServiceDetail(this.$route.query.id)
+    }
   },
   methods: {
     async getAppList() {
-      const result = await this.$axios.get('/appList')
+      const result = await this.$axios.get('app/all')
       if (result.data.success) {
-        this.appList = result.data.data
+        const appInfos = result.data.data
+        for (const item of appInfos) {
+          this.appList.push({value: item.id, label: item.appName})
+        }
       } else {
         this.$message.error(result.data.message)
       }
     },
     handleChange() {
 
+    },
+    async getServiceDetail(id) {
+      const result = await this.$axios.get('/service/detail', {params: {id: id}})
+      if (result.data.success) {
+        console.log(JSON.parse(result.data.data.headers))
+        Object.assign(this.service, result.data.data)
+        if (result.data.data.headers) {
+          this.service.headers = JSON.parse(result.data.data.headers)
+        }
+      }
     },
     addHeader() {
       this.service.headers.push({
@@ -180,10 +194,43 @@ export default {
         this.service.headers.splice(index, 1)
       }
     },
-    onSubmit() {
+    onSubmit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let url = this.service.id ? '/service/update' : '/service/add'
 
+          this.$axios.post(url, this.buildRequest()).then((res) => {
+            if (res.data.success) {
+              this.$message.success('保存成功')
+              this.$router.push('/services')
+            } else {
+              this.$message.error(res.data.message)
+            }
+          })
+        } else {
+          return false
+        }
+      })
+    },
+    buildRequest() {
+      const request = {}
+      Object.assign(request, this.service)
+      if (this.service.headers) {
+        request.headers = JSON.stringify(this.service.headers)
+      }
+      if (this.service.protocolType && Array.isArray(this.service.protocolType)) {
+        request.protocolType = this.service.protocolType[0]
+      }
+      if (this.service.responseDataType && Array.isArray(this.service.responseDataType)) {
+        request.responseDataType = this.service.responseDataType[0]
+      }
+      if (this.service.appId && Array.isArray(this.service.appId)) {
+        request.appId = this.service.appId[0]
+      }
+      return request
     }
   }
+
 }
 
 </script>

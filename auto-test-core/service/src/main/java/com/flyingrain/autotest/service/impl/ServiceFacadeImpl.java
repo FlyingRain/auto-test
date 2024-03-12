@@ -82,20 +82,29 @@ public class ServiceFacadeImpl implements ServiceFacade, Resource {
         return count > 0 ? CommonResult.success(true) : CommonResult.fail(AutoTestResultCodeEnum.FAIL.getCode(), AutoTestResultCodeEnum.FAIL.getMessage());
     }
 
+    @Override
+    public CommonResult<AutoTestService> getDetail(Integer id) {
+        if (id == null) {
+            return CommonResult.fail(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), AutoTestResultCodeEnum.PARAM_ERROR.getMessage());
+        }
+        Service service = serviceManager.queryById(id);
+        return CommonResult.success(ServiceViewConvert.convertModel(service));
+    }
+
     private void checkParam(AutoTestService autoTestService) {
         if (autoTestService == null) {
             throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR);
         }
-        if (StringUtils.hasText(autoTestService.getServiceName())) {
+        if (!StringUtils.hasText(autoTestService.getServiceName())) {
             throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), "服务名为空");
         }
-        if (StringUtils.hasText(autoTestService.getServiceCode())) {
+        if (!StringUtils.hasText(autoTestService.getServiceCode())) {
             throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), "服务编码为空");
         }
-        if (StringUtils.hasText(autoTestService.getRequestPath())) {
+        if (!StringUtils.hasText(autoTestService.getRequestPath())) {
             throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), "请求路径为空");
         }
-        if (StringUtils.hasText(autoTestService.getProtocolType())) {
+        if (!StringUtils.hasText(autoTestService.getProtocolType())) {
             throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), "协议类型为空");
         }
     }
