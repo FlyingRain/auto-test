@@ -6,13 +6,14 @@
       <el-col>
         <el-form ref="searchRef" :model="searchForm" size="small" inline>
           <el-form-item label="服务名称：" prop="serviceName">
-            <el-input v-model.trim="searchForm.serviceName" placeholder="请输入服务名称"/>
+            <el-input v-model.trim="searchForm.conditions.serviceName" placeholder="请输入服务名称"/>
           </el-form-item>
           <el-form-item label="服务编码：" prop="serviceCode">
-            <el-input v-model.trim="searchForm.serviceCode" placeholder="请输入服务编码"/>
+            <el-input v-model.trim="searchForm.conditions.serviceCode" placeholder="请输入服务编码"/>
           </el-form-item>
-          <el-form-item label="所属应用：" prop="appName">
-            <el-input v-model.trim="searchForm.appName" placeholder="请输入服务编码"/>
+          <el-form-item label="所属应用:" prop="appId">
+            <el-cascader placeholder="请选择所属应用" v-model="searchForm.conditions.appId" :options="appList"
+                         @change="handleChange"></el-cascader>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" size="small" @click="handleSearch()">查询</el-button>
@@ -22,7 +23,8 @@
       </el-col>
       <el-col>
         <div class="opts">
-          <el-button type="primary" icon="el-icon-circle-plus" size="small" @click="addService()"> 新增</el-button>
+          <el-button type="primary" icon="el-icon-circle-plus" size="small" @click="changeView('/service/add')"> 新增
+          </el-button>
         </div>
       </el-col>
 
@@ -46,7 +48,7 @@
 
       <!-- 分页 -->
       <el-pagination class="pagination" layout="->,total,sizes,prev,pager,next,jumper" :page-sizes="[10,20,30,40]"
-                     :current-page="searchForm.current" :page-size="searchForm.size" :total="total"
+                     :current-page="searchForm.currentPage" :page-size="searchForm.pageSize" :total="total"
                      @size-change="handleSizeChange" @current-change="handleCurrentPageChange"/>
       <Detail ref="course_detail"/>
     </el-card>
@@ -64,21 +66,25 @@ export default {
       tableData: [],
       total: 0,
       searchForm: {
-        current: 1,
-        size: 10,
-        serviceName: '',
-        serviceCode: '',
-        appName: ''
-      }
+        currentPage: 1,
+        pageSize: 10,
+        conditions: {
+          serviceName: '',
+          serviceCode: '',
+          appId: ''
+        }
+      },
+      appList: []
 
     }
   },
   created() {
     this.getPageList()
+    this.getAppList()
   },
   methods: {
     async getPageList() {
-      const result = await this.$axios.get('/service/list', {params: this.searchForm})
+      const result = await this.$axios.post('/service/list', this.searchForm)
       if (result.data.success) {
         this.tableData = result.data.data.records
         this.total = result.data.data.total
@@ -87,21 +93,38 @@ export default {
       }
     },
     handleSizeChange(val) {
-      this.searchForm.size = val
-      this.searchForm.current = 1
+      this.searchForm.pageSize = val
+      this.searchForm.currentPage = 1
       this.getPageList()
     },
     handleCurrentPageChange(val) {
-      this.searchForm.current = val
+      this.searchForm.currentPage = val
       this.getPageList()
     },
     handleSearch() {
-      this.searchForm.current = 1
+      this.searchForm.currentPage = 1
       this.getPageList()
     },
     handleClear() {
       this.$refs['searchRef'].resetFields()
       this.getPageList()
+    },
+    changeView(url, queryParams) {
+      this.$router.push({
+        path: url,
+        query: queryParams
+      })
+    },
+    async getAppList() {
+      const result = await this.$axios.get('/app/all')
+      if (result.data.success) {
+        const appInfos = result.data.data
+        this.appList = appInfos.map(t => {
+          return {value: t.id, label: t.appName}
+        })
+      } else {
+        this.$message.error(result.data.message)
+      }
     }
   }
 
@@ -116,4 +139,7 @@ export default {
   margin-top: 5px;
 }
 
+.content {
+  margin-top: 10px;
+}
 </style>
