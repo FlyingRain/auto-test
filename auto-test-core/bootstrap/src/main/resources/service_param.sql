@@ -11,26 +11,24 @@
  Target Server Version : 80036 (8.0.36)
  File Encoding         : 65001
 
- Date: 13/03/2024 16:39:48
+ Date: 13/03/2024 16:39:54
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for case_check_point
+-- Table structure for service_param
 -- ----------------------------
-DROP TABLE IF EXISTS `case_check_point`;
-CREATE TABLE `case_check_point`  (
+DROP TABLE IF EXISTS `service_param`;
+CREATE TABLE `service_param`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `case_id` int NULL DEFAULT NULL COMMENT '用例id',
-  `check_point_type` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '检查点类型',
-  `script` varchar(1024) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '检查脚本',
-  `check_value` varchar(1024) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '检查值',
-  `judge` int NULL DEFAULT NULL COMMENT '判断符号',
+  `service_id` int NULL DEFAULT NULL COMMENT '用例id',
+  `param_nam` varchar(128) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '参数名称',
+  `desc` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '描述',
+  `param_value` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '参数值',
   `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `creator` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '创建人',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 

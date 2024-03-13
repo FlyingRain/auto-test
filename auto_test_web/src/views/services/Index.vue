@@ -21,7 +21,8 @@
                     :value="item.value">
                 </el-option>
               </el-select>
-            </template>         </el-form-item>
+            </template>
+          </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" size="small" @click="handleSearch()">查询</el-button>
             <el-button icon="el-icon-refresh-right" size="small" @click="handleClear()">重置</el-button>
@@ -59,7 +60,7 @@
       <el-pagination class="pagination" layout="->,total,sizes,prev,pager,next,jumper" :page-sizes="[10,20,30,40]"
                      :current-page="searchForm.currentPage" :page-size="searchForm.pageSize" :total="total"
                      @size-change="handleSizeChange" @current-change="handleCurrentPageChange"/>
-      <Detail ref="course_detail"/>
+      <Detail ref="service_detail"/>
     </el-card>
   </div>
 </template>
@@ -88,8 +89,10 @@ export default {
     }
   },
   created() {
+    this.initPage()
+  },
+  mounted() {
     this.getPageList()
-    this.getAppList()
   },
   methods: {
     async getPageList() {
@@ -98,6 +101,7 @@ export default {
         this.tableData = result.data.data.data
         for (let item of this.tableData) {
           if (item.appId) {
+            console.log(this.appList)
             for (let a of this.appList) {
               if (a.value === item.appId) {
                 item.appName = a.label
@@ -124,7 +128,9 @@ export default {
       this.getPageList()
     },
     handleClear() {
-      this.$refs['searchRef'].resetFields()
+      this.searchForm.conditions.appId = ''
+      this.searchForm.conditions.serviceCode = ''
+      this.searchForm.conditions.serviceName = ''
       this.getPageList()
     },
     changeView(url, queryParams) {
@@ -133,13 +139,14 @@ export default {
         query: queryParams
       })
     },
-    async getAppList() {
+    async initPage() {
       const result = await this.$axios.get('/app/all')
       if (result.data.success) {
         const appInfos = result.data.data
         this.appList = appInfos.map(t => {
           return {value: t.id, label: t.appName}
         })
+        await this.getPageList()
       } else {
         this.$message.error(result.data.message)
       }
@@ -165,6 +172,11 @@ export default {
           this.$message.error(reason)
         })
       })
+    },
+    detail(id) {
+      this.$refs.service_detail.drawer = true
+      this.$refs.service_detail.formData.id = id
+      this.$refs.service_detail.getServiceDetail()
     }
   }
 

@@ -25,7 +25,7 @@ public interface AutoTestServiceMapper {
             @Result(property = "requestPath", column = "request_path"),
             @Result(property = "requestType", column = "request_type"),
             @Result(property = "headers", column = "headers"),
-            @Result(property = "requestModel", column = "request_module"),
+            @Result(property = "requestModel", column = "request_model"),
             @Result(property = "responseDataType", column = "response_data_type"),
             @Result(property = "creator", column = "creator"),
             @Result(property = "createTime", column = "create_time"),
@@ -33,7 +33,7 @@ public interface AutoTestServiceMapper {
     })
     AutoTestServiceModel queryById(@Param("id") int id);
 
-    @Select("select * from auto_test_service where app_id in #{ids}")
+    @Select("<script>select * from auto_test_service where app_id in <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>")
     @ResultMap("serviceMap")
     List<AutoTestServiceModel> queryByAppIds(@Param("ids") List<Integer> ids);
 

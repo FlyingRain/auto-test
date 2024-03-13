@@ -19,7 +19,7 @@ public interface AutoTestAppMapper {
             @Result(property = "createTime", column = "create_time"),
             @Result(property = "updateTime", column = "update_time"),
     })
-    AutoTestApplicationModel queryByServiceId(@Param("id") int serviceId);
+    AutoTestApplicationModel queryById(@Param("id") int serviceId);
 
 
     @SelectProvider(type = AppDynamicSqlProvider.class,method = "queryByPage")
@@ -29,11 +29,13 @@ public interface AutoTestAppMapper {
     @SelectProvider(type = AppDynamicSqlProvider.class,method = "pageCount")
     int pageCount(@Param("pageCondition")PageQuery<AutoTestApplicationModel> query);
 
+    @UpdateProvider(type = AppDynamicSqlProvider.class,method = "updateById")
+    int updateApp(@Param("application") AutoTestApplicationModel autoTestApplicationModel);
 
     @Insert("insert into auto_test_application (app_name,app_code,`desc`,`owner`) values (#{appName},#{appCode},#{desc},#{owner})")
     int insertApp(AutoTestApplicationModel autoTestApplicationModel);
 
-    @Delete("delete from auto_test_application where id in #{ids}")
+    @Delete("<script>delete from auto_test_application where id in <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>")
     int batchDel(@Param("ids") List<Integer> ids);
 
     @Select("select * from auto_test_application")

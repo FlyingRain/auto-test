@@ -31,4 +31,12 @@ public interface AppFacade {
     @POST
     CommonResult<Integer> batchDel(BatchDelRequest batchDelRequest);
 
+    @GET
+    @Path("/detail")
+    CommonResult<AutoTestApp> queryDetailById(@QueryParam("id") Integer id);
+
+    @POST
+    @Path("/update")
+    CommonResult<Boolean> updateApp(AutoTestApp autoTestApp);
+
 }

@@ -64,12 +64,29 @@ public class AppFacadeImpl implements AppFacade, Resource {
         return CommonResult.success(count);
     }
 
+    @Override
+    public CommonResult<AutoTestApp> queryDetailById(Integer id) {
+        Application application = applicationManager.queryDetail(id);
+        return CommonResult.success(ApplicationViewConvert.convertView(application));
+    }
+
+    @Override
+    public CommonResult<Boolean> updateApp(AutoTestApp autoTestApp) {
+        StringBuilder errorMsg = new StringBuilder();
+        if (autoTestApp.getId() == 0) {
+            logger.error("id is invalid");
+            errorMsg.append("id is invalid;");
+        }
+        int count = applicationManager.updateApp(ApplicationViewConvert.convertModel(autoTestApp));
+        return count == 1 ? CommonResult.success(true) : CommonResult.fail("500", errorMsg.toString());
+    }
+
     private void checkParam(BatchDelRequest batchDelRequest) {
         List<Integer> appIds = batchDelRequest.getIds();
         List<Service> autoTestServiceModels = serviceManager.queryByAppIds(appIds);
         if (!CollectionUtils.isEmpty(autoTestServiceModels)) {
             logger.error("can't delete  app  still had service:[{}]", autoTestServiceModels);
-            throw new AutoTestException(AutoTestResultCodeEnum.DEPEND_NOT_CLEAN);
+            throw new AutoTestException(AutoTestResultCodeEnum.DEPEND_NOT_CLEAN.getCode(),"请先删除应用下的所有服务");
         }
     }
 

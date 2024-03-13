@@ -4,7 +4,7 @@
     <el-card shadow="never">
 
       <el-col>
-        <el-form ref="searchRef" :model="searchForm" size="small" inline>
+        <el-form ref="searchForm" :model="searchForm" size="small" inline>
           <el-form-item label="应用名称：" prop="appName">
             <el-input v-model.trim="searchForm.conditions.appName" placeholder="请输入应用名称"/>
           </el-form-item>
@@ -32,7 +32,7 @@
           ref="addDialog"
           :visible.sync="dialogVisible"
           width="30%"
-          :before-close="handleClose">
+          >
         <el-form :model="addAppForm" size="small" :rules="addRules">
           <el-form-item label="应用编码：" prop="appCode">
             <el-input v-model.trim="addAppForm.appCode" placeholder="请输入应用编码"/>
@@ -61,9 +61,9 @@
         <el-table-column prop="desc" label="描述" show-overflow-tooltip/>
         <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip/>
         <el-table-column label="操作" width="180">
-          <template v-slot="{row}">
-            <el-button type="success" size="small" @click="changeView('/service/update')">编辑</el-button>
-            <el-button type="danger" size="small" @click="deletecourse(row.id)"> 删除</el-button>
+          <template v-slot="row">
+            <el-button type="success" size="small" @click="updateApp(row.row.id)">编辑</el-button>
+            <el-button type="danger" size="small" @click="deleteApp(row.row.id)"> 删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -98,6 +98,7 @@ export default {
         }
       },
       addAppForm: {
+        id: '',
         appCode: '',
         appName: '',
         desc: '',
@@ -145,7 +146,9 @@ export default {
       this.getPageList()
     },
     handleClear() {
-      this.$refs['searchRef'].resetFields()
+      this.searchForm.conditions.owner = ''
+      this.searchForm.conditions.appCode = ''
+      this.searchForm.conditions.appName = ''
       this.getPageList()
     },
     changeView(url, queryParams) {
@@ -156,11 +159,42 @@ export default {
     },
     async addApp() {
       console.log(JSON.stringify(this.addAppForm))
-      const result = await this.$axios.post('/app/add', this.addAppForm)
+      var url = this.addAppForm.id ? '/app/update' : '/app/add'
+      const result = await this.$axios.post(url, this.addAppForm)
       if (result.data.success) {
         this.dialogVisible = false
         location.reload()
+      } else {
+        this.$message.error(result.data.message)
       }
+    },
+    async updateApp(id) {
+      const result = await this.$axios.get('/app/detail', {params: {id: id}})
+      if (result.data.success) {
+        if (result.data.data) {
+          const appInfo = result.data.data
+          Object.assign(this.addAppForm, appInfo)
+          this.dialogVisible = true
+        }
+      } else {
+        this.$message.error(result.data.message)
+      }
+    },
+    async deleteApp(id) {
+      this.$confirm('确认删除此条信息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post('/app/batchDelete', {ids: [id]}).then((res) => {
+          if (res.data.success) {
+            this.$message.success('删除成功')
+            location.reload()
+          } else {
+            this.$message.error(res.data.message)
+          }
+        })
+      })
     }
   }
 

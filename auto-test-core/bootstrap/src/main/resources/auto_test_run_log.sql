@@ -11,7 +11,7 @@
  Target Server Version : 80036 (8.0.36)
  File Encoding         : 65001
 
- Date: 05/03/2024 18:45:49
+ Date: 13/03/2024 16:39:24
 */
 
 SET NAMES utf8mb4;
@@ -35,6 +35,6 @@ CREATE TABLE `auto_test_run_log`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `case_id_index`(`case_id` ASC) USING BTREE,
   INDEX `batch_num_idx`(`batch_num` ASC) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;

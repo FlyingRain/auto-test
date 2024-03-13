@@ -11,7 +11,7 @@
  Target Server Version : 80036 (8.0.36)
  File Encoding         : 65001
 
- Date: 05/03/2024 18:45:36
+ Date: 13/03/2024 16:39:09
 */
 
 SET NAMES utf8mb4;
@@ -26,6 +26,6 @@ CREATE TABLE `auto_test_case_scene`  (
   `scene_id` int NULL DEFAULT NULL COMMENT '场景id',
   `case_id` int NULL DEFAULT NULL COMMENT '用例id',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;

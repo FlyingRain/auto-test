@@ -69,9 +69,9 @@
                 <i class="el-icon-hot-water"></i>
                 <span>自动化测试</span>
               </template>
-              <el-menu-item index="/scenes" @click="saveActiveNav('/autotest/app')"> 场景管理</el-menu-item>
-              <el-menu-item index="/cases" @click="saveActiveNav('/autotest/cases')"> 用例管理</el-menu-item>
-              <el-menu-item index="/report" @click="saveActiveNav('/autotest/report')"> 执行报告</el-menu-item>
+              <el-menu-item index="/autotest/scene" @click="saveActiveNav('/autotest/scene')"> 场景管理</el-menu-item>
+              <el-menu-item index="/autotest/cases" @click="saveActiveNav('/autotest/cases')"> 用例管理</el-menu-item>
+              <el-menu-item index="/autotest/report" @click="saveActiveNav('/autotest/report')"> 执行报告</el-menu-item>
             </el-submenu>
           </el-menu>
         </el-aside>

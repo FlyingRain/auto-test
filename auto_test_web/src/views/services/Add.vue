@@ -24,19 +24,22 @@
           <span>协议配置</span>
         </div>
         <div class="card-content">
-          <el-form-item label="请求路径:" prop="requestPath">
-            <el-input v-model="service.requestPath" placeholder="请输入请求路径"></el-input>
-          </el-form-item>
           <el-form-item label="请求协议:" prop="protocolType">
             <el-cascader placeholder="请选择协议类型" v-model="service.protocolType"
                          :options="protocolList"
                          @change="handleChange"></el-cascader>
 
           </el-form-item>
-          <el-form-item label="返回报文格式:">
-            <el-cascader placeholder="请选择返回报文格式" v-model="service.responseDataType"
-                         :options="responseType"
+          <el-form-item label="请求类型:">
+            <el-cascader placeholder="请选择返回报文格式" v-model="service.requestType"
+                         :options="requestTypes"
                          @change="handleChange"></el-cascader>
+          </el-form-item>
+          <el-form-item label="返回报文格式:" prop="responseDataType">
+            <el-cascader placeholder="请选择协议类型" v-model="service.responseDataType"
+                         :options="dataFormat"
+                         @change="handleChange"></el-cascader>
+
           </el-form-item>
 
         </div>
@@ -44,9 +47,12 @@
       </el-card>
       <el-card class="box-card">
         <div slot="header">
-          <span>报文配置</span>
+          <span>请求配置</span>
         </div>
         <div class="template-content">
+          <el-form-item label="请求路径:" prop="requestPath">
+            <el-input v-model="service.requestPath" placeholder="请输入请求路径"></el-input>
+          </el-form-item>
           <el-form-item label="报文头:"></el-form-item>
           <el-form-item v-for="(header,index) in service.headers" :key="index" style="width: 100%">
             <el-row :gutter="10" style="width: 100%">
@@ -106,16 +112,24 @@ export default {
         requestModel: ''
 
       },
-      appList: [
-      ],
-      responseType: [
+      appList: [],
+      dataFormat: [{value: 'JSON', label: 'JSON'}, {value: 'XML', label: 'XML'}],
+      requestTypes: [
         {
-          value: 'JSON',
-          label: 'JSON'
+          value: 'POST',
+          label: 'POST'
         },
         {
-          value: 'XML',
-          label: 'XML'
+          value: 'GET',
+          label: 'GET'
+        },
+        {
+          value: 'PUT',
+          label: 'PUT'
+        },
+        {
+          value: 'DELETE',
+          label: 'DELETE'
         }],
       protocolList: [
         {
@@ -226,6 +240,9 @@ export default {
       }
       if (this.service.appId && Array.isArray(this.service.appId)) {
         request.appId = this.service.appId[0]
+      }
+      if (this.service.requestType && Array.isArray(this.service.requestType)) {
+        request.requestType = this.service.requestType[0]
       }
       return request
     }

@@ -51,4 +51,12 @@ public class ApplicationManager {
         return autoTestAppMapper.queryAll().stream().map(ApplicationConvert::convertApplication).collect(Collectors.toList());
     }
 
+    public Application queryDetail(int id){
+
+        return ApplicationConvert.convertApplication(autoTestAppMapper.queryById(id));
+    }
+
+    public int updateApp(Application application){
+        return autoTestAppMapper.updateApp(ApplicationConvert.convertModel(application));
+    }
 }

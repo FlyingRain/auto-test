@@ -29,12 +29,34 @@ public class AppDynamicSqlProvider {
     }
 
 
-    public String pageCount(Map<String,Object> params){
+    public String pageCount(Map<String, Object> params) {
         PageQuery<AutoTestApplicationModel> pageQuery = (PageQuery<AutoTestApplicationModel>) params.get("pageCondition");
         SQL sql = new SQL();
         sql.SELECT("count(1)").FROM("auto_test_application");
         AutoTestApplicationModel autoTestApplicationModel = pageQuery.getConditions();
         buildQueryCondition(autoTestApplicationModel, sql);
+        return sql.toString();
+    }
+
+
+    public String updateById(Map<String, Object> params) {
+        AutoTestApplicationModel autoTestApplicationModel = (AutoTestApplicationModel) params.get("application");
+        SQL sql = new SQL();
+        sql.UPDATE("auto_test_application");
+        if (StringUtils.hasText(autoTestApplicationModel.getAppCode())) {
+            sql.SET("app_code=#{application.appCode}");
+        }
+        if (StringUtils.hasText(autoTestApplicationModel.getAppName())) {
+            sql.SET("app_name=#{application.appName}");
+        }
+        if (StringUtils.hasText(autoTestApplicationModel.getDesc())) {
+            sql.SET("`desc` = #{application.desc}");
+        }
+        if (StringUtils.hasText(autoTestApplicationModel.getOwner())) {
+            sql.SET("`owner` = #{application.owner}");
+        }
+        sql.WHERE("id = #{application.id}");
+        logger.info("update sql is :[{}]", sql);
         return sql.toString();
     }
 
