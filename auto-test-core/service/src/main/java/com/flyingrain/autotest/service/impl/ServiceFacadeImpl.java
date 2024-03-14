@@ -108,4 +108,5 @@ public class ServiceFacadeImpl implements ServiceFacade, Resource {
             throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), "协议类型为空");
         }
     }
+
 }

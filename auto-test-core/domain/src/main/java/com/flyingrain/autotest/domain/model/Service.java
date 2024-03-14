@@ -39,6 +39,8 @@ public class Service {
 
     private Date updateTime;
 
+    private List<ServiceParam> params;
+
 
     public int getId() {
         return id;
@@ -158,6 +160,14 @@ public class Service {
 
     public void setResponseDataType(String responseDataType) {
         this.responseDataType = responseDataType;
+    }
+
+    public List<ServiceParam> getParams() {
+        return params;
+    }
+
+    public void setParams(List<ServiceParam> params) {
+        this.params = params;
     }
 
     @Override
