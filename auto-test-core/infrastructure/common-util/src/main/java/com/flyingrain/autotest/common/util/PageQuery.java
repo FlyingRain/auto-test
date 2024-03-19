@@ -5,7 +5,7 @@ public class PageQuery <T>{
 
     private int pageSize;
 
-    private T Conditions;
+    private T conditions;
 
     public PageQuery() {
     }
@@ -13,7 +13,7 @@ public class PageQuery <T>{
     public PageQuery(int currentPage, int pageSize, T conditions) {
         this.currentPage = currentPage;
         this.pageSize = pageSize;
-        Conditions = conditions;
+        this.conditions = conditions;
     }
 
     public int getCurrentPage() {
@@ -33,11 +33,11 @@ public class PageQuery <T>{
     }
 
     public T getConditions() {
-        return Conditions;
+        return conditions;
     }
 
     public void setConditions(T conditions) {
-        Conditions = conditions;
+        this.conditions = conditions;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class PageQuery <T>{
         return "PageQuery{" +
                 "currentPage=" + currentPage +
                 ", pageSize=" + pageSize +
-                ", Conditions=" + Conditions +
+                ", Conditions=" + conditions +
                 '}';
     }
 }

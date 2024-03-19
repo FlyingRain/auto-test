@@ -8,27 +8,41 @@ import java.util.Date;
  */
 public class AutoTestCaseModel {
 
-    private long id;
+    private int id;
 
     private String name;
 
-    private long serviceId;
+    private int serviceId;
 
     private String caseStatus;
 
-    private String checkPoint;
+    private String checkPointConfig;
 
+    private String paramValue;
+
+    private String resultCollectConfig;
     private String creator;
+
+    private String modifier;
 
     private Date createTime;
 
     private Date updateTime;
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+
+    public String getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
+    }
+
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -40,14 +54,21 @@ public class AutoTestCaseModel {
         this.name = name;
     }
 
-    public long getServiceId() {
+    public int getServiceId() {
         return serviceId;
     }
 
-    public void setServiceId(long serviceId) {
+    public void setServiceId(int serviceId) {
         this.serviceId = serviceId;
     }
 
+    public String getResultCollectConfig() {
+        return resultCollectConfig;
+    }
+
+    public void setResultCollectConfig(String resultCollectConfig) {
+        this.resultCollectConfig = resultCollectConfig;
+    }
 
     public String getCaseStatus() {
         return caseStatus;
@@ -58,12 +79,12 @@ public class AutoTestCaseModel {
     }
 
 
-    public String getCheckPoint() {
-        return checkPoint;
+    public String getCheckPointConfig() {
+        return checkPointConfig;
     }
 
-    public void setCheckPoint(String checkPoint) {
-        this.checkPoint = checkPoint;
+    public void setCheckPointConfig(String checkPointConfig) {
+        this.checkPointConfig = checkPointConfig;
     }
 
     public String getCreator() {
@@ -90,4 +111,11 @@ public class AutoTestCaseModel {
         this.updateTime = updateTime;
     }
 
+    public String getParamValue() {
+        return paramValue;
+    }
+
+    public void setParamValue(String paramValue) {
+        this.paramValue = paramValue;
+    }
 }

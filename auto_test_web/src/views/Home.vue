@@ -64,7 +64,7 @@
               <i class="el-icon-s-management"></i>
               <span slot="title">服务管理</span>
             </el-menu-item>
-            <el-submenu index="1">
+            <el-submenu index="/autotest">
               <template slot="title">
                 <i class="el-icon-hot-water"></i>
                 <span>自动化测试</span>

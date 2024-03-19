@@ -1,10 +1,10 @@
 package com.flyingrain.autotest.infrastructure.datasource.mapper;
 
+import com.flyingrain.autotest.common.util.PageQuery;
+import com.flyingrain.autotest.infrastructure.datasource.AutoTestCaseQuery;
+import com.flyingrain.autotest.infrastructure.datasource.mapper.provider.AutoTestCaseDynamicSqlProvider;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestCaseModel;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.ResultMap;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -21,7 +21,10 @@ public interface AutoTestCaseMapper {
             @Result(property = "name", column = "name"),
             @Result(property = "serviceId", column = "service_id"),
             @Result(property = "caseStatus", column = "case_status"),
-            @Result(property = "checkPoint", column = "check_point"),
+            @Result(property = "checkPointConfig", column = "check_point_config"),
+            @Result(property = "paramValue", column = "param_value"),
+            @Result(property = "resultCollectConfig", column = "result_collect_config"),
+            @Result(property = "modifier", column = "modifier"),
             @Result(property = "creator", column = "creator"),
             @Result(property = "createTime", column = "create_time"),
             @Result(property = "updateTime", column = "update_time"),
@@ -33,5 +36,15 @@ public interface AutoTestCaseMapper {
     AutoTestCaseModel queryCaseById(long caseId);
 
 
+    @SelectProvider(type = AutoTestCaseDynamicSqlProvider.class,method = "queryByPage")
+    @ResultMap(value = "caseMap")
+    List<AutoTestCaseModel> queryByPage(@Param("queryCondition") PageQuery<AutoTestCaseQuery> queryCondition);
+
+
+    @SelectProvider(type = AutoTestCaseDynamicSqlProvider.class,method = "pageCount")
+    int queryByPageCount(@Param("caseModel") AutoTestCaseQuery autoTestCaseQuery);
+
+    @UpdateProvider(type = AutoTestCaseDynamicSqlProvider.class,method = "updateCase")
+    int updateCaseById(@Param("caseModel") AutoTestCaseModel autoTestCaseModel);
 
 }

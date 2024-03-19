@@ -9,6 +9,8 @@ import com.flyingrain.autotest.mvc.jersey.AuthCheck;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
+import java.util.List;
+
 @Path("/autotest/service")
 @Produces(MediaType.APPLICATION_JSON)
 public interface ServiceFacade {
@@ -39,5 +41,9 @@ public interface ServiceFacade {
     @GET
     @Path("/detail")
     CommonResult<AutoTestService> getDetail(@QueryParam("id") Integer id);
+
+    @GET
+    @Path("/all")
+    CommonResult<List<AutoTestService>> queryAllService();
 
 }

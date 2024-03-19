@@ -1,7 +1,6 @@
 package com.flyingrain.autotest.infrastructure.datasource.mapper;
 
 import com.flyingrain.autotest.infrastructure.datasource.mapper.provider.ServiceParamDynamicSqlProvider;
-import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestServiceModel;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestServiceParamModel;
 import org.apache.ibatis.annotations.*;
 
@@ -18,7 +17,7 @@ public interface AutoTestServiceParamMapper {
             @Result(property = "create_time", column = "createTime"),
             @Result(property = "update_time", column = "updateTime"),
     })
-    AutoTestServiceModel queryParamById(@Param("id") Integer id);
+    AutoTestServiceParamModel queryParamById(@Param("id") Integer id);
 
 
     @InsertProvider(type = ServiceParamDynamicSqlProvider.class,method = "batchInsert")

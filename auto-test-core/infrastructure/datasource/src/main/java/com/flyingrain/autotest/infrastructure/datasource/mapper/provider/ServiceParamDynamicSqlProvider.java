@@ -14,11 +14,13 @@ public class ServiceParamDynamicSqlProvider {
 
     public String batchInsert(Map<String, Object> params) {
         List<AutoTestServiceParamModel> autoTestServiceParamModels = (List<AutoTestServiceParamModel>) params.get("serviceParams");
-        SQL sql = new SQL();
-        sql.INSERT_INTO("service_param");
-        sql.INTO_COLUMNS("service_id", "param", "desc");
-        for (AutoTestServiceParamModel param : autoTestServiceParamModels) {
-            sql.ADD_ROW().INTO_VALUES(String.valueOf(param.getServiceId()), param.getParam(), param.getDesc());
+        StringBuilder sql = new StringBuilder("insert into service_param (service_id,param,`desc`) values ");
+        for (int i = 0; i < autoTestServiceParamModels.size(); i++) {
+            AutoTestServiceParamModel param = autoTestServiceParamModels.get(i);
+            sql.append("(").append(param.getServiceId()).append(",\"").append(param.getParam()).append("\",\"").append(param.getDesc()).append("\")");
+            if (i != autoTestServiceParamModels.size() - 1) {
+                sql.append(",");
+            }
         }
         logger.debug("insert sql is :[{}]", sql);
         return sql.toString();

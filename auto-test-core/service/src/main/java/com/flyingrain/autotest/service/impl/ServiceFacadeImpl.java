@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -88,7 +89,14 @@ public class ServiceFacadeImpl implements ServiceFacade, Resource {
             return CommonResult.fail(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), AutoTestResultCodeEnum.PARAM_ERROR.getMessage());
         }
         Service service = serviceManager.queryById(id);
+
         return CommonResult.success(ServiceViewConvert.convertModel(service));
+    }
+
+    @Override
+    public CommonResult<List<AutoTestService>> queryAllService() {
+        List<Service> services = serviceManager.queryAllService();
+        return CommonResult.success(services.stream().map(ServiceViewConvert::convertModel).collect(Collectors.toList()));
     }
 
     private void checkParam(AutoTestService autoTestService) {

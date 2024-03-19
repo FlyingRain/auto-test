@@ -1,6 +1,7 @@
 package com.flyingrain.autotest.facade.intf.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class AutoTestService {
 
@@ -31,6 +32,8 @@ public class AutoTestService {
     private Date createTime;
 
     private Date updateTime;
+
+    private List<AutoTestServiceParam> autoTestServiceParams;
 
     public int getId() {
         return id;
@@ -142,6 +145,15 @@ public class AutoTestService {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+
+    public List<AutoTestServiceParam> getAutoTestServiceParams() {
+        return autoTestServiceParams;
+    }
+
+    public void setAutoTestServiceParams(List<AutoTestServiceParam> autoTestServiceParams) {
+        this.autoTestServiceParams = autoTestServiceParams;
     }
 
     @Override

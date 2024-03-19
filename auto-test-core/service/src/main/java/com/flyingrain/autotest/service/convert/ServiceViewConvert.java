@@ -2,6 +2,9 @@ package com.flyingrain.autotest.service.convert;
 
 import com.flyingrain.autotest.domain.model.Service;
 import com.flyingrain.autotest.facade.intf.model.AutoTestService;
+import org.springframework.util.CollectionUtils;
+
+import java.util.stream.Collectors;
 
 public class ServiceViewConvert {
 
@@ -44,6 +47,9 @@ public class ServiceViewConvert {
         autoTestService.setProtocolType(service.getProtocolType());
         autoTestService.setRequestPath(service.getRequestUrl());
         autoTestService.setResponseDataType(service.getResponseDataType());
+        if (!CollectionUtils.isEmpty(service.getParams())) {
+            autoTestService.setAutoTestServiceParams(service.getParams().stream().map(ServiceParamViewConvert::convertToView).collect(Collectors.toList()));
+        }
         return autoTestService;
     }
 

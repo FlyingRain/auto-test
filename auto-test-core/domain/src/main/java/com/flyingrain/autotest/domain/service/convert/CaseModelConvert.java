@@ -17,7 +17,7 @@ public class CaseModelConvert {
         runCase.setCaseStatus(autoTestCaseModel.getCaseStatus());
         runCase.setId(autoTestCaseModel.getId());
         runCase.setCreateTime(autoTestCaseModel.getCreateTime());
-        runCase.setCheckPoint(autoTestCaseModel.getCheckPoint());
+        runCase.setCheckPoint(autoTestCaseModel.getCheckPointConfig());
         runCase.setCreator(autoTestCaseModel.getCreator());
         runCase.setName(autoTestCaseModel.getName());
         runCase.setServiceId(autoTestCaseModel.getServiceId());

@@ -10,9 +10,11 @@ import com.flyingrain.autotest.domain.model.HttpHeader;
 import com.flyingrain.autotest.domain.model.Service;
 import com.flyingrain.autotest.domain.model.ServiceParam;
 import com.flyingrain.autotest.domain.service.convert.ServiceModelConvert;
+import com.flyingrain.autotest.domain.service.convert.ServiceParamModelConvert;
 import com.flyingrain.autotest.infrastructure.datasource.mapper.AutoTestServiceMapper;
 import com.flyingrain.autotest.infrastructure.datasource.mapper.AutoTestServiceParamMapper;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestServiceModel;
+import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestServiceParamModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +60,17 @@ public class ServiceManager {
     public Service queryById(int serviceId) {
         logger.info("query service detail:[{}]", serviceId);
         AutoTestServiceModel autoTestServiceModel = autoTestServiceMapper.queryById(serviceId);
-        return ServiceModelConvert.convertServiceModel(autoTestServiceModel);
+        Service service = ServiceModelConvert.convertServiceModel(autoTestServiceModel);
+        fillServiceParam(service);
+        return service;
+    }
+
+    private void fillServiceParam(Service service) {
+        List<AutoTestServiceParamModel> autoTestServiceParamModels = serviceParamMapper.queryServiceParams(service.getId());
+        if (!CollectionUtils.isEmpty(autoTestServiceParamModels)) {
+            List<ServiceParam> serviceParams = autoTestServiceParamModels.stream().map(ServiceParamModelConvert::convertModel).collect(Collectors.toList());
+            service.setParams(serviceParams);
+        }
     }
 
     public List<Service> queryByAppIds(List<Integer> appIds) {
@@ -71,8 +83,14 @@ public class ServiceManager {
     @Transactional
     public int addService(Service service) {
         logger.info("add service:[{}]", service);
+        AutoTestServiceModel autoTestServiceModel = ServiceModelConvert.convertService(service);
+        autoTestServiceMapper.insertServiceModel(autoTestServiceModel);
+        service.setId(autoTestServiceModel.getId());
+        logger.info("insert service success;id:[{}]", service.getId());
         List<ServiceParam> serviceParams = extractParams(service);
-        return autoTestServiceMapper.insertServiceModel(ServiceModelConvert.convertService(service));
+        int count = serviceParamMapper.batchInsert(serviceParams.stream().map(ServiceParamModelConvert::convertServiceParam).collect(Collectors.toList()));
+        logger.info("insert service param:[{}],service:[{}]", count, service.getName());
+        return 1;
     }
 
     private List<ServiceParam> extractParams(Service service) {
@@ -84,9 +102,9 @@ public class ServiceManager {
             logger.info("extract params from url:[{}]", tempUrl.size());
         }
         if (StringUtils.hasText(service.getRequestDataModule())) {
-            List<String> tempContent = extractParamsFromStr(requestUrl);
+            List<String> tempContent = extractParamsFromStr(service.getRequestDataModule());
             params.addAll(tempContent);
-            logger.info("extract params from url:[{}]", tempContent.size());
+            logger.info("extract params from body:[{}]", tempContent.size());
         }
         if (StringUtils.hasText(service.getHeaders())) {
             List<HttpHeader> headers = JSONArray.parseArray(service.getHeaders(), HttpHeader.class);
@@ -128,20 +146,30 @@ public class ServiceManager {
             }
             if (Character.toString(str.charAt(i)).equals("}")) {
                 endIndex = i;
-                if (startIndex == 0 || startIndex >= endIndex) {
+                if (startIndex == 0) {
+                    logger.warn("not valid,continue");
+                    continue;
+                }
+                if (startIndex >= endIndex) {
                     logger.error("param format error!at str index:[{}]", i);
                     throw new AutoTestException(AutoTestResultCodeEnum.TEMPLATE_ERROR);
                 }
-                startIndex = 0;
                 String param = str.substring(startIndex, endIndex);
                 serviceParams.add(param);
+                startIndex = 0;
             }
         }
         return serviceParams;
     }
 
+    @Transactional
     public int updateServiceById(Service service) {
         logger.info("update service:[{}]", service);
+        serviceParamMapper.deleteServiceParams(service.getId());
+        List<ServiceParam> params = extractParams(service);
+        if (!CollectionUtils.isEmpty(params)) {
+            serviceParamMapper.batchInsert(params.stream().map(ServiceParamModelConvert::convertServiceParam).collect(Collectors.toList()));
+        }
         return autoTestServiceMapper.updateServiceById(ServiceModelConvert.convertService(service));
     }
 
@@ -157,6 +185,10 @@ public class ServiceManager {
 
     private boolean beforeDeleteCheck(List<Integer> serviceIds) {
         return true;
+    }
+
+    public List<Service> queryAllService() {
+        return autoTestServiceMapper.queryAllService().stream().map(ServiceModelConvert::convertServiceModel).peek(this::fillServiceParam).collect(Collectors.toList());
     }
 
 }
