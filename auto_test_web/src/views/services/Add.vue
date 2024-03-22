@@ -170,6 +170,7 @@ export default {
     if (this.$route.query.id) {
       this.getServiceDetail(this.$route.query.id)
     }
+    this.addRulesForHeaders()
   },
   methods: {
     async getAppList() {
@@ -197,15 +198,42 @@ export default {
       }
     },
     addHeader() {
+      this.removeRulesForHeaders()
       this.service.headers.push({
         key: '',
         value: ''
       })
+      this.addRulesForHeaders()
+      console.log(this.rules)
     },
     removeHeader(item) {
+      this.removeRulesForHeaders()
       var index = this.service.headers.indexOf(item)
       if (index !== -1) {
         this.service.headers.splice(index, 1)
+      }
+      this.addRulesForHeaders()
+    },
+    removeRulesForHeaders() {
+      for (let i = 0; i < this.service.headers.length; i++) {
+        this.$refs['service_from'].clearValidate(['headers.' + i + '.key'])
+        this.$refs['service_from'].clearValidate(['headers.' + i + '.value'])
+        this.$delete(this.rules, 'headers.' + i + '.value')
+        this.$delete(this.rules, 'headers.' + i + '.key')
+      }
+    },
+    addRulesForHeaders() {
+      for (let i = 0; i < this.service.headers.length; i++) {
+        this.$set(this.rules, 'headers.' + i + '.key', [{
+          required: true,
+          message: '请输入key',
+          trigger: blur
+        }])
+        this.$set(this.rules, 'headers.' + i + '.value', [{
+          required: true,
+          message: '请输入value',
+          trigger: blur
+        }])
       }
     },
     onSubmit(formName) {
