@@ -10,8 +10,14 @@
             <el-input v-model="caseModel.name" placeholder="请输入用例名称"></el-input>
           </el-form-item>
           <el-form-item label="所属服务:" prop="serviceId">
-            <el-cascader placeholder="请选择所属服务" v-model="caseModel.serviceId" :options="serviceList"
-                         @change="serviceChange"></el-cascader>
+            <el-select v-model="caseModel.serviceId" placeholder="请选择所属服务" @change='serviceChange' filterable>
+              <el-option
+                  v-for="item in serviceList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
           </el-form-item>
         </div>
       </el-card>
@@ -20,14 +26,21 @@
         <div slot="header">
           <span>参数配置</span>
         </div>
-        <div class="card-content">
-          <el-table :data="paramValue" style="width: 50%">
-            <el-table-column prop="name" label="动态变量名"></el-table-column>
-            <el-table-column prop="value" label="值">
-              <el-input v-model="paramValue.value" placeholder="请输入参数值"></el-input>
-            </el-table-column>
-          </el-table>
-
+        <div>
+          <div v-for="(param,index) in caseModel.paramValue" :key="index">
+            <el-row :gutter="10" style="width: 100%">
+              <el-col :span="6">
+                <el-form-item :label="'参数:'">
+                  <el-input v-model="param.name" disabled></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item :label="'值:'">
+                  <el-input v-model="param.value"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
         </div>
 
       </el-card>
@@ -178,21 +191,14 @@ export default {
         id: '',
         name: '',
         serviceId: '',
-        requestType: '',
-        protocolType: '',
-        appId: 0,
-        requestPath: '',
         responseDataType: '',
-        headers: [
-          {key: 'Content-Type', value: 'application/json'}
-        ],
         checkPoints: [{judges: [{logic: '', expect: '', param: ''}], sourceCode: ''}],
-        responseConfig: {responseParam: []}
+        responseConfig: {responseParam: []},
+        paramValue: []
       },
       lType: '',
       lType2: '',
       showScript: false,
-      paramValue: [],
       serviceList: [],
       dataFormat: [{value: 'JSON', label: 'JSON'}, {value: 'XML', label: 'XML'}],
       sourceList: [{value: 'COMMON', label: '测试环境数据源'}],
@@ -249,7 +255,7 @@ export default {
   created() {
     this.getAppList()
     if (this.$route.query.id) {
-      this.getServiceDetail(this.$route.query.id)
+      this.getCaseDetail(this.$route.query.id)
     }
     this.addCheckPointRules()
   },
@@ -271,22 +277,23 @@ export default {
       }
     },
     serviceChange(value) {
+      console.log('asdfasdf---------' + value)
       for (let ser of this.serviceList) {
-        if (ser.value === value[0]) {
-          console.log(ser.responseDataType)
-          this.paramValue = ser.params
+        if (ser.value === value) {
+          this.caseModel.paramValue = ser.params
           this.caseModel.responseConfig.responseDataType = ser.responseDataType
         }
       }
     },
-    async getServiceDetail(id) {
-      const result = await this.$axios.get('/service/detail', {params: {id: id}})
+    async getCaseDetail(id) {
+      const result = await this.$axios.get('/case/detail', {params: {id: id}})
       if (result.data.success) {
-        console.log(JSON.parse(result.data.data.headers))
-        Object.assign(this.service, result.data.data)
-        if (result.data.data.headers) {
-          this.service.headers = JSON.parse(result.data.data.headers)
-        }
+        Object.assign(this.caseModel, result.data.data)
+        this.caseModel.checkPoints = JSON.parse(result.data.data.checkPoints)
+        this.caseModel.responseConfig = JSON.parse(result.data.data.responseConfig)
+        this.caseModel.paramValue = JSON.parse(result.data.data.paramValue)
+      } else {
+        this.$message.error(result.data.message)
       }
     },
     addResult() {
@@ -351,14 +358,27 @@ export default {
     onSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.buildRequest()
+          var url = this.caseModel.id ? '/case/update' : '/case/insert'
+          this.$axios.post(url, this.buildRequest()).then((res) => {
+            if (res.data.success) {
+              this.$message.success('保存成功')
+              this.$router.push('/autotest/cases')
+            } else {
+              this.$message.error('保存失败，' + res.data.message)
+            }
+          })
         } else {
           return false
         }
       })
     },
     buildRequest() {
-      console.log(this.caseModel)
+      const requestVar = {}
+      Object.assign(requestVar, this.caseModel)
+      requestVar.checkPoints = JSON.stringify(this.caseModel.checkPoints)
+      requestVar.paramValue = JSON.stringify(this.caseModel.paramValue)
+      requestVar.responseConfig = JSON.stringify(this.caseModel.responseConfig)
+      return requestVar
     },
     addJudge(checkPoint, value) {
       this.removeCheckPointRules()

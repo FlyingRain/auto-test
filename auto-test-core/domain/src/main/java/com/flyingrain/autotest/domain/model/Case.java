@@ -9,34 +9,37 @@ import java.util.Date;
  */
 public class Case {
 
-    private long id;
+    private int id;
 
     private String name;
 
-    private long serviceId;
+    private int serviceId;
 
 
     private String caseStatus;
 
 
-    private String result;
+    private String resultCollectConfig;
 
-    private String checkPoint;
+    private String checkPoints;
+
+    private String paramValue;
+
+    private Service service;
 
     private String creator;
 
+    private String modifier;
 
     private Date createTime;
 
     private Date updateTime;
 
-    private Service service;
-
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -48,11 +51,11 @@ public class Case {
         this.name = name;
     }
 
-    public long getServiceId() {
+    public int getServiceId() {
         return serviceId;
     }
 
-    public void setServiceId(long serviceId) {
+    public void setServiceId(int serviceId) {
         this.serviceId = serviceId;
     }
 
@@ -64,20 +67,36 @@ public class Case {
         this.caseStatus = caseStatus;
     }
 
-    public String getResult() {
-        return result;
+    public String getResultCollectConfig() {
+        return resultCollectConfig;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setResultCollectConfig(String resultCollectConfig) {
+        this.resultCollectConfig = resultCollectConfig;
     }
 
-    public String getCheckPoint() {
-        return checkPoint;
+    public String getCheckPoints() {
+        return checkPoints;
     }
 
-    public void setCheckPoint(String checkPoint) {
-        this.checkPoint = checkPoint;
+    public void setCheckPoints(String checkPoints) {
+        this.checkPoints = checkPoints;
+    }
+
+    public String getParamValue() {
+        return paramValue;
+    }
+
+    public void setParamValue(String paramValue) {
+        this.paramValue = paramValue;
+    }
+
+    public Service getService() {
+        return service;
+    }
+
+    public void setService(Service service) {
+        this.service = service;
     }
 
     public String getCreator() {
@@ -86,6 +105,14 @@ public class Case {
 
     public void setCreator(String creator) {
         this.creator = creator;
+    }
+
+    public String getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
     }
 
     public Date getCreateTime() {
@@ -104,12 +131,21 @@ public class Case {
         this.updateTime = updateTime;
     }
 
-    public Service getService() {
-        return service;
+    @Override
+    public String toString() {
+        return "Case{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", serviceId=" + serviceId +
+                ", caseStatus='" + caseStatus + '\'' +
+                ", resultCollectConfig='" + resultCollectConfig + '\'' +
+                ", checkPoints='" + checkPoints + '\'' +
+                ", paramValue='" + paramValue + '\'' +
+                ", service=" + service +
+                ", creator='" + creator + '\'' +
+                ", modifier='" + modifier + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
-
-    public void setService(Service service) {
-        this.service = service;
-    }
-
 }

@@ -9,13 +9,13 @@
             <el-descriptions-item label="服务编码">{{ formData.serviceCode }}</el-descriptions-item>
             <el-descriptions-item label="所属应用">{{ formData.appName }}</el-descriptions-item>
           </el-descriptions>
-          <el-descriptions title="协议信息"  direction="vertical" column=1>
+          <el-descriptions title="协议信息"  direction="vertical" :column=1>
             <el-descriptions-item label="请求地址">{{ formData.requestPath }}</el-descriptions-item>
             <el-descriptions-item label="请求协议">{{ formData.protocolType }}</el-descriptions-item>
             <el-descriptions-item label="请求类型">{{ formData.requestType }}</el-descriptions-item>
             <el-descriptions-item label="返回报文格式">{{ formData.responseDataType }}</el-descriptions-item>
           </el-descriptions>
-          <el-descriptions title="报文信息" direction="vertical" column=1>
+          <el-descriptions title="报文信息" direction="vertical" :column=1>
             <el-descriptions-item label="请求头">
               <el-table :data="formData.headers" style="width: 50%">
                 <el-table-column prop="key" label="key"></el-table-column>
@@ -24,7 +24,7 @@
             </el-descriptions-item>
             <el-descriptions-item label="请求报文模板">{{ formData.requestModel }}</el-descriptions-item>
           </el-descriptions>
-          <el-descriptions title="动态参数列表" direction="vertical" column=1>
+          <el-descriptions title="动态参数列表" direction="vertical" :column=1>
             <el-descriptions-item label="参数：">
               <el-table :data="formData.autoTestServiceParams" style="width: 50%">
                 <el-table-column prop="id" label="id"></el-table-column>

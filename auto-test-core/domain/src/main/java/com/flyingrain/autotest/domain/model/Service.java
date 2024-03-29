@@ -12,8 +12,6 @@ public class Service {
 
     private int id;
 
-    private List<Case> cases;
-
     private String serviceCode;
 
     private String name;
@@ -50,13 +48,6 @@ public class Service {
         this.id = id;
     }
 
-    public List<Case> getCases() {
-        return cases;
-    }
-
-    public void setCases(List<Case> cases) {
-        this.cases = cases;
-    }
 
     public String getServiceCode() {
         return serviceCode;

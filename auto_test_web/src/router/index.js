@@ -64,6 +64,13 @@ const router = new Router({
               component: () => import('@/views/cases/Add.vue')
             },
             {
+              path: '/autotest/update',
+              meta: {
+                title: '用例编排'
+              },
+              component: () => import('@/views/cases/Add.vue')
+            },
+            {
               path: '/autotest/cases',
               meta: {
                 title: '用例编排'

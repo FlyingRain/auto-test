@@ -10,6 +10,8 @@ public class AutoTestServiceParam {
 
     private String desc;
 
+    private String value;
+
     private Date createTime;
 
     private Date updateTime;
@@ -48,6 +50,14 @@ public class AutoTestServiceParam {
 
     public Date getUpdateTime() {
         return updateTime;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public void setUpdateTime(Date updateTime) {

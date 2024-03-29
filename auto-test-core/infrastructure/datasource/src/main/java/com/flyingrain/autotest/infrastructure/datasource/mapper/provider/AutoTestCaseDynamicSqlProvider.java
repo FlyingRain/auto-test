@@ -17,7 +17,7 @@ public class AutoTestCaseDynamicSqlProvider {
     public String queryByPage(Map<String, Object> queryParams) {
         PageQuery<AutoTestCaseQuery> pageQuery = (PageQuery<AutoTestCaseQuery>) queryParams.get("queryCondition");
         SQL sql = new SQL();
-        sql.SELECT("c.id as id ,c.name as name,c.service_id as service_id,c.case_status as case_status,c.creator as creator,c.modifier as modifier,c.createTime as createTime").FROM("auto_test_case as c");
+        sql.SELECT("c.id as id ,c.name as name,c.service_id as service_id,c.case_status as case_status,c.creator as creator,c.modifier as modifier,c.create_time as create_time").FROM("auto_test_case as c");
         AutoTestCaseQuery autoTestCaseQuery = pageQuery.getConditions();
         buildQuerySql(autoTestCaseQuery, sql);
         int currentPage = Math.max(pageQuery.getCurrentPage(), 1);
@@ -31,10 +31,10 @@ public class AutoTestCaseDynamicSqlProvider {
     }
 
     public String pageCount(Map<String, Object> queryParams) {
-        AutoTestCaseQuery autoTestCaseQuery = (AutoTestCaseQuery) queryParams.get("caseModel");
+        PageQuery<AutoTestCaseQuery> autoTestCaseQuery = (PageQuery<AutoTestCaseQuery>) queryParams.get("queryCondition");
         SQL sql = new SQL();
         sql.SELECT("count(1)").FROM("auto_test_case as c");
-        buildQuerySql(autoTestCaseQuery, sql);
+        buildQuerySql(autoTestCaseQuery.getConditions(), sql);
         logger.info("build case query count sql:[{}]", sql);
         return sql.toString();
     }

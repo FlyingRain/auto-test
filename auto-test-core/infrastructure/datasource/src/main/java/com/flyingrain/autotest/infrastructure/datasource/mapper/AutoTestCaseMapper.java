@@ -42,9 +42,16 @@ public interface AutoTestCaseMapper {
 
 
     @SelectProvider(type = AutoTestCaseDynamicSqlProvider.class,method = "pageCount")
-    int queryByPageCount(@Param("caseModel") AutoTestCaseQuery autoTestCaseQuery);
+    int queryByPageCount(@Param("queryCondition") PageQuery<AutoTestCaseQuery> autoTestCaseQuery);
 
     @UpdateProvider(type = AutoTestCaseDynamicSqlProvider.class,method = "updateCase")
     int updateCaseById(@Param("caseModel") AutoTestCaseModel autoTestCaseModel);
 
+    @Insert("insert into auto_test_case (name,service_id,case_status,check_point_config,result_collect_config,param_value,modifier,creator) values " +
+            "(#{caseModel.name},#{caseModel.serviceId},#{caseModel.caseStatus},#{caseModel.checkPointConfig},#{caseModel.resultCollectConfig},#{caseModel.paramValue},#{caseModel.modifier},#{caseModel.creator})")
+    int insertCase(@Param("caseModel") AutoTestCaseModel autoTestCaseModel);
+
+
+    @Delete("<script>delete from auto_test_case where id in <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>")
+    int batchDel(@Param("ids") List<Integer> ids);
 }

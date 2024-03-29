@@ -1,8 +1,7 @@
 package com.flyingrain.autotest.domain.service;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.flyingrain.autotest.common.util.AutoTestResultCodeEnum;
+import com.flyingrain.autotest.common.util.DynamicParamExtract;
 import com.flyingrain.autotest.common.util.PageQuery;
 import com.flyingrain.autotest.common.util.PageableModel;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
@@ -25,7 +24,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -88,8 +86,11 @@ public class ServiceManager {
         service.setId(autoTestServiceModel.getId());
         logger.info("insert service success;id:[{}]", service.getId());
         List<ServiceParam> serviceParams = extractParams(service);
-        int count = serviceParamMapper.batchInsert(serviceParams.stream().map(ServiceParamModelConvert::convertServiceParam).collect(Collectors.toList()));
-        logger.info("insert service param:[{}],service:[{}]", count, service.getName());
+        if (!CollectionUtils.isEmpty(serviceParams)) {
+            int count = serviceParamMapper.batchInsert(serviceParams.stream().map(ServiceParamModelConvert::convertServiceParam).collect(Collectors.toList()));
+            logger.info("insert service param:[{}]", count);
+        }
+        logger.info("insert service ,service:[{}]", service.getName());
         return 1;
     }
 
@@ -97,20 +98,20 @@ public class ServiceManager {
         List<String> params = new ArrayList<>();
         String requestUrl = service.getRequestUrl();
         if (StringUtils.hasText(requestUrl)) {
-            List<String> tempUrl = extractParamsFromStr(requestUrl);
+            List<String> tempUrl = DynamicParamExtract.extractParam(requestUrl);
             params.addAll(tempUrl);
             logger.info("extract params from url:[{}]", tempUrl.size());
         }
         if (StringUtils.hasText(service.getRequestDataModule())) {
-            List<String> tempContent = extractParamsFromStr(service.getRequestDataModule());
+            List<String> tempContent = DynamicParamExtract.extractParam(service.getRequestDataModule());
             params.addAll(tempContent);
             logger.info("extract params from body:[{}]", tempContent.size());
         }
         if (StringUtils.hasText(service.getHeaders())) {
             List<HttpHeader> headers = JSONArray.parseArray(service.getHeaders(), HttpHeader.class);
             for (HttpHeader header : headers) {
-                List<String> keyParam = extractParamsFromStr(header.getKey());
-                List<String> valueParam = extractParamsFromStr(header.getValue());
+                List<String> keyParam = DynamicParamExtract.extractParam(header.getKey());
+                List<String> valueParam = DynamicParamExtract.extractParam(header.getValue());
                 params.addAll(keyParam);
                 params.addAll(valueParam);
             }
@@ -124,43 +125,7 @@ public class ServiceManager {
     }
 
 
-    /**
-     * 从字符串中提取动态参数
-     *
-     * @param str
-     * @return
-     */
-    private List<String> extractParamsFromStr(String str) {
-        List<String> serviceParams = new ArrayList<>();
-        if (!StringUtils.hasText(str)) {
-            return new ArrayList<>();
-        }
-        int startIndex = 0, endIndex = 0;
-        for (int i = 1; i < str.length(); i++) {
-            if (Character.toString(str.charAt(i)).equals("{") && Character.toString(str.charAt(i - 1)).equals("$")) {
-                if (startIndex != 0) {
-                    logger.error("param format error!at str index:[{}]", i);
-                    throw new AutoTestException(AutoTestResultCodeEnum.TEMPLATE_ERROR);
-                }
-                startIndex = i + 1;
-            }
-            if (Character.toString(str.charAt(i)).equals("}")) {
-                endIndex = i;
-                if (startIndex == 0) {
-                    logger.warn("not valid,continue");
-                    continue;
-                }
-                if (startIndex >= endIndex) {
-                    logger.error("param format error!at str index:[{}]", i);
-                    throw new AutoTestException(AutoTestResultCodeEnum.TEMPLATE_ERROR);
-                }
-                String param = str.substring(startIndex, endIndex);
-                serviceParams.add(param);
-                startIndex = 0;
-            }
-        }
-        return serviceParams;
-    }
+
 
     @Transactional
     public int updateServiceById(Service service) {
