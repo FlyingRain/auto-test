@@ -165,7 +165,6 @@ public class Service {
     public String toString() {
         return "Service{" +
                 "id=" + id +
-                ", cases=" + cases +
                 ", serviceCode='" + serviceCode + '\'' +
                 ", name='" + name + '\'' +
                 ", headers='" + headers + '\'' +

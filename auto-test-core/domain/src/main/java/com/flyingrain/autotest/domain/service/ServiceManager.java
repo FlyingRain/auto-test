@@ -5,7 +5,7 @@ import com.flyingrain.autotest.common.util.DynamicParamExtract;
 import com.flyingrain.autotest.common.util.PageQuery;
 import com.flyingrain.autotest.common.util.PageableModel;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
-import com.flyingrain.autotest.domain.model.HttpHeader;
+import com.flyingrain.autotest.domain.model.ParamMap;
 import com.flyingrain.autotest.domain.model.Service;
 import com.flyingrain.autotest.domain.model.ServiceParam;
 import com.flyingrain.autotest.domain.service.convert.ServiceModelConvert;
@@ -108,8 +108,8 @@ public class ServiceManager {
             logger.info("extract params from body:[{}]", tempContent.size());
         }
         if (StringUtils.hasText(service.getHeaders())) {
-            List<HttpHeader> headers = JSONArray.parseArray(service.getHeaders(), HttpHeader.class);
-            for (HttpHeader header : headers) {
+            List<ParamMap> headers = JSONArray.parseArray(service.getHeaders(), ParamMap.class);
+            for (ParamMap header : headers) {
                 List<String> keyParam = DynamicParamExtract.extractParam(header.getKey());
                 List<String> valueParam = DynamicParamExtract.extractParam(header.getValue());
                 params.addAll(keyParam);

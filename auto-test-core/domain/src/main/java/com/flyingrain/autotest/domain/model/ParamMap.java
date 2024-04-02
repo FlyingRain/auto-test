@@ -1,6 +1,6 @@
 package com.flyingrain.autotest.domain.model;
 
-public class HttpHeader {
+public class ParamMap {
 
     private String key;
 

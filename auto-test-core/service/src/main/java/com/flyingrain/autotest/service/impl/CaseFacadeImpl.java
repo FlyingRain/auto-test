@@ -3,6 +3,7 @@ package com.flyingrain.autotest.service.impl;
 import com.flyingrain.autotest.common.util.*;
 import com.flyingrain.autotest.common.util.constant.AutoTestConstants;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
+import com.flyingrain.autotest.domain.core.CaseExecutorHelper;
 import com.flyingrain.autotest.domain.model.Case;
 import com.flyingrain.autotest.domain.model.Service;
 import com.flyingrain.autotest.domain.model.User;
@@ -21,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,6 +35,9 @@ public class CaseFacadeImpl implements CaseFacade, Resource {
 
     @Autowired
     private ServiceManager serviceManager;
+
+    @Autowired
+    private CaseExecutorHelper caseExecutorHelper;
 
 
     @Override
@@ -95,6 +100,7 @@ public class CaseFacadeImpl implements CaseFacade, Resource {
         Case testCase = caseService.queryDetail(id);
         Service service = serviceManager.queryById(testCase.getServiceId());
         testCase.setService(service);
+        caseExecutorHelper.fillDynamicParam(testCase,new HashMap<>());
         return CommonResult.success(CaseViewConvert.convertCaseModel(testCase));
     }
 }

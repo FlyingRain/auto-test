@@ -1,12 +1,12 @@
 package com.flyingrain.autotest.domain.core;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.flyingrain.autotest.common.util.DynamicParamExtract;
 import com.flyingrain.autotest.domain.model.Case;
 import com.flyingrain.autotest.domain.model.ParamValue;
 import com.flyingrain.autotest.domain.model.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -17,6 +17,7 @@ import java.util.Map;
 @Component
 public class CaseExecutorHelper {
 
+    private final Logger logger = LoggerFactory.getLogger(CaseExecutorHelper.class);
 
     /**
      * 填充用例中的变量
@@ -26,17 +27,23 @@ public class CaseExecutorHelper {
     public void fillDynamicParam(Case runCase, Map<String, String> params) {
         Service service = runCase.getService();
         if (StringUtils.hasText(runCase.getParamValue())) {
-            List<ParamValue> paramValueList = JSONArray.parseArray(runCase.getParamValue()).toJavaList(ParamValue.class);
-            paramValueList.forEach(paramValue -> {
-                params.put(paramValue.getName(), paramValue.getValue());
-            });
+            try {
+                List<ParamValue> paramValueList = JSONArray.parseArray(runCase.getParamValue()).toJavaList(ParamValue.class);
+                paramValueList.forEach(paramValue -> {
+                    params.put(paramValue.getName(), paramValue.getValue());
+                });
+            } catch (Exception e) {
+                logger.error("parse case paramValue failed!case value:[{}]", runCase.getParamValue());
+                logger.error("exception:", e);
+            }
         }
         fillService(service, params);
     }
 
     private void fillService(Service service, Map<String, String> params) {
-        String url = service.getRequestUrl();
-        url = replaceParam(params, url);
+        service.setRequestUrl(replaceParam(params, service.getRequestUrl()));
+        service.setHeaders(replaceParam(params, service.getHeaders()));
+        service.setRequestDataModule(replaceParam(params, service.getRequestDataModule()));
     }
 
     private static String replaceParam(Map<String, String> params, String str) {

@@ -46,6 +46,8 @@ public enum AutoTestResultCodeEnum {
     USER_NOT_LOGIN("551", "用户尚未登录或登录已过期"),
 
     DEPEND_NOT_CLEAN("580","存在未清除的依赖"),
+
+    PARAM_NOT_EXIST("590","参数值不存在"),
     ;
 
 
