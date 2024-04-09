@@ -1,6 +1,5 @@
 package com.flyingrain.autotest.domain.core;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.flyingrain.autotest.common.util.AutoTestResultCodeEnum;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
@@ -12,8 +11,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JSONResultExtract implements ResultExtract {
 
@@ -21,16 +20,16 @@ public class JSONResultExtract implements ResultExtract {
     private List<ParamMap> resultConfig = new ArrayList<>();
 
 
-    public JSONResultExtract(String config) {
-        if (StringUtils.hasText(config)) {
-            resultConfig = JSONArray.parseArray(config).toJavaList(ParamMap.class);
-        }
+    public JSONResultExtract(List<ParamMap> resultConfig) {
+        this.resultConfig = resultConfig;
 
     }
 
     @Override
     public void extractResult(ExecuteResult executeResult, ExecuteContext executeContext) {
         String resultStr = executeResult.getResult();
+        Map<String, String> resultMap = executeResult.getResultMap();
+        Map<String, String> params = executeContext.getParams();
         if (!StringUtils.hasText(resultStr)) {
             return;
         }
@@ -49,13 +48,14 @@ public class JSONResultExtract implements ResultExtract {
                             throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "result extract error!");
                         }
                     }
-                    value.toJavaObject(String.class);
-
-
+                    String realValue = value.getString(keys[keys.length - 1]);
+                    params.put(paramMap.getValue(), realValue);
+                    resultMap.put(paramMap.getValue(), realValue);
                 }
             }
         } catch (Exception e) {
             logger.error("extract result happen error!", e);
+            throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "result extract failed! unknown exception!");
         }
     }
 }

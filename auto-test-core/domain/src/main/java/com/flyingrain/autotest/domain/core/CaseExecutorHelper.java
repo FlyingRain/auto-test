@@ -17,14 +17,14 @@ import java.util.Map;
 @Component
 public class CaseExecutorHelper {
 
-    private final Logger logger = LoggerFactory.getLogger(CaseExecutorHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(CaseExecutorHelper.class);
 
     /**
      * 填充用例中的变量
      *
      * @param runCase
      */
-    public void fillDynamicParam(Case runCase, Map<String, String> params) {
+    public static void fillDynamicParam(Case runCase, Map<String, String> params) {
         Service service = runCase.getService();
         if (StringUtils.hasText(runCase.getParamValue())) {
             try {
@@ -40,13 +40,13 @@ public class CaseExecutorHelper {
         fillService(service, params);
     }
 
-    private void fillService(Service service, Map<String, String> params) {
+    public static void fillService(Service service, Map<String, String> params) {
         service.setRequestUrl(replaceParam(params, service.getRequestUrl()));
         service.setHeaders(replaceParam(params, service.getHeaders()));
         service.setRequestDataModule(replaceParam(params, service.getRequestDataModule()));
     }
 
-    private static String replaceParam(Map<String, String> params, String str) {
+    public static String replaceParam(Map<String, String> params, String str) {
         if (StringUtils.hasText(str)) {
             List<String> dynamicParams = DynamicParamExtract.extractParam(str);
             if (!CollectionUtils.isEmpty(dynamicParams)) {
@@ -54,6 +54,8 @@ public class CaseExecutorHelper {
                     String value = params.get(param);
                     if (StringUtils.hasText(value)) {
                         str = str.replace("${" + param + "}", value);
+                    } else {
+                        str = str.replace("${" + param + "}", "null");
                     }
                 }
             }

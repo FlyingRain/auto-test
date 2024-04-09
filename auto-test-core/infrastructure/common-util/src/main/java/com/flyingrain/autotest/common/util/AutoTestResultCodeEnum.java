@@ -41,6 +41,9 @@ public enum AutoTestResultCodeEnum {
     CASE_RUN_ERROR("515", "依赖用例运行失败"),
     TEMPLATE_ERROR("516","模板格式错误"),
 
+    NOT_SUPPORT_DATA_SOURCE("518","不支持的数据源"),
+    NOT_SUPPORT_DATA_TYPE("519","不支持的数据源"),
+
 
     USER_NOT_EXIST("550", "用户不存在"),
     USER_NOT_LOGIN("551", "用户尚未登录或登录已过期"),

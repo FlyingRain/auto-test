@@ -1,8 +1,7 @@
 package com.flyingrain.autotest.common.util;
 
-public enum CheckTypeEnum {
+public enum DataSourceTypeEnum {
 
     MYSQL,
-    VALUE
-
+    REDIS,
 }

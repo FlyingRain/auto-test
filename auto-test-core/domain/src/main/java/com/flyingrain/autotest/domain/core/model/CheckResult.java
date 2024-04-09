@@ -2,14 +2,10 @@ package com.flyingrain.autotest.domain.core.model;
 
 public class CheckResult {
 
-    private Boolean valid;
+    private Boolean valid = true;
 
     private String message;
 
-    public CheckResult(Boolean valid, String message) {
-        this.valid = valid;
-        this.message = message;
-    }
 
     public Boolean getValid() {
         return valid;
@@ -25,5 +21,13 @@ public class CheckResult {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "CheckResult{" +
+                "valid=" + valid +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

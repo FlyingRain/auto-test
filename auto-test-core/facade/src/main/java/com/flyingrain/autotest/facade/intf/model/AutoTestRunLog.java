@@ -1,18 +1,18 @@
-package com.flyingrain.autotest.domain.model;
+package com.flyingrain.autotest.facade.intf.model;
+
+import com.flyingrain.autotest.domain.model.Case;
 
 import java.util.Date;
 
-/**
- * @author wally
- * @date 2021-12-13
- */
-public class RunLog {
+public class AutoTestRunLog {
 
-    private long id;
-
-    private long  caseId;
+    private int id;
 
     private String runStatus;
+
+    private String message;
+
+    private String caseId;
 
     private String executor;
 
@@ -20,9 +20,7 @@ public class RunLog {
 
     private Date executeTime;
 
-    private long caseSpendTime;
-
-    private String message;
+    private long spendTime;
 
     private Date createTime;
 
@@ -30,28 +28,12 @@ public class RunLog {
 
     private Case aCase;
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
-    }
-
-    public long getCaseId() {
-        return caseId;
-    }
-
-    public void setCaseId(long caseId) {
-        this.caseId = caseId;
-    }
-
-    public String getBatchNum() {
-        return batchNum;
-    }
-
-    public void setBatchNum(String batchNum) {
-        this.batchNum = batchNum;
     }
 
     public String getRunStatus() {
@@ -62,12 +44,36 @@ public class RunLog {
         this.runStatus = runStatus;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getCaseId() {
+        return caseId;
+    }
+
+    public void setCaseId(String caseId) {
+        this.caseId = caseId;
+    }
+
     public String getExecutor() {
         return executor;
     }
 
     public void setExecutor(String executor) {
         this.executor = executor;
+    }
+
+    public String getBatchNum() {
+        return batchNum;
+    }
+
+    public void setBatchNum(String batchNum) {
+        this.batchNum = batchNum;
     }
 
     public Date getExecuteTime() {
@@ -78,20 +84,12 @@ public class RunLog {
         this.executeTime = executeTime;
     }
 
-    public long getCaseSpendTime() {
-        return caseSpendTime;
+    public long getSpendTime() {
+        return spendTime;
     }
 
-    public void setCaseSpendTime(long caseSpendTime) {
-        this.caseSpendTime = caseSpendTime;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+    public void setSpendTime(long spendTime) {
+        this.spendTime = spendTime;
     }
 
     public Date getCreateTime() {
@@ -120,15 +118,15 @@ public class RunLog {
 
     @Override
     public String toString() {
-        return "RunLog{" +
+        return "AutoTestRunLog{" +
                 "id=" + id +
-                ", caseId=" + caseId +
                 ", runStatus='" + runStatus + '\'' +
+                ", message='" + message + '\'' +
+                ", caseId='" + caseId + '\'' +
                 ", executor='" + executor + '\'' +
                 ", batchNum='" + batchNum + '\'' +
                 ", executeTime=" + executeTime +
-                ", caseSpendTime=" + caseSpendTime +
-                ", message='" + message + '\'' +
+                ", spendTime=" + spendTime +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 ", aCase=" + aCase +

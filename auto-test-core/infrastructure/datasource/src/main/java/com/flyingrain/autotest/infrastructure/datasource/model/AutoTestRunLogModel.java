@@ -14,6 +14,8 @@ public class AutoTestRunLogModel {
 
     private String runStatus;
 
+    private String batchNum;
+
     private String executor;
 
     private Date executeTime;
@@ -94,7 +96,31 @@ public class AutoTestRunLogModel {
         return updateTime;
     }
 
+    public String getBatchNum() {
+        return batchNum;
+    }
+
+    public void setBatchNum(String batchNum) {
+        this.batchNum = batchNum;
+    }
+
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Override
+    public String toString() {
+        return "AutoTestRunLogModel{" +
+                "id=" + id +
+                ", caseId=" + caseId +
+                ", runStatus='" + runStatus + '\'' +
+                ", batchNum='" + batchNum + '\'' +
+                ", executor='" + executor + '\'' +
+                ", executeTime=" + executeTime +
+                ", caseSpendTime=" + caseSpendTime +
+                ", message='" + message + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }

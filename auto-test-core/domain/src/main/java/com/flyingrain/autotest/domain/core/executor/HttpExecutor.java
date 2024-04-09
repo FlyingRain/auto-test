@@ -18,25 +18,35 @@ public class HttpExecutor implements Executor<String> {
 
     @Override
     public ExecuteResult execute(ExecuteParam<String> executeParam) {
-        logger.info("start to send params");
+        logger.info("start to send params：[{}]", executeParam);
         ExecuteResult executeResult = new ExecuteResult();
-        HttpExecuteParam httpExecuteParam = (HttpExecuteParam) executeParam;
-        String url = executeParam.getPath();
-        HTTPRequestTypeEnum httpRequestTypeEnum = httpExecuteParam.getRequestTypeEnum();
-        Map<String, String> headers = httpExecuteParam.getHeaders();
-        String body = httpExecuteParam.getBody();
-        switch (httpRequestTypeEnum) {
-            case GET:
-                runGet(url, headers, executeResult);
-                break;
-            case POST:
-                runPost(url, headers, body, executeResult);
-                break;
-            default:
-                break;
+        try {
+            HttpExecuteParam httpExecuteParam = (HttpExecuteParam) executeParam;
+            String url = executeParam.getPath();
+            HTTPRequestTypeEnum httpRequestTypeEnum = httpExecuteParam.getRequestTypeEnum();
+            Map<String, String> headers = httpExecuteParam.getHeaders();
+            String body = httpExecuteParam.getBody();
+            long startTime = System.currentTimeMillis();
+            switch (httpRequestTypeEnum) {
+                case GET:
+                    runGet(url, headers, executeResult);
+                    break;
+                case POST:
+                    runPost(url, headers, body, executeResult);
+                    break;
+                default:
+                    break;
 
+            }
+            long endTime = System.currentTimeMillis();
+            long spendTime = endTime - startTime;
+            executeResult.setSpendTime(spendTime);
+            logger.info("end interface [{}],call spend:[{}]", url, spendTime);
+        } catch (Exception e) {
+            logger.error("execute failed!", e);
+            executeResult.setSuccess(false);
+            executeResult.setResult(e.getMessage());
         }
-
         return executeResult;
     }
 

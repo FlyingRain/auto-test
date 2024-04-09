@@ -1,5 +1,6 @@
 package com.flyingrain.autotest.domain.core.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ExecuteResult {
@@ -8,7 +9,9 @@ public class ExecuteResult {
 
     private String result;
 
-    private Map<String,Object> resultMap;
+    private long spendTime;
+
+    private Map<String,String> resultMap = new HashMap<>(8);
 
     public boolean isSuccess() {
         return success;
@@ -26,11 +29,19 @@ public class ExecuteResult {
         this.result = result;
     }
 
-    public Map<String, Object> getResultMap() {
+    public Map<String, String> getResultMap() {
         return resultMap;
     }
 
-    public void setResultMap(Map<String, Object> resultMap) {
+    public long getSpendTime() {
+        return spendTime;
+    }
+
+    public void setSpendTime(long spendTime) {
+        this.spendTime = spendTime;
+    }
+
+    public void setResultMap(Map<String, String> resultMap) {
         this.resultMap = resultMap;
     }
 }

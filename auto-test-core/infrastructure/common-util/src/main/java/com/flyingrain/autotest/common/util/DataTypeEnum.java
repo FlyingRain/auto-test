@@ -1,4 +1,4 @@
-package com.flyingrain.autotest.facade.intf.requests;
+package com.flyingrain.autotest.common.util;
 
 /**
  * @author wally

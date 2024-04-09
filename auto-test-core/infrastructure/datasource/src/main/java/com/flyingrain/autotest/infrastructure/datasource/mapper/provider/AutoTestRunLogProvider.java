@@ -1,9 +1,12 @@
 package com.flyingrain.autotest.infrastructure.datasource.mapper.provider;
 
+import com.flyingrain.autotest.common.util.PageQuery;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestRunLogModel;
+import org.apache.ibatis.jdbc.SQL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -16,23 +19,42 @@ public class AutoTestRunLogProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(AutoTestRunLogProvider.class);
 
-    public String insertBatchRunLog(Map<String, Object> params) {
-        List<AutoTestRunLogModel> runLogModels = (List<AutoTestRunLogModel>) params.get("runLogs");
-        if (CollectionUtils.isEmpty(runLogModels)) {
-            logger.error("runLog collection is empty!");
-            return null;
+    public String pageQuery(Map<String, Object> params) {
+        PageQuery<AutoTestRunLogModel> runLogModels = (PageQuery<AutoTestRunLogModel>) params.get("pageQuery");
+        SQL sql = new SQL();
+        sql.SELECT("*").FROM("auto_test_run_log");
+        AutoTestRunLogModel autoTestRunLogModel = runLogModels.getConditions();
+        buildQueryConditions(autoTestRunLogModel, sql);
+        int currentPage = Math.max(runLogModels.getCurrentPage(), 1);
+        int pageSize = Math.max(runLogModels.getPageSize(), 10);
+        int offset = (currentPage - 1) * pageSize;
+        sql.OFFSET(offset).LIMIT(pageSize);
+        sql.ORDER_BY("id desc");
+        logger.info("query run log sql:[{}]", sql);
+        return sql.toString();
+    }
+
+
+    public String pageQueryCount(Map<String, Object> params) {
+        PageQuery<AutoTestRunLogModel> runLogModels = (PageQuery<AutoTestRunLogModel>) params.get("pageQuery");
+        AutoTestRunLogModel autoTestRunLogModel = runLogModels.getConditions();
+        SQL sql = new SQL();
+        sql.SELECT("count(1)").FROM("auto_test_run_log");
+        buildQueryConditions(autoTestRunLogModel, sql);
+        logger.info("query run log count:[{}]", sql);
+        return sql.toString();
+
+    }
+
+    private void buildQueryConditions(AutoTestRunLogModel autoTestRunLogModel, SQL sql) {
+        if (StringUtils.hasText(autoTestRunLogModel.getRunStatus())) {
+            sql.WHERE("run_status=#{pageQuery.conditions.runStatus}");
         }
-        StringBuilder sqlBuilder = new StringBuilder("insert into auto_test_run_log (case_id,run_status,executor,execute_time,case_spend_time,message) values ");
-        for (AutoTestRunLogModel autoTestRunLogModel : runLogModels) {
-            sqlBuilder.append("(");
-            sqlBuilder.append("#{").append(autoTestRunLogModel.getCaseId()).append("},");
-            sqlBuilder.append("#{").append(autoTestRunLogModel.getRunStatus()).append("},");
-            sqlBuilder.append("#{").append(autoTestRunLogModel.getExecutor()).append("},");
-            sqlBuilder.append("#{").append(autoTestRunLogModel.getExecuteTime()).append("},");
-            sqlBuilder.append("#{").append(autoTestRunLogModel.getCaseSpendTime()).append("},");
-            sqlBuilder.append("#{").append(autoTestRunLogModel.getMessage()).append("}");
-            sqlBuilder.append(")");
+        if (StringUtils.hasText(autoTestRunLogModel.getBatchNum())) {
+            sql.WHERE("batch_num =#{pageQuery.conditions.batchNum}");
         }
-        return sqlBuilder.toString();
+        if (autoTestRunLogModel.getCaseId() != 0) {
+            sql.WHERE("case_id = #{pageQuery.conditions.caseId}");
+        }
     }
 }

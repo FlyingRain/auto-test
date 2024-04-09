@@ -36,8 +36,6 @@ public class CaseFacadeImpl implements CaseFacade, Resource {
     @Autowired
     private ServiceManager serviceManager;
 
-    @Autowired
-    private CaseExecutorHelper caseExecutorHelper;
 
 
     @Override
@@ -100,7 +98,7 @@ public class CaseFacadeImpl implements CaseFacade, Resource {
         Case testCase = caseService.queryDetail(id);
         Service service = serviceManager.queryById(testCase.getServiceId());
         testCase.setService(service);
-        caseExecutorHelper.fillDynamicParam(testCase,new HashMap<>());
+        CaseExecutorHelper.fillDynamicParam(testCase,new HashMap<>());
         return CommonResult.success(CaseViewConvert.convertCaseModel(testCase));
     }
 }

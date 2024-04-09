@@ -12,6 +12,8 @@ public class ExecuteContext {
 
     private String executeCode;
 
+    private String executor;
+
     public Map<String, String> getParams() {
         return params;
     }
@@ -30,6 +32,14 @@ public class ExecuteContext {
 
     public Map<String, JSONObject> getResults() {
         return results;
+    }
+
+    public String getExecutor() {
+        return executor;
+    }
+
+    public void setExecutor(String executor) {
+        this.executor = executor;
     }
 
     public void setResults(Map<String, JSONObject> results) {

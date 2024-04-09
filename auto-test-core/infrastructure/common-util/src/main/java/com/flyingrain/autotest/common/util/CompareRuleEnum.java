@@ -1,8 +1,8 @@
 package com.flyingrain.autotest.common.util;
 
-public enum CheckTypeEnum {
+public enum CompareRuleEnum {
 
-    MYSQL,
-    VALUE
+    AND,
+    OR,
 
 }
