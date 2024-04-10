@@ -19,10 +19,12 @@ public class SQLExecutorHelper {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(script);
             ResultSetMetaData metaData = resultSet.getMetaData();
-            for (int i = 0; i < metaData.getColumnCount(); i++) {
+            for (int i = 1; i < metaData.getColumnCount() + 1; i++) {
                 String columName = metaData.getColumnName(i);
-                String value = resultSet.getString(columName);
-                queryResult.put(columName, value);
+                if (resultSet.next()) {
+                    String value = resultSet.getString(columName);
+                    queryResult.put(columName, value);
+                }
             }
         } catch (Exception e) {
             logger.error("execute sql happen exception!", e);

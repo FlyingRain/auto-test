@@ -201,7 +201,7 @@ export default {
       showScript: false,
       serviceList: [],
       dataFormat: [{value: 'JSON', label: 'JSON'}, {value: 'XML', label: 'XML'}],
-      sourceList: [{value: 'COMMON', label: '测试环境数据源'}],
+      sourceList: [],
       checkPointType: [
         {
           value: 'MYSQL',
