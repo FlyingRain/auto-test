@@ -8,15 +8,17 @@ import java.util.Date;
  */
 public class AutoTestRunLogModel {
 
-    private long id;
+    private int id;
 
-    private long  caseId;
+    private int  caseId;
 
     private String runStatus;
 
     private String batchNum;
 
     private String executor;
+
+    private String runResult;
 
     private Date executeTime;
 
@@ -28,20 +30,28 @@ public class AutoTestRunLogModel {
 
     private Date updateTime;
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public long getCaseId() {
+    public int getCaseId() {
         return caseId;
     }
 
-    public void setCaseId(long caseId) {
+    public void setCaseId(int caseId) {
         this.caseId = caseId;
+    }
+
+    public String getRunResult() {
+        return runResult;
+    }
+
+    public void setRunResult(String runResult) {
+        this.runResult = runResult;
     }
 
     public String getRunStatus() {
@@ -116,6 +126,7 @@ public class AutoTestRunLogModel {
                 ", runStatus='" + runStatus + '\'' +
                 ", batchNum='" + batchNum + '\'' +
                 ", executor='" + executor + '\'' +
+                ", runResult='" + runResult + '\'' +
                 ", executeTime=" + executeTime +
                 ", caseSpendTime=" + caseSpendTime +
                 ", message='" + message + '\'' +

@@ -5,6 +5,9 @@
 
       <el-col>
         <el-form ref="searchRef" :model="searchForm" size="small" inline>
+          <el-form-item label="用例id：" prop="id">
+            <el-input v-model.trim="searchForm.conditions.id" placeholder="请输入用例id"/>
+          </el-form-item>
           <el-form-item label="用例名称：" prop="name">
             <el-input v-model.trim="searchForm.conditions.name" placeholder="请输入用例名称"/>
           </el-form-item>
@@ -47,7 +50,7 @@
           <template v-slot="row">
             <el-tooltip content="Run" placement="top">
               <el-button type="success" size="small" icon="el-icon-video-play"
-                         @click="changeView('/service/update',{id:row.row.id})">运行
+                         @click="runCase(row.row.id)">运行
               </el-button>
               <!--              <i class="el-icon-video-play"></i>-->
             </el-tooltip>
@@ -81,6 +84,7 @@ export default {
         currentPage: 1,
         pageSize: 10,
         conditions: {
+          id: '',
           name: '',
           serviceId: '',
           creator: ''
@@ -129,6 +133,7 @@ export default {
       this.searchForm.conditions.name = ''
       this.searchForm.conditions.serviceId = ''
       this.searchForm.conditions.creator = ''
+      this.searchForm.conditions.id = ''
       this.getPageList()
     },
     async getPageList() {
@@ -166,6 +171,15 @@ export default {
             this.$message.error(res.data.message)
           }
         })
+      })
+    },
+    runCase(caseId) {
+      this.$axios.get('/case/start', {params: {id: caseId}}).then((res) => {
+        if (res.data.success) {
+          this.$message.success('执行成功，请到执行报告页面查看结果，批次号：' + res.data.data)
+        } else {
+          this.$message.error('执行失败:' + res.data.message)
+        }
       })
     }
   }

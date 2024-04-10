@@ -254,6 +254,7 @@ export default {
   },
   created() {
     this.getAppList()
+    this.getSourceList()
     if (this.$route.query.id) {
       this.getCaseDetail(this.$route.query.id)
     }
@@ -276,11 +277,25 @@ export default {
         this.$message.error(result.data.message)
       }
     },
+    async getSourceList() {
+      const result = await this.$axios.get('/sourceConfig/all')
+      if (result.data.success) {
+        for (let source of result.data.data) {
+          this.sourceList.push({value: source.code, label: source.name})
+        }
+      } else {
+        this.$message.error(result.data.message)
+      }
+    },
     serviceChange(value) {
       console.log('asdfasdf---------' + value)
       for (let ser of this.serviceList) {
         if (ser.value === value) {
-          this.caseModel.paramValue = ser.params
+          if (ser.params === null) {
+            console.log('no param' + ser.name)
+          } else {
+            this.caseModel.paramValue = ser.params
+          }
           this.caseModel.responseConfig.responseDataType = ser.responseDataType
         }
       }

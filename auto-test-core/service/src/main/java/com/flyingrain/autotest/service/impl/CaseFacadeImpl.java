@@ -4,6 +4,9 @@ import com.flyingrain.autotest.common.util.*;
 import com.flyingrain.autotest.common.util.constant.AutoTestConstants;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import com.flyingrain.autotest.domain.core.CaseExecutorHelper;
+import com.flyingrain.autotest.domain.core.ExecuteContext;
+import com.flyingrain.autotest.domain.core.ExecuteUnit;
+import com.flyingrain.autotest.domain.core.ExecuteUnitBuilder;
 import com.flyingrain.autotest.domain.model.Case;
 import com.flyingrain.autotest.domain.model.Service;
 import com.flyingrain.autotest.domain.model.User;
@@ -23,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -35,7 +39,6 @@ public class CaseFacadeImpl implements CaseFacade, Resource {
 
     @Autowired
     private ServiceManager serviceManager;
-
 
 
     @Override
@@ -96,9 +99,13 @@ public class CaseFacadeImpl implements CaseFacade, Resource {
     @Override
     public CommonResult<AutoTestCase> detail(Integer id) {
         Case testCase = caseService.queryDetail(id);
-        Service service = serviceManager.queryById(testCase.getServiceId());
-        testCase.setService(service);
-        CaseExecutorHelper.fillDynamicParam(testCase,new HashMap<>());
+        CaseExecutorHelper.fillDynamicParam(testCase, new HashMap<>());
         return CommonResult.success(CaseViewConvert.convertCaseModel(testCase));
+    }
+
+    @Override
+    public CommonResult<String> start(Integer id) {
+        String result = caseService.run(id);
+        return CommonResult.success(result);
     }
 }

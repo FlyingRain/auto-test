@@ -48,11 +48,7 @@ public class ExecuteUnit<R> {
      * @return
      */
     public void run(ExecuteContext executeContext) {
-        if (StringUtils.hasText(executeContext.getExecuteCode())) {
-            String runId = UUID.randomUUID().toString().replace("-", "");
-            executeContext.setExecuteCode(runId);
-            logger.info("runCase log id :[{}]", runId);
-        }
+
         ExecuteParam executeParam = requestAssemble.assembleRequest(executeContext);
 
         ExecuteResult executeResult = executor.execute(executeParam);
@@ -73,34 +69,48 @@ public class ExecuteUnit<R> {
         runLog.setCaseSpendTime(executeResult.getSpendTime());
         runLog.setCaseId(aCase.getId());
         runLog.setMessage(checkResult.getMessage());
+        if (StringUtils.hasText(executeResult.getResult())) {
+            executeResult.setResult(executeResult.getResult().length() > 1024 ? executeResult.getResult().substring(0, 1024) : executeResult.getResult());
+            runLog.setRunResult(executeResult.getResult());
+        }
         runLog.setExecutor(executeContext.getExecutor());
         runLogService.insertRunLog(runLog);
     }
 
     private CheckResult runCheckPoints(ExecuteResult executeResult) {
         CheckResult checkResult = new CheckResult();
+        if (!executeResult.isSuccess()) {
+            checkResult.setValid(false);
+            checkResult.setMessage(executeResult.getExtractResult());
+            return checkResult;
+        }
         if (CollectionUtils.isEmpty(checkPoints)) {
             checkResult.setValid(true);
             return checkResult;
         }
         Boolean temp = null;
+        CompareRuleEnum compareRuleEnum = null;
         for (CheckPoint check : checkPoints) {
             CheckResult result = check.check(executeResult);
-            CompareRuleEnum compareRuleEnum = check.joinRule();
-            switch (compareRuleEnum) {
-                case OR:
-                    temp = temp == null ? result.getValid() : result.getValid() || temp;
-                    break;
-                case AND:
-                    temp = temp == null ? result.getValid() : result.getValid() && temp;
-                    break;
-                default:
-                    throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "不支持的运算类型");
+            if (compareRuleEnum != null) {
+                switch (compareRuleEnum) {
+                    case OR:
+                        temp = result.getValid() || temp;
+                        break;
+                    case AND:
+                        temp = result.getValid() && temp;
+                        break;
+                    default:
+                        throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "不支持的运算类型");
+                }
+            } else {
+                temp = result.getValid();
             }
             if (!temp) {
                 logger.error("check point failed![{}]", result.getMessage());
                 checkResult.setMessage(result.getMessage());
             }
+            compareRuleEnum = check.joinRule();
         }
         checkResult.setValid(temp);
         return checkResult;

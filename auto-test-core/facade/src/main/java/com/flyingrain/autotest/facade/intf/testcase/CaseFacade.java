@@ -39,4 +39,8 @@ public interface CaseFacade {
     @Path("/detail")
     CommonResult<AutoTestCase> detail(@QueryParam("id") Integer id);
 
+    @GET
+    @Path("/start")
+    CommonResult<String>  start(@QueryParam("id") Integer id);
+
 }

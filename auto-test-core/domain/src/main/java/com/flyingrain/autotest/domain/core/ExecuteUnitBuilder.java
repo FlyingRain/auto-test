@@ -1,6 +1,5 @@
 package com.flyingrain.autotest.domain.core;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.flyingrain.autotest.common.util.*;
@@ -22,12 +21,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class ExecuteUnitBuilder implements InitializingBean {
@@ -47,7 +46,7 @@ public class ExecuteUnitBuilder implements InitializingBean {
     private Map<String, DataSourceConf> sourceConfigMap = new HashMap<>(8);
 
 
-    public ExecuteUnit buildExecuteUnit(Case runCase, ExecuteContext executeContext) {
+    public ExecuteUnit buildExecuteUnit(Case runCase) {
         ExecuteUnit executeUnit = new ExecuteUnit();
         Service service = runCase.getService();
         String protocolType = service.getProtocolType();
@@ -82,7 +81,8 @@ public class ExecuteUnitBuilder implements InitializingBean {
         ProtocolTypeEnum protocolTypeEnum = ProtocolTypeEnum.valueOf(protocolType);
         switch (protocolTypeEnum) {
             case HTTP:
-                return new HttpRequestAssemble(JSONArray.parseArray(runCase.getParamValue()).toJavaList(ParamValue.class), service);
+                List<ParamValue> paramValueList = StringUtils.hasText(runCase.getParamValue()) ? JSONArray.parseArray(runCase.getParamValue()).toJavaList(ParamValue.class) : new ArrayList<>();
+                return new HttpRequestAssemble(paramValueList, service);
             default:
                 throw new AutoTestException(AutoTestResultCodeEnum.NOT_SUPPORT_PROTOCOL);
         }
@@ -108,13 +108,13 @@ public class ExecuteUnitBuilder implements InitializingBean {
                 MysqlSourceConfig mysqlSourceConfig = (MysqlSourceConfig) sourceConfigMap.get(checkPointConfig.getSourceCode());
                 mysqlCheckPoint.setDataSourceConfig(mysqlSourceConfig);
                 mysqlCheckPoint.setScript(checkPointConfig.getScript());
-                mysqlCheckPoint.setCompareRuleEnum(CompareRuleEnum.valueOf(checkPointConfig.getRef()));
+                mysqlCheckPoint.setCompareRuleEnum(StringUtils.hasText(checkPointConfig.getRef()) ? CompareRuleEnum.valueOf(checkPointConfig.getRef()) : null);
                 mysqlCheckPoint.setCheckRule(buildRule(checkPointConfig.getJudges()));
                 return mysqlCheckPoint;
             case VALUE:
                 ResultValueCheckpoint resultValueCheckpoint = new ResultValueCheckpoint();
                 resultValueCheckpoint.setCheckRule(buildRule(checkPointConfig.getJudges()));
-                resultValueCheckpoint.setCompareRuleEnum(CompareRuleEnum.valueOf(checkPointConfig.getRef()));
+                resultValueCheckpoint.setCompareRuleEnum(StringUtils.hasText(checkPointConfig.getRef()) ? CompareRuleEnum.valueOf(checkPointConfig.getRef()) : null);
                 return resultValueCheckpoint;
             default:
                 throw new AutoTestException(AutoTestResultCodeEnum.NOT_SUPPORT_DATA_TYPE);
@@ -129,8 +129,10 @@ public class ExecuteUnitBuilder implements InitializingBean {
         List<CheckParam> checkParams = judges.stream().map(judgeConfig -> {
             CheckParam checkParam = new CheckParam();
             checkParam.setCheckKey(judgeConfig.getParam());
-            checkParam.setOperateRuleEnum(OperateRuleEnum.valueOf(judgeConfig.getLogic()));
-            checkParam.setCompareRuleEnum(CompareRuleEnum.valueOf(judgeConfig.getRef()));
+            checkParam.setOperateRuleEnum(OperateRuleEnum.codeOf(judgeConfig.getLogic()));
+            if (judgeConfig.getRef() != null) {
+                checkParam.setCompareRuleEnum(CompareRuleEnum.valueOf(judgeConfig.getRef()));
+            }
             checkParam.setCheckValue(judgeConfig.getExpect());
             return checkParam;
         }).toList();

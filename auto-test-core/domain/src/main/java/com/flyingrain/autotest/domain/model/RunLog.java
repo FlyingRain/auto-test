@@ -8,9 +8,9 @@ import java.util.Date;
  */
 public class RunLog {
 
-    private long id;
+    private int id;
 
-    private long  caseId;
+    private int  caseId;
 
     private String runStatus;
 
@@ -19,6 +19,8 @@ public class RunLog {
     private String batchNum;
 
     private Date executeTime;
+
+    private String runResult;
 
     private long caseSpendTime;
 
@@ -30,19 +32,19 @@ public class RunLog {
 
     private Case aCase;
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public long getCaseId() {
+    public int getCaseId() {
         return caseId;
     }
 
-    public void setCaseId(long caseId) {
+    public void setCaseId(int caseId) {
         this.caseId = caseId;
     }
 
@@ -60,6 +62,14 @@ public class RunLog {
 
     public void setRunStatus(String runStatus) {
         this.runStatus = runStatus;
+    }
+
+    public String getRunResult() {
+        return runResult;
+    }
+
+    public void setRunResult(String runResult) {
+        this.runResult = runResult;
     }
 
     public String getExecutor() {
@@ -127,6 +137,7 @@ public class RunLog {
                 ", executor='" + executor + '\'' +
                 ", batchNum='" + batchNum + '\'' +
                 ", executeTime=" + executeTime +
+                ", runResult='" + runResult + '\'' +
                 ", caseSpendTime=" + caseSpendTime +
                 ", message='" + message + '\'' +
                 ", createTime=" + createTime +

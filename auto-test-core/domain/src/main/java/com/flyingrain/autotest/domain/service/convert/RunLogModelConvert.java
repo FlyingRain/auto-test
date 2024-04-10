@@ -21,6 +21,7 @@ public class RunLogModelConvert {
         runLog.setCaseId(autoTestRunLogModel.getCaseId());
         runLog.setCaseSpendTime(autoTestRunLogModel.getCaseSpendTime());
         runLog.setExecuteTime(autoTestRunLogModel.getExecuteTime());
+        runLog.setRunResult(autoTestRunLogModel.getRunResult());
         runLog.setExecutor(autoTestRunLogModel.getExecutor());
         runLog.setMessage(autoTestRunLogModel.getMessage());
         runLog.setRunStatus(autoTestRunLogModel.getRunStatus());
@@ -35,6 +36,7 @@ public class RunLogModelConvert {
         autoTestRunLogModel.setCaseId(runLog.getCaseId());
         autoTestRunLogModel.setId(runLog.getId());
         autoTestRunLogModel.setBatchNum(runLog.getBatchNum());
+        autoTestRunLogModel.setRunResult(runLog.getRunResult());
         autoTestRunLogModel.setCreateTime(runLog.getCreateTime());
         autoTestRunLogModel.setRunStatus(runLog.getRunStatus());
         autoTestRunLogModel.setUpdateTime(runLog.getUpdateTime());

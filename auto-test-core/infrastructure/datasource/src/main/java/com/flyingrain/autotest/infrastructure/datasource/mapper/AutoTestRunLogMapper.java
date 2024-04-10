@@ -13,11 +13,11 @@ import java.util.List;
  */
 public interface AutoTestRunLogMapper {
 
-    @Insert("insert into auto_test_run_log (case_id,run_status,batch_num,executor,execute_time,case_spend_time,message) values (#{caseId},#{runStatus},#{batchNum},#{executor},#{executeTime},#{caseSpendTime},#{message})")
+    @Insert("insert into auto_test_run_log (case_id,run_status,batch_num,executor,execute_time,run_result,case_spend_time,message) values (#{caseId},#{runStatus},#{batchNum},#{executor},#{executeTime},#{runResult},#{caseSpendTime},#{message})")
     int insertRunLog(AutoTestRunLogModel autoTestRunLogModel);
 
-    @Insert("<script>insert into auto_test_run_log (case_id,run_status,batch_num,executor,execute_time,case_spend_time,message) values <foreach item='item' index='index' collection='runLogs' separator=','>" +
-            "(#{item.caseId},#{item.runStatus},#{item.batchNum},#{item.executor},#{item.executeTime},#{item.caseSpendTime},#{item.message})</foreach></script>")
+    @Insert("<script>insert into auto_test_run_log (case_id,run_status,batch_num,executor,execute_time,run_result,case_spend_time,message) values <foreach item='item' index='index' collection='runLogs' separator=','>" +
+            "(#{item.caseId},#{item.runStatus},#{item.batchNum},#{item.executor},#{item.executeTime},#{item.runResult},#{item.caseSpendTime},#{item.message})</foreach></script>")
     int insertRunLogBatch(@Param("runLogs") List<AutoTestRunLogModel> runLogModels);
 
     @SelectProvider(value = AutoTestRunLogProvider.class,method = "pageQuery")
@@ -28,6 +28,7 @@ public interface AutoTestRunLogMapper {
             @Result(property = "batchNum", column = "batch_num"),
             @Result(property = "executor", column = "executor"),
             @Result(property = "executeTime", column = "execute_time"),
+            @Result(property = "runResult", column = "run_result"),
             @Result(property = "caseSpendTime", column = "case_spend_time"),
             @Result(property = "message", column = "message"),
             @Result(property = "createTime", column = "create_time"),

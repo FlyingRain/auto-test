@@ -72,6 +72,9 @@ public class HttpRequestAssemble implements RequestAssemble {
     }
 
     private void checkParamsPair(Map<String, String> params, List<ServiceParam> params1) {
+        if (CollectionUtils.isEmpty(params1)) {
+            return;
+        }
         for (ServiceParam serviceParam : params1) {
             if (!params.containsKey(serviceParam.getParam())) {
                 logger.error("service param  not exist! param:[{}]", serviceParam.getParam());

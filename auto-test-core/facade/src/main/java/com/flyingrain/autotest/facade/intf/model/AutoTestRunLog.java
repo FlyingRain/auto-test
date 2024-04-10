@@ -10,9 +10,11 @@ public class AutoTestRunLog {
 
     private String runStatus;
 
+    private String runResult;
+
     private String message;
 
-    private String caseId;
+    private int caseId;
 
     private String executor;
 
@@ -40,6 +42,14 @@ public class AutoTestRunLog {
         return runStatus;
     }
 
+    public String getRunResult() {
+        return runResult;
+    }
+
+    public void setRunResult(String runResult) {
+        this.runResult = runResult;
+    }
+
     public void setRunStatus(String runStatus) {
         this.runStatus = runStatus;
     }
@@ -52,11 +62,11 @@ public class AutoTestRunLog {
         this.message = message;
     }
 
-    public String getCaseId() {
+    public int getCaseId() {
         return caseId;
     }
 
-    public void setCaseId(String caseId) {
+    public void setCaseId(int caseId) {
         this.caseId = caseId;
     }
 

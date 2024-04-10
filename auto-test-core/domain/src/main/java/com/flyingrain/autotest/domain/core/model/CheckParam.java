@@ -39,6 +39,9 @@ public class CheckParam {
 
 
     public boolean compareStr(String v1, String v2) {
+        if ("null".equals(v2)) {
+            v2 = null;
+        }
         switch (operateRuleEnum) {
             case EQUAL:
                 return Objects.equals(v1, v2);

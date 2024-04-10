@@ -43,6 +43,5 @@ public class CommonExceptionHandler implements ExceptionMapper<Exception> {
             commonResult.setMessage(e.getMessage());
         }
         return Response.ok(JSONObject.toJSONString(commonResult), MediaType.APPLICATION_JSON).status(200).build();
-
     }
 }

@@ -26,6 +26,8 @@ public class AutoTestCaseDynamicSqlProvider {
 
         sql.LIMIT(pageSize);
         sql.OFFSET(offset);
+        sql.ORDER_BY("id desc");
+
         logger.info("build case query sql:[{}]", sql);
         return sql.toString();
     }

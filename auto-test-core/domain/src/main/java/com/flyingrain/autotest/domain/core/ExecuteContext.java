@@ -2,11 +2,12 @@ package com.flyingrain.autotest.domain.core;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ExecuteContext {
 
-    private Map<String, String> params;
+    private Map<String, String> params = new HashMap<>();
 
     private Map<String, JSONObject> results;
 

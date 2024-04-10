@@ -52,4 +52,8 @@ public class RunLogService {
         return pageableModel;
     }
 
+    public RunLog detail(int id) {
+        AutoTestRunLogModel autoTestRunLogModel = autoTestRunLogMapper.queryDetail(id);
+        return RunLogModelConvert.convertRunLogModel(autoTestRunLogModel);
+    }
 }

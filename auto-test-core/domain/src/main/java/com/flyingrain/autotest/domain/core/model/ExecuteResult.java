@@ -11,6 +11,8 @@ public class ExecuteResult {
 
     private long spendTime;
 
+    private String extractResult;
+
     private Map<String,String> resultMap = new HashMap<>(8);
 
     public boolean isSuccess() {
@@ -39,6 +41,14 @@ public class ExecuteResult {
 
     public void setSpendTime(long spendTime) {
         this.spendTime = spendTime;
+    }
+
+    public String getExtractResult() {
+        return extractResult;
+    }
+
+    public void setExtractResult(String extractResult) {
+        this.extractResult = extractResult;
     }
 
     public void setResultMap(Map<String, String> resultMap) {

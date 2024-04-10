@@ -27,6 +27,10 @@ public class JSONResultExtract implements ResultExtract {
 
     @Override
     public void extractResult(ExecuteResult executeResult, ExecuteContext executeContext) {
+        if (CollectionUtils.isEmpty(resultConfig)) {
+            logger.info("no result need to extract,exit[{}]", executeContext.getExecuteCode());
+            return;
+        }
         String resultStr = executeResult.getResult();
         Map<String, String> resultMap = executeResult.getResultMap();
         Map<String, String> params = executeContext.getParams();
@@ -45,7 +49,7 @@ public class JSONResultExtract implements ResultExtract {
                             value = value.getJSONObject(keys[i]);
                         } else {
                             logger.error("result param not exits!result:[{}],extract path:[{}]", resultStr, keyPath);
-                            throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "result extract error!");
+                            throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "result extract error!" + keyPath);
                         }
                     }
                     String realValue = value.getString(keys[keys.length - 1]);
@@ -55,7 +59,8 @@ public class JSONResultExtract implements ResultExtract {
             }
         } catch (Exception e) {
             logger.error("extract result happen error!", e);
-            throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "result extract failed! unknown exception!");
+            executeResult.setSuccess(false);
+            executeResult.setExtractResult(e.getMessage());
         }
     }
 }

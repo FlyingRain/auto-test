@@ -15,6 +15,7 @@ public class SourceConfigConvert {
         autoTestSourceConfigModel.setId(sourceConfig.getId());
         autoTestSourceConfigModel.setOperator(sourceConfig.getOperator());
         autoTestSourceConfigModel.setName(sourceConfig.getName());
+        autoTestSourceConfigModel.setSourceType(sourceConfig.getSourceType());
         autoTestSourceConfigModel.setCreateTime(sourceConfig.getCreateTime());
         autoTestSourceConfigModel.setUpdateTime(sourceConfig.getUpdateTime());
         return autoTestSourceConfigModel;
@@ -30,6 +31,7 @@ public class SourceConfigConvert {
         sourceConfig.setConfig(autoTestSourceConfigModel.getConfig());
         sourceConfig.setOperator(autoTestSourceConfigModel.getOperator());
         sourceConfig.setId(autoTestSourceConfigModel.getId());
+        sourceConfig.setSourceType(autoTestSourceConfigModel.getSourceType());
         sourceConfig.setCreateTime(autoTestSourceConfigModel.getCreateTime());
         sourceConfig.setUpdateTime(autoTestSourceConfigModel.getUpdateTime());
         return sourceConfig;
