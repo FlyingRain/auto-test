@@ -83,6 +83,8 @@ public class CaseService {
         ExecuteUnit executeUnit = executeUnitBuilder.buildExecuteUnit(testCase);
         String runId = UUID.randomUUID().toString().replace("-", "");
         executeContext.setExecuteCode(runId);
+        User user = RunTimeContext.get(AutoTestConstants.USER);
+        executeContext.setExecutor(user == null ? null : user.getUserName());
         logger.info("start to run case:[{}]", executeUnit);
         executeUnit.run(executeContext);
         return runId;

@@ -8,6 +8,8 @@ public enum AutoTestResultCodeEnum {
 
     SUCCESS("200", "成功"),
 
+    NOT_LOGIN("401","登陆过期"),
+
     FAIL("500", "失败"),
 
     MODEL_NOT_EXIST("501", "模块不存在"),

@@ -56,6 +56,10 @@
                   <label class="check_label">值：</label>
                   <span>{{ judge.expect }}</span>
                 </el-col>
+                <el-col :span="6">
+                  <span v-if="checkpoint.ref === 'AND'" style="color: darkgreen">{{ checkpoint.ref }}</span>
+                  <span v-if="checkpoint.ref === 'OR'" style="color: red">{{ checkpoint.ref }}</span>
+                </el-col>
               </el-row>
             </el-descriptions-item>
           </el-descriptions>

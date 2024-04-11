@@ -18,7 +18,7 @@ public interface RunLogFacade {
 
     @GET
     @Path("/detail")
-    AutoTestRunLog  queryDetail(@QueryParam("id") Integer id);
+    CommonResult<AutoTestRunLog>  queryDetail(@QueryParam("id") Integer id);
 
 
 }

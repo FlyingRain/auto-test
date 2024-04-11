@@ -1,6 +1,11 @@
 package com.flyingrain.autotest.domain.service;
 
+import com.flyingrain.autotest.common.util.PageQuery;
+import com.flyingrain.autotest.common.util.PageableModel;
+import com.flyingrain.autotest.common.util.RunTimeContext;
+import com.flyingrain.autotest.common.util.constant.AutoTestConstants;
 import com.flyingrain.autotest.domain.model.SourceConfig;
+import com.flyingrain.autotest.domain.model.User;
 import com.flyingrain.autotest.domain.service.convert.SourceConfigConvert;
 import com.flyingrain.autotest.infrastructure.datasource.mapper.AutoTestSourceConfigMapper;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestSourceConfigModel;
@@ -25,6 +30,46 @@ public class SourceConfigService {
         List<AutoTestSourceConfigModel> autoTestSourceConfigModels = autoTestSourceConfigMapper.queryAll();
         logger.info("query all source config:[{}]", autoTestSourceConfigModels.size());
         return autoTestSourceConfigModels.stream().map(SourceConfigConvert::convertToDomain).collect(Collectors.toList());
+    }
+
+    public PageableModel<SourceConfig> queryByPage(PageQuery<SourceConfig> pageQuery) {
+        logger.info("query sourceConfig:[{}]", pageQuery);
+        PageQuery<AutoTestSourceConfigModel> autoTestSourceConfigModelPageQuery = new PageQuery<>();
+        autoTestSourceConfigModelPageQuery.setCurrentPage(pageQuery.getCurrentPage());
+        autoTestSourceConfigModelPageQuery.setPageSize(pageQuery.getPageSize());
+        autoTestSourceConfigModelPageQuery.setConditions(SourceConfigConvert.convertToModel(pageQuery.getConditions()));
+        List<AutoTestSourceConfigModel> autoTestSourceConfigModels = autoTestSourceConfigMapper.queryPage(autoTestSourceConfigModelPageQuery);
+        int count = autoTestSourceConfigMapper.queryPageCount(autoTestSourceConfigModelPageQuery);
+        PageableModel<SourceConfig> pageableModel = new PageableModel<>();
+        pageableModel.copyOf(pageQuery);
+        pageableModel.setTotal(count);
+        pageableModel.setData(autoTestSourceConfigModels.stream().map(SourceConfigConvert::convertToDomain).collect(Collectors.toList()));
+        return pageableModel;
+    }
+
+    public int batchDel(List<Integer> ids) {
+        logger.info("batch del ids:[{}]", ids);
+        return autoTestSourceConfigMapper.batchDel(ids);
+    }
+
+    public boolean insert(SourceConfig sourceConfig) {
+        logger.info("start to insert config:[{}]", sourceConfig);
+        User user = RunTimeContext.get(AutoTestConstants.USER);
+        sourceConfig.setOperator(user == null ? null : user.getUserName());
+        return autoTestSourceConfigMapper.insertSourceConfig(SourceConfigConvert.convertToModel(sourceConfig)) == 1;
+
+    }
+
+    public SourceConfig queryDetail(int id) {
+        logger.info("query sourceConfig detail:[{}]", id);
+        return SourceConfigConvert.convertToDomain(autoTestSourceConfigMapper.queryDetail(id));
+    }
+
+    public Boolean updateById(SourceConfig sourceConfig) {
+        logger.info("start to update config:[{}]", sourceConfig);
+        User user = RunTimeContext.get(AutoTestConstants.USER);
+        sourceConfig.setOperator(user == null ? null : user.getUserName());
+        return autoTestSourceConfigMapper.updateById(SourceConfigConvert.convertToModel(sourceConfig)) == 1;
     }
 
 

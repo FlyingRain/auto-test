@@ -22,7 +22,7 @@ public class SourceConfigViewConvert {
     }
 
 
-    public static AutoTestSourceConfig convertTiView(SourceConfig sourceConfig) {
+    public static AutoTestSourceConfig convertToView(SourceConfig sourceConfig) {
         if (sourceConfig == null) {
             return null;
         }
@@ -32,9 +32,9 @@ public class SourceConfigViewConvert {
         autoTestSourceConfig.setConfig(sourceConfig.getConfig());
         autoTestSourceConfig.setOperator(sourceConfig.getOperator());
         autoTestSourceConfig.setId(sourceConfig.getId());
-        autoTestSourceConfig.setSourceType(autoTestSourceConfig.getSourceType());
-        autoTestSourceConfig.setCreateTime(autoTestSourceConfig.getCreateTime());
-        autoTestSourceConfig.setUpdateTime(autoTestSourceConfig.getUpdateTime());
+        autoTestSourceConfig.setSourceType(sourceConfig.getSourceType());
+        autoTestSourceConfig.setCreateTime(sourceConfig.getCreateTime());
+        autoTestSourceConfig.setUpdateTime(sourceConfig.getUpdateTime());
         return autoTestSourceConfig;
 
     }

@@ -83,4 +83,18 @@ public class AutoTestSourceConfig {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+    @Override
+    public String toString() {
+        return "AutoTestSourceConfig{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
+                ", config='" + config + '\'' +
+                ", sourceType='" + sourceType + '\'' +
+                ", operator='" + operator + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
+    }
 }

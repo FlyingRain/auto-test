@@ -35,8 +35,8 @@ public class RunLogFacadeImpl implements RunLogFacade, Resource {
     }
 
     @Override
-    public AutoTestRunLog queryDetail(Integer id) {
+    public CommonResult<AutoTestRunLog> queryDetail(Integer id) {
         RunLog runLog = runLogService.detail(id);
-        return RunLogViewConvert.convertToView(runLog);
+        return CommonResult.success(RunLogViewConvert.convertToView(runLog));
     }
 }

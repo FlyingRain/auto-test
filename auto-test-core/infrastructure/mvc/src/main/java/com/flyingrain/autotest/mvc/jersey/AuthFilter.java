@@ -1,7 +1,9 @@
 package com.flyingrain.autotest.mvc.jersey;
 
+import com.flyingrain.autotest.common.util.AutoTestResultCodeEnum;
 import com.flyingrain.autotest.common.util.RunTimeContext;
 import com.flyingrain.autotest.common.util.constant.AutoTestConstants;
+import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import com.flyingrain.autotest.domain.model.User;
 import com.flyingrain.autotest.domain.service.LoginService;
 import com.flyingrain.autotest.domain.service.UserManager;
@@ -35,7 +37,7 @@ public class AuthFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
         // 在此处进行身份验证操作
         if (!isAuthenticated(containerRequestContext)) {
-            containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+            throw new AutoTestException(AutoTestResultCodeEnum.NOT_LOGIN);
         }
 
     }

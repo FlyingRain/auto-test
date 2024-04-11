@@ -3,6 +3,7 @@ package com.flyingrain.autotest.infrastructure.datasource.mapper;
 import com.flyingrain.autotest.common.util.PageQuery;
 import com.flyingrain.autotest.infrastructure.datasource.mapper.provider.AutoTestSourceConfigDynamicSqlProvider;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestSourceConfigModel;
+import jakarta.ws.rs.DELETE;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -36,5 +37,10 @@ public interface AutoTestSourceConfigMapper {
     @UpdateProvider(value = AutoTestSourceConfigDynamicSqlProvider.class, method = "updateById")
     int updateById(@Param("updateModel") AutoTestSourceConfigModel autoTestSourceConfigModel);
 
+    @Select("select * from auto_test_source_config where id =#{id}")
+    @ResultMap("sourceMap")
+    AutoTestSourceConfigModel queryDetail(@Param("id") Integer id);
 
+    @Delete("<script>delete from auto_test_source_config where id in <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>")
+    int batchDel(List<Integer> ids);
 }

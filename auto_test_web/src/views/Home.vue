@@ -71,8 +71,12 @@
               </template>
               <el-menu-item index="/autotest/scene" @click="saveActiveNav('/autotest/scene')"> 场景管理</el-menu-item>
               <el-menu-item index="/autotest/cases" @click="saveActiveNav('/autotest/cases')"> 用例管理</el-menu-item>
-              <el-menu-item index="/autotest/report" @click="saveActiveNav('/autotest/report')"> 执行报告</el-menu-item>
+              <el-menu-item index="/autotest/report" @click="saveActiveNav('/autotest/report')"> 执行流水</el-menu-item>
             </el-submenu>
+            <el-menu-item index="/sourceConfig" @click="saveActiveNav('/sourceConfig')">
+              <i class="el-icon-s-data"></i>
+              <span slot="title">数据源配置</span>
+            </el-menu-item>
           </el-menu>
         </el-aside>
         <!-- 主体部分 -->
@@ -164,7 +168,9 @@ export default {
   },
   created() {
     this.activePath = sessionStorage.getItem('activePath') ? sessionStorage.getItem('activePath') : '/index'
-    this.user = JSON.parse(sessionStorage.getItem('user'))
+    let cuser = this.$cookies.get('user')
+    console.log('cuser:' + cuser)
+    this.user = JSON.parse(cuser)
   },
   methods: {
     saveActiveNav(activePath) {

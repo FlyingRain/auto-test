@@ -104,7 +104,8 @@ export default {
           this.$axios.post('/user/login', this.form).then((res) => {
             if (res.data.success) {
               console.log('--------------' + JSON.stringify(res.data.data.user) + '--------------------')
-
+              this.$cookies.set('user', JSON.stringify(res.data.data.user), {expires: 1})
+              this.$cookies.set('token', res.data.data.token, {expires: 1})
               sessionStorage.setItem('user', JSON.stringify(res.data.data.user))
               sessionStorage.setItem('token', res.data.data.token)
               this.$router.push('/home')

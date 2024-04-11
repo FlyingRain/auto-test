@@ -3,17 +3,17 @@
     <el-card shadow="never">
       <el-col>
         <el-form ref="reportSearch" :model="searchForm" size="small" inline>
-          <el-form-item label="批次号：">
-            <el-input v-model.trim="searchForm.conditions.batchNum" placeholder="请输入批次号"></el-input>
+          <el-form-item label="数据源名称：">
+            <el-input v-model.trim="searchForm.conditions.name" placeholder="请输入批次号"></el-input>
           </el-form-item>
-          <el-form-item label="用例id：">
-            <el-input v-model.trim="searchForm.conditions.caseId" placeholder="请输入用例id"></el-input>
+          <el-form-item label="数据源编码：">
+            <el-input v-model.trim="searchForm.conditions.code" placeholder="请输入用例id"></el-input>
           </el-form-item>
-          <el-form-item label="状态:" prop="serviceId">
+          <el-form-item label="数据源类型:" prop="sourceType">
             <template>
-              <el-select v-model="searchForm.conditions.runStatus" filterable placeholder="请选择状态">
+              <el-select v-model="searchForm.conditions.sourceType" filterable placeholder="请选择状态">
                 <el-option
-                    v-for="item in statusList"
+                    v-for="item in sourceTypes"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value">
@@ -31,21 +31,16 @@
       <!-- 表格 -->
       <el-table ref="table" :data="tableData" stripe border>
         <el-table-column prop="id" label="id" width="50"/>
-        <el-table-column prop="batchNum" label="执行批次" show-overflow-tooltip/>
-        <el-table-column prop="caseId" label="用例id" show-overflow-tooltip/>
-        <el-table-column prop="runStatus" label="执行状态" show-overflow-tooltip>
+        <el-table-column prop="name" label="名称" show-overflow-tooltip/>
+        <el-table-column prop="code" label="编码" show-overflow-tooltip/>
+        <el-table-column prop="sourceType" label="类型" show-overflow-tooltip />
+        <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip/>
+        <el-table-column label="操作" width="350">
           <template v-slot="row">
-            <span v-if="row.row.runStatus==='SUCCESS'" style="color: green"> 成功</span>
-            <span v-if="row.row.runStatus==='FAIL'" style="color:red;"> 失败</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="spendTime" label="耗时（ms）" show-overflow-tooltip/>
-        <el-table-column prop="runResult" label="运行结果" show-overflow-tooltip/>
-        <el-table-column prop="message" label="校验结果" show-overflow-tooltip/>
-        <el-table-column prop="executeTime" label="执行时间" show-overflow-tooltip/>
-        <el-table-column label="操作" width="150">
-          <template v-slot="row">
+            <el-button type="success" size="small" @click="changeView('/service/update',{id:row.row.id})">编辑
+            </el-button>
             <el-button type="primary" size="small" @click="detail(row.row.id)"> 详情</el-button>
+            <el-button type="danger" size="small" @click="deleteService(row.row.id)"> 删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -75,15 +70,14 @@ export default {
         currentPage: 1,
         pageSize: 10,
         conditions: {
-          batchNum: '',
-          caseId: '',
-          runStatus: ''
+          name: '',
+          code: '',
+          sourceType: ''
         }
       },
-      statusList: [
-        {value: 'SUCCESS', label: '成功'},
-        {value: 'FAIL', label: '失败'},
-        {value: 'EXECUTING', label: '执行中'}
+      sourceTypes: [
+        {value: 'MYSQL', label: 'MYSQL'},
+        {value: 'REDIS', label: 'REDIS'}
       ]
     }
   },
@@ -92,7 +86,7 @@ export default {
   },
   methods: {
     async initPage() {
-      const result = await this.$axios.post('/runlog/list', this.searchForm)
+      const result = await this.$axios.post('/sourceConfig/list', this.searchForm)
       if (result.data.success) {
         this.tableData = result.data.data.data
         this.total = result.data.data.total
