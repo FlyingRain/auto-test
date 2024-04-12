@@ -27,20 +27,25 @@
           </el-form-item>
         </el-form>
       </el-col>
-
+      <el-col>
+        <div class="opts">
+          <el-button type="primary" icon="el-icon-circle-plus" size="small" @click="changeView('/sourceConfig/add')"> 新增
+          </el-button>
+        </div>
+      </el-col>
       <!-- 表格 -->
       <el-table ref="table" :data="tableData" stripe border>
         <el-table-column prop="id" label="id" width="50"/>
         <el-table-column prop="name" label="名称" show-overflow-tooltip/>
         <el-table-column prop="code" label="编码" show-overflow-tooltip/>
-        <el-table-column prop="sourceType" label="类型" show-overflow-tooltip />
+        <el-table-column prop="sourceType" label="类型" show-overflow-tooltip/>
         <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip/>
         <el-table-column label="操作" width="350">
           <template v-slot="row">
-            <el-button type="success" size="small" @click="changeView('/service/update',{id:row.row.id})">编辑
+            <el-button type="success" size="small" @click="changeView('/sourceConfig/update',{id:row.row.id})">编辑
             </el-button>
             <el-button type="primary" size="small" @click="detail(row.row.id)"> 详情</el-button>
-            <el-button type="danger" size="small" @click="deleteService(row.row.id)"> 删除</el-button>
+            <el-button type="danger" size="small" @click="deleteSource(row.row.id)"> 删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -49,7 +54,7 @@
       <el-pagination class="pagination" layout="->,total,sizes,prev,pager,next,jumper" :page-sizes="[10,20,30,40]"
                      :current-page="searchForm.currentPage" :page-size="searchForm.pageSize" :total="total"
                      @size-change="handleSizeChange" @current-change="handleCurrentPageChange"/>
-      <Detail ref="runLog_detail"/>
+      <Detail ref="source_detail"/>
     </el-card>
 
   </div>
@@ -108,16 +113,40 @@ export default {
       this.initPage()
     },
     handleClear() {
-      this.searchForm.conditions.batchNum = ''
-      this.searchForm.conditions.caseId = ''
-      this.searchForm.conditions.runStatus = ''
+      this.searchForm.conditions.name = ''
+      this.searchForm.conditions.code = ''
+      this.searchForm.conditions.sourceType = ''
       this.initPage()
     },
     detail(id) {
       console.log('id is ------- ' + id)
-      this.$refs.runLog_detail.drawer = true
-      this.$refs.runLog_detail.formData.id = id
-      this.$refs.runLog_detail.getRunLogDetail()
+      this.$refs.source_detail.drawer = true
+      this.$refs.source_detail.formData.id = id
+      this.$refs.source_detail.getSourceDetail()
+    },
+    changeView(url, queryParams) {
+      this.$router.push({
+        path: url,
+        query: queryParams
+      })
+    },
+    deleteSource(id) {
+      this.$confirm('确认删除此数据源?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post('/sourceConfig/batchDel', {ids: [id]}).then((res) => {
+          if (res.data.success) {
+            this.$message.success('删除成功')
+            this.$router.go(0)
+          } else {
+            this.$message.error(res.data.message)
+          }
+        }).catch((reason) => {
+          this.$message.error(reason)
+        })
+      })
     }
   }
 
@@ -126,5 +155,13 @@ export default {
 <style>
 .content {
   margin-top: 10px;
+
+}
+
+.opts {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 5px;
+  margin-top: 5px;
 }
 </style>

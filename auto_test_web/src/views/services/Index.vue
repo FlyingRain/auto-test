@@ -156,7 +156,7 @@ export default {
       console.log(JSON.stringify(data))
     },
     deleteService(id) {
-      this.$confirm('确认删除磁条信息?', '提示', {
+      this.$confirm('确认删除此服务?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

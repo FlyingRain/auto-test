@@ -48,7 +48,8 @@ public class SourceConfigService {
     }
 
     public int batchDel(List<Integer> ids) {
-        logger.info("batch del ids:[{}]", ids);
+        User user = RunTimeContext.get(AutoTestConstants.USER);
+        logger.info("user:[{}],batch del ids:[{}]", user, ids);
         return autoTestSourceConfigMapper.batchDel(ids);
     }
 

@@ -50,13 +50,26 @@ const router = new Router({
           },
           component: () => import('@/views/services/Add.vue')
         },
-
         {
           path: '/sourceConfig',
           meta: {
             title: '数据源配置'
           },
           component: () => import('@/views/source/Index.vue')
+        },
+        {
+          path: '/sourceConfig/add',
+          meta: {
+            title: '新增数据源'
+          },
+          component: () => import('@/views/source/Add.vue')
+        },
+        {
+          path: '/sourceConfig/update',
+          meta: {
+            title: '修改数据源'
+          },
+          component: () => import('@/views/source/Add.vue')
         },
         {
           path: '/autotest',

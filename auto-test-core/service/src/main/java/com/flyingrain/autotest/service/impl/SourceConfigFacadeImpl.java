@@ -6,6 +6,7 @@ import com.flyingrain.autotest.common.util.PageableModel;
 import com.flyingrain.autotest.domain.model.SourceConfig;
 import com.flyingrain.autotest.domain.service.SourceConfigService;
 import com.flyingrain.autotest.facade.intf.model.AutoTestSourceConfig;
+import com.flyingrain.autotest.facade.intf.requests.BatchDelRequest;
 import com.flyingrain.autotest.facade.intf.source.SourceConfigFacade;
 import com.flyingrain.autotest.mvc.jersey.Resource;
 import com.flyingrain.autotest.service.convert.SourceConfigViewConvert;
@@ -59,7 +60,7 @@ public class SourceConfigFacadeImpl implements SourceConfigFacade, Resource {
     }
 
     @Override
-    public CommonResult<Integer> batchDel(List<Integer> ids) {
-        return CommonResult.success(sourceConfigService.batchDel(ids));
+    public CommonResult<Integer> batchDel(BatchDelRequest batchDelRequest) {
+        return CommonResult.success(sourceConfigService.batchDel(batchDelRequest.getIds()));
     }
 }
