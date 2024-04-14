@@ -13,7 +13,8 @@
           <el-input type="password" placeholder="请输入密码" v-model="form.password" prefix-icon="el-icon-lock"/>
         </el-form-item>
         <el-form-item>
-          <el-button :loading="loginLoading" style="background: #5b89fe;color: white" @click="submitForm('ruleForm')">
+          <el-button :loading="loginLoading" style="background: #5b89fe;color: white" @click="submitForm('ruleForm')"
+                     @keyup.enter="submitForm('ruleForm')">
             登录
           </el-button>
         </el-form-item>
@@ -93,6 +94,14 @@ export default {
       rules: {
         userName: [{required: true, message: '请输入账号', trigger: 'blur'}],
         password: [{required: true, message: '请输入密码', trigger: 'blur'}]
+      }
+    }
+  },
+  created() {
+    document.onkeyup = e => {
+      if ((e.code === 'Enter' || e.code === 'NumpadEnter') && e.target.baseURI.match(/login/)) {
+        // 调用登录 验证方法
+        this.submitForm('ruleForm')
       }
     }
   },

@@ -45,9 +45,8 @@ public class JSONResultExtract implements ResultExtract {
                     String[] keys = keyPath.split("\\.");
                     JSONObject value = jsonObject;
                     for (int i = 0; i < keys.length - 1; i++) {
-                        if (jsonObject.containsKey(keys[i])) {
-                            value = value.getJSONObject(keys[i]);
-                        } else {
+                        value = extractKey(keys[i], jsonObject);
+                        if (value == null) {
                             logger.error("result param not exits!result:[{}],extract path:[{}]", resultStr, keyPath);
                             throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "result extract error!" + keyPath);
                         }
@@ -62,5 +61,22 @@ public class JSONResultExtract implements ResultExtract {
             executeResult.setSuccess(false);
             executeResult.setExtractResult(e.getMessage());
         }
+    }
+
+    private JSONObject extractKey(String key, JSONObject jsonObject) {
+        if(isArrayKey(key)){
+
+        }else if(isMethodKey(key)){
+
+        }
+        return null;
+    }
+
+    private boolean isMethodKey(String key) {
+        return false;
+    }
+
+    private boolean isArrayKey(String key) {
+        return false;
     }
 }
