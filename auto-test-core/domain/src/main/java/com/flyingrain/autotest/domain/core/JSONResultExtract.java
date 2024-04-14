@@ -13,6 +13,8 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class JSONResultExtract implements ResultExtract {
 
@@ -64,19 +66,27 @@ public class JSONResultExtract implements ResultExtract {
     }
 
     private JSONObject extractKey(String key, JSONObject jsonObject) {
-        if(isArrayKey(key)){
-
-        }else if(isMethodKey(key)){
-
+        JSONObject result = null;
+        if (isArrayKey(key)) {
+            int start = key.indexOf("[");
+            String numberStr = key.substring(start + 1, key.length() - 1);
+            result = jsonObject.getJSONArray(key.substring(start)).getJSONObject(Integer.parseInt(numberStr));
+        } else if (isMethodKey(key)) {
+            throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "结果提取函数只能在最后：" + key);
+        } else {
+            result = jsonObject.getJSONObject(key);
         }
-        return null;
+        return result;
     }
 
     private boolean isMethodKey(String key) {
-        return false;
+        return key.endsWith("()");
     }
 
     private boolean isArrayKey(String key) {
-        return false;
+        String reg = "[\\w_0-9]+\\[\\d\\]";
+        Pattern pattern = Pattern.compile(reg);
+        Matcher matcher = pattern.matcher(key);
+        return matcher.matches();
     }
 }
