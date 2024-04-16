@@ -13,8 +13,11 @@ public class Case {
 
     private String name;
 
+    private String code;
+
     private int serviceId;
 
+    private String desc;
 
     private String caseStatus;
 
@@ -75,12 +78,28 @@ public class Case {
         this.resultCollectConfig = resultCollectConfig;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public String getCheckPoints() {
         return checkPoints;
     }
 
     public void setCheckPoints(String checkPoints) {
         this.checkPoints = checkPoints;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
     public String getParamValue() {
@@ -136,7 +155,9 @@ public class Case {
         return "Case{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
                 ", serviceId=" + serviceId +
+                ", desc='" + desc + '\'' +
                 ", caseStatus='" + caseStatus + '\'' +
                 ", resultCollectConfig='" + resultCollectConfig + '\'' +
                 ", checkPoints='" + checkPoints + '\'' +

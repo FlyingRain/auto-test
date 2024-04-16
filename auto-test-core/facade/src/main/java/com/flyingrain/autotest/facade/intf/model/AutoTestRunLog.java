@@ -14,7 +14,7 @@ public class AutoTestRunLog {
 
     private String message;
 
-    private int caseId;
+    private String caseCode;
 
     private String executor;
 
@@ -62,12 +62,12 @@ public class AutoTestRunLog {
         this.message = message;
     }
 
-    public int getCaseId() {
-        return caseId;
+    public String getCaseCode() {
+        return caseCode;
     }
 
-    public void setCaseId(int caseId) {
-        this.caseId = caseId;
+    public void setCaseCode(String caseCode) {
+        this.caseCode = caseCode;
     }
 
     public String getExecutor() {
@@ -132,7 +132,7 @@ public class AutoTestRunLog {
                 "id=" + id +
                 ", runStatus='" + runStatus + '\'' +
                 ", message='" + message + '\'' +
-                ", caseId='" + caseId + '\'' +
+                ", caseCode='" + caseCode + '\'' +
                 ", executor='" + executor + '\'' +
                 ", batchNum='" + batchNum + '\'' +
                 ", executeTime=" + executeTime +

@@ -3,9 +3,11 @@
     <el-drawer title="详情" :visible.sync="drawer" size="40%">
       <el-card class="box-card">
         <div class="card-content">
-          <el-descriptions title="基本信息">
+          <el-descriptions title="基本信息" :column=1>
             <el-descriptions-item label="用例名">{{ formData.name }}</el-descriptions-item>
+            <el-descriptions-item label="用例编码">{{ formData.code }}</el-descriptions-item>
             <el-descriptions-item label="服务名称">{{ formData.service.serviceName }}</el-descriptions-item>
+            <el-descriptions-item label="描述">{{ formData.desc }}</el-descriptions-item>
           </el-descriptions>
           <el-descriptions title="请求预览" direction="vertical" :column=1>
             <el-descriptions-item label="请求协议" v-if="formData.service.protocolType==='HTTP'">{{

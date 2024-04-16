@@ -17,7 +17,7 @@ public class AutoTestCaseDynamicSqlProvider {
     public String queryByPage(Map<String, Object> queryParams) {
         PageQuery<AutoTestCaseQuery> pageQuery = (PageQuery<AutoTestCaseQuery>) queryParams.get("queryCondition");
         SQL sql = new SQL();
-        sql.SELECT("c.id as id ,c.name as name,c.service_id as service_id,c.case_status as case_status,c.creator as creator,c.modifier as modifier,c.create_time as create_time").FROM("auto_test_case as c");
+        sql.SELECT("c.id as id ,c.name as name,c.code as code,c.service_id as service_id,c.desc as `desc`,c.case_status as case_status,c.creator as creator,c.modifier as modifier,c.create_time as create_time").FROM("auto_test_case as c");
         AutoTestCaseQuery autoTestCaseQuery = pageQuery.getConditions();
         buildQuerySql(autoTestCaseQuery, sql);
         int currentPage = Math.max(pageQuery.getCurrentPage(), 1);
@@ -55,6 +55,12 @@ public class AutoTestCaseDynamicSqlProvider {
         if (autoTestCaseQuery.getServiceId() != 0) {
             sql.WHERE("c.service_id = #{queryCondition.conditions.serviceId}");
         }
+        if (StringUtils.hasText(autoTestCaseQuery.getName())) {
+            sql.WHERE("c.name like '${queryCondition.conditions.name}%'");
+        }
+        if (StringUtils.hasText(autoTestCaseQuery.getCode())) {
+            sql.WHERE("c.code = #{queryCondition.conditions.code}");
+        }
     }
 
     public String updateCase(Map<String, Object> params) {
@@ -76,8 +82,14 @@ public class AutoTestCaseDynamicSqlProvider {
         if (StringUtils.hasText(autoTestCaseModel.getModifier())) {
             sql.SET("modifier = #{caseModel.modifier}");
         }
+        if (StringUtils.hasText(autoTestCaseModel.getDesc())) {
+            sql.SET("desc=#{caseModel.desc}");
+        }
         if (autoTestCaseModel.getServiceId() != 0) {
             sql.SET("service_id = #{caseModel.serviceId}");
+        }
+        if (StringUtils.hasText(autoTestCaseModel.getName())) {
+            sql.SET("name=#{caseModel.name}");
         }
         sql.WHERE("id=#{caseModel.id}");
         logger.info("update case sql:[{}]", sql);

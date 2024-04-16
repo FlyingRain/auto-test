@@ -14,6 +14,8 @@ public class Scene {
 
     private String desc;
 
+
+    private String operator;
     private List<SceneCase> sceneCases;
 
     private Date createTime;
@@ -50,6 +52,15 @@ public class Scene {
 
     public void setSceneCases(List<SceneCase> sceneCases) {
         this.sceneCases = sceneCases;
+    }
+
+    public String getOperator() {
+
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
     }
 
     public Date getCreateTime() {
@@ -92,6 +103,7 @@ public class Scene {
                 ", sceneCode='" + sceneCode + '\'' +
                 ", config='" + config + '\'' +
                 ", desc='" + desc + '\'' +
+                ", operator='" + operator + '\'' +
                 ", sceneCases=" + sceneCases +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +

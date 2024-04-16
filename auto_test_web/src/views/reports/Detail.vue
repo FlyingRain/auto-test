@@ -5,7 +5,7 @@
       <el-card class="box-card">
         <div class="card-content">
           <el-descriptions title="基本信息" :column=1>
-            <el-descriptions-item label="用例id">{{ formData.caseId }}</el-descriptions-item>
+            <el-descriptions-item label="用例编码">{{ formData.caseCode }}</el-descriptions-item>
             <el-descriptions-item label="批次号">{{ formData.batchNum }}</el-descriptions-item>
             <el-descriptions-item label="执行人">{{ formData.executor }}</el-descriptions-item>
           </el-descriptions>
@@ -33,7 +33,7 @@ export default {
       drawer: false,
       formData: {
         id: '',
-        caseId: '',
+        caseCode: '',
         runStatus: '',
         batchNum: '',
         executor: '',

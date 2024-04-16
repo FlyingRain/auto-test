@@ -10,7 +10,7 @@ public class AutoTestRunLogModel {
 
     private int id;
 
-    private int  caseId;
+    private String  caseCode;
 
     private String runStatus;
 
@@ -38,12 +38,12 @@ public class AutoTestRunLogModel {
         this.id = id;
     }
 
-    public int getCaseId() {
-        return caseId;
+    public String getCaseCode() {
+        return caseCode;
     }
 
-    public void setCaseId(int caseId) {
-        this.caseId = caseId;
+    public void setCaseCode(String caseCode) {
+        this.caseCode = caseCode;
     }
 
     public String getRunResult() {
@@ -122,7 +122,7 @@ public class AutoTestRunLogModel {
     public String toString() {
         return "AutoTestRunLogModel{" +
                 "id=" + id +
-                ", caseId=" + caseId +
+                ", caseCode=" + caseCode +
                 ", runStatus='" + runStatus + '\'' +
                 ", batchNum='" + batchNum + '\'' +
                 ", executor='" + executor + '\'' +

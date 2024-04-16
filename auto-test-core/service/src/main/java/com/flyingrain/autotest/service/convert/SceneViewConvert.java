@@ -18,6 +18,7 @@ public class SceneViewConvert {
         scene.setSceneCode(autoTestScene.getSceneCode());
         scene.setSceneName(autoTestScene.getSceneName());
         scene.setConfig(autoTestScene.getConfig());
+        scene.setOperator(autoTestScene.getOperator());
         if (!CollectionUtils.isEmpty(autoTestScene.getAutoTestSceneCases())) {
             scene.setSceneCases(autoTestScene.getAutoTestSceneCases().stream().map(SceneCaseViewConvert::convertToModel).collect(Collectors.toList()));
         }
@@ -36,6 +37,7 @@ public class SceneViewConvert {
         autoTestScene.setId(scene.getId());
         autoTestScene.setConfig(scene.getConfig());
         autoTestScene.setSceneCode(scene.getSceneCode());
+        autoTestScene.setOperator(scene.getOperator());
         autoTestScene.setSceneName(scene.getSceneName());
         autoTestScene.setDesc(scene.getDesc());
         autoTestScene.setCreateTime(scene.getCreateTime());

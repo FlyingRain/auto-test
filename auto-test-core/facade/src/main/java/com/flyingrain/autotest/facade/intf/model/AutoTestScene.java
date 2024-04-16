@@ -17,6 +17,7 @@ public class AutoTestScene {
 
     private String desc;
 
+    private String operator;
     private Date createTime;
 
     private Date updateTime;
@@ -35,6 +36,14 @@ public class AutoTestScene {
 
     public String getDesc() {
         return desc;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
     }
 
     public void setDesc(String desc) {
@@ -93,6 +102,8 @@ public class AutoTestScene {
                 ", sceneName='" + sceneName + '\'' +
                 ", config='" + config + '\'' +
                 ", autoTestSceneCases=" + autoTestSceneCases +
+                ", desc='" + desc + '\'' +
+                ", operator='" + operator + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';

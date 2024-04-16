@@ -29,10 +29,10 @@ public interface AutoTestSceneMapper {
 
     @SelectProvider(value = AutoTestSceneProvider.class, method = "pageQuery")
     @ResultMap("sceneMap")
-    List<AutoTestSceneCaseModel> queryByPage(@Param("pageQueryModel") PageQuery<AutoTestSceneCaseModel> pageQuery);
+    List<AutoTestSceneModel> queryByPage(@Param("pageQueryModel") PageQuery<AutoTestSceneModel> pageQuery);
 
     @SelectProvider(value = AutoTestSceneProvider.class, method = "pageQueryCount")
-    int queryByPageCount(@Param("pageQueryModel") PageQuery<AutoTestSceneCaseModel> pageQuery);
+    int queryByPageCount(@Param("pageQueryModel") PageQuery<AutoTestSceneModel> pageQuery);
 
     @UpdateProvider(value = AutoTestSceneProvider.class, method = "updateById")
     int updateById(@Param("sceneModel") AutoTestSceneModel autoTestSceneModel);

@@ -53,8 +53,8 @@ public class AutoTestRunLogProvider {
         if (StringUtils.hasText(autoTestRunLogModel.getBatchNum())) {
             sql.WHERE("batch_num =#{pageQuery.conditions.batchNum}");
         }
-        if (autoTestRunLogModel.getCaseId() != 0) {
-            sql.WHERE("case_id = #{pageQuery.conditions.caseId}");
+        if (StringUtils.hasText(autoTestRunLogModel.getCaseCode())) {
+            sql.WHERE("case_code = #{pageQuery.conditions.caseCode}");
         }
     }
 }

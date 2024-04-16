@@ -3,21 +3,29 @@
     <el-form ref="case_from" :model="caseModel" :rules="rules" label-width="150px">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
-          <span>通用配置</span>
+          <span>基础信息</span>
         </div>
         <div class="card-content">
           <el-form-item label="用例名称:" prop="name">
             <el-input v-model="caseModel.name" placeholder="请输入用例名称"></el-input>
           </el-form-item>
+          <el-form-item label="用例编码:" prop="code">
+            <el-input v-model="caseModel.code" placeholder="请输入用例编码" :disabled="canModified"></el-input>
+          </el-form-item>
           <el-form-item label="所属服务:" prop="serviceId">
             <el-select v-model="caseModel.serviceId" placeholder="请选择所属服务" @change='serviceChange' filterable>
               <el-option
-                v-for="item in serviceList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                  v-for="item in serviceList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
               </el-option>
             </el-select>
+          </el-form-item>
+        </div>
+        <div>
+          <el-form-item label="描述:" prop="desc">
+            <el-input v-model="caseModel.desc" type="textarea" placeholder="请输入用例描述"></el-input>
           </el-form-item>
         </div>
       </el-card>
@@ -52,11 +60,12 @@
           <el-form-item label="返回体报文格式：" prop="responseDataType">
             <el-input v-model="caseModel.responseConfig.responseDataType" disabled style="width: 30%"></el-input>
             <span
-              style="font-size: 12px;color: #999a9a;margin-left: 10px">系统将按配置的报文协议将文本自动转换为对象</span>
+                style="font-size: 12px;color: #999a9a;margin-left: 10px">系统将按配置的报文协议将文本自动转换为对象</span>
 
           </el-form-item>
         </div>
-        <div v-for="(header,index) in caseModel.responseConfig.responseParam" :key="index" style="width: 100%;display: flex">
+        <div v-for="(header,index) in caseModel.responseConfig.responseParam" :key="index"
+             style="width: 100%;display: flex">
           <el-row :gutter="10" style="width: 100%">
             <el-col style="width: 30%">
               <el-form-item :label="'结果:'" :prop="'responseConfig.responseParam.'+index+'.key'">
@@ -64,7 +73,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="6" style="height: 40px;display: grid;place-items: center;">
-              <label >映射为:</label>
+              <label>映射为:</label>
             </el-col>
             <el-col style="width: 30%">
               <el-form-item :label="'变量:'" :prop="'responseConfig.responseParam.'+index+'.value'">
@@ -93,10 +102,10 @@
                   <el-select v-model="checkPoint.checkPointType" placeholder="请选择校验类型"
                              filterable @change='changeCheckPoint(checkPoint)'>
                     <el-option
-                      v-for="item in checkPointType"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
+                        v-for="item in checkPointType"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
                     </el-option>
                   </el-select>
                 </el-form-item>
@@ -105,10 +114,10 @@
                   <el-select v-model="checkPoint.sourceCode" placeholder="请选择数据源"
                              filterable>
                     <el-option
-                      v-for="item in sourceList"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
+                        v-for="item in sourceList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
                     </el-option>
                   </el-select>
                 </el-form-item>
@@ -123,10 +132,10 @@
                 <el-form-item :prop="'checkPoints.'+index+'.judges.'+idx+'.logic'">
                   <el-select v-model="judge.logic" placeholder="请选择比较器">
                     <el-option
-                      v-for="item in logicType"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
+                        v-for="item in logicType"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
                     </el-option>
                   </el-select>
                 </el-form-item>
@@ -146,10 +155,10 @@
               <el-select placeholder="选择与或" style="height: 40px;width: 120px;"
                          @change='addJudge(checkPoint,$event)' v-model="lType">
                 <el-option
-                  v-for="item in refType"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
+                    v-for="item in refType"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
                 </el-option>
               </el-select>
             </el-card>
@@ -159,10 +168,10 @@
             <el-select placeholder="选择与或" style="height: 40px;width: 120px;"
                        @change='addCheckPoint' v-model="lType2">
               <el-option
-                v-for="item in refType"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                  v-for="item in refType"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
               </el-option>
             </el-select>
             <el-button type="info" size="small" @click.prevent="removeCheckPoint" style="margin-left: 10px">删除
@@ -190,12 +199,15 @@ export default {
       caseModel: {
         id: '',
         name: '',
+        code: '',
         serviceId: '',
+        desc: '',
         responseDataType: '',
         checkPoints: [{judges: [{logic: '', expect: '', param: ''}], sourceCode: ''}],
         responseConfig: {responseParam: []},
         paramValue: []
       },
+      canModified: false,
       lType: '',
       lType2: '',
       showScript: false,
@@ -247,6 +259,11 @@ export default {
           required: true,
           message: '请选择服务',
           trigger: 'blur'
+        }],
+        code: [{
+          required: true,
+          message: '请输入用例编码',
+          trigger: 'blur'
         }]
       }
 
@@ -256,6 +273,7 @@ export default {
     this.getAppList()
     this.getSourceList()
     if (this.$route.query.id) {
+      this.canModified = true
       this.getCaseDetail(this.$route.query.id)
     }
     this.addCheckPointRules()
@@ -504,7 +522,7 @@ export default {
 
 .card-content {
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
   flex-wrap: wrap;
 }
 

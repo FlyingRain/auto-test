@@ -1,9 +1,11 @@
 package com.flyingrain.autotest.domain.service;
 
+import com.flyingrain.autotest.common.util.AutoTestResultCodeEnum;
 import com.flyingrain.autotest.common.util.PageQuery;
 import com.flyingrain.autotest.common.util.PageableModel;
 import com.flyingrain.autotest.common.util.RunTimeContext;
 import com.flyingrain.autotest.common.util.constant.AutoTestConstants;
+import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import com.flyingrain.autotest.domain.core.ExecuteContext;
 import com.flyingrain.autotest.domain.core.ExecuteUnit;
 import com.flyingrain.autotest.domain.core.ExecuteUnitBuilder;
@@ -18,8 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -90,12 +93,39 @@ public class CaseService {
         return runId;
     }
 
+    /**
+     * 这里查询用例的详细信息，并用填充好service，为后续执行做准备
+     *
+     * @param caseIds
+     * @return
+     */
+    public List<Case> queryFilledCaseByIds(List<Integer> caseIds) {
+        List<AutoTestCaseModel> autoTestCaseModels = autoTestCaseMapper.queryCaseByIds(caseIds);
+        if (!CollectionUtils.isEmpty(autoTestCaseModels)) {
+            List<Integer> serviceIds = autoTestCaseModels.stream().map(AutoTestCaseModel::getServiceId).distinct().toList();
+            List<Service> services = serviceManager.queryServiceByIds(serviceIds);
+            return autoTestCaseModels.stream().map(autoTestCaseModel -> {
+                Case runCase = CaseModelConvert.convertCaseModel(autoTestCaseModel);
+                for (Service service : services) {
+                    if (service.getId() == runCase.getServiceId()) {
+                        runCase.setService(service);
+                        break;
+                    }
+                    throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "用例服务不存在，用例编码:" + runCase.getCode() + ",服务id：" + runCase.getServiceId());
+                }
+                return runCase;
+            }).toList();
+        }
+        return new ArrayList<>();
+    }
+
 
     private AutoTestCaseQuery buildQuery(CaseQuery conditions) {
         AutoTestCaseQuery autoTestCaseQuery = new AutoTestCaseQuery();
         autoTestCaseQuery.setServiceId(conditions.getServiceId());
         autoTestCaseQuery.setId(conditions.getId());
         autoTestCaseQuery.setName(conditions.getName());
+        autoTestCaseQuery.setCode(conditions.getCode());
         autoTestCaseQuery.setCreator(conditions.getCreator());
         autoTestCaseQuery.setSceneId(conditions.getSceneId());
         return autoTestCaseQuery;

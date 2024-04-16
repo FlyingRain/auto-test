@@ -24,7 +24,7 @@ public interface SceneFacade {
 
     @Path("/update")
     @POST
-    CommonResult<AutoTestScene> update(AutoTestScene autoTestScene);
+    CommonResult<Boolean> update(AutoTestScene autoTestScene);
 
     @Path("/detail")
     @GET
@@ -33,6 +33,6 @@ public interface SceneFacade {
 
     @Path("/batchDel")
     @POST
-    CommonResult<Integer> batchDel(BatchDelRequest batchDelRequest);
+    CommonResult<Boolean> delScene(@QueryParam("id")Integer sceneId);
 
 }

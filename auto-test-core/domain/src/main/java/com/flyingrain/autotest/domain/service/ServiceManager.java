@@ -125,8 +125,6 @@ public class ServiceManager {
     }
 
 
-
-
     @Transactional
     public int updateServiceById(Service service) {
         logger.info("update service:[{}]", service);
@@ -146,6 +144,13 @@ public class ServiceManager {
         } else {
             throw new AutoTestException("500", "服务下存在用例，请先删除服务下的所有用例");
         }
+    }
+
+    public List<Service> queryServiceByIds(List<Integer> serviceIds) {
+        logger.info("query serviceIds:[{}]", serviceIds);
+        List<AutoTestServiceModel> autoTestServiceModels = autoTestServiceMapper.queryServiceByIds(serviceIds);
+        return autoTestServiceModels.stream().map(ServiceModelConvert::convertServiceModel).collect(Collectors.toList());
+
     }
 
     private boolean beforeDeleteCheck(List<Integer> serviceIds) {

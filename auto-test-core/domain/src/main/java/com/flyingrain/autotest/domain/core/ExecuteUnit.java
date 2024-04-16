@@ -20,7 +20,6 @@ import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * 执行单元
@@ -67,7 +66,7 @@ public class ExecuteUnit<R> {
         runLog.setRunStatus(checkResult.getValid() ? RunLogStatusEnum.SUCCESS.getCode() : RunLogStatusEnum.FAIL.getCode());
         runLog.setExecuteTime(executeTime);
         runLog.setCaseSpendTime(executeResult.getSpendTime());
-        runLog.setCaseId(aCase.getId());
+        runLog.setCaseCode(aCase.getCode());
         runLog.setMessage(checkResult.getMessage());
         if (StringUtils.hasText(executeResult.getResult())) {
             executeResult.setResult(executeResult.getResult().length() > 1024 ? executeResult.getResult().substring(0, 1024) : executeResult.getResult());

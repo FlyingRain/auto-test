@@ -8,15 +8,20 @@ import java.util.Date;
  */
 public class AutoTestCaseModel {
 
+
     private int id;
 
     private String name;
+
+    private String code;
 
     private int serviceId;
 
     private String caseStatus;
 
     private String checkPointConfig;
+
+    private String desc;
 
     private String paramValue;
 
@@ -56,6 +61,22 @@ public class AutoTestCaseModel {
 
     public int getServiceId() {
         return serviceId;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
     public void setServiceId(int serviceId) {
@@ -117,5 +138,23 @@ public class AutoTestCaseModel {
 
     public void setParamValue(String paramValue) {
         this.paramValue = paramValue;
+    }
+
+    @Override
+    public String toString() {
+        return "AutoTestCaseModel{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", serviceId=" + serviceId +
+                ", caseStatus='" + caseStatus + '\'' +
+                ", checkPointConfig='" + checkPointConfig + '\'' +
+                ", desc='" + desc + '\'' +
+                ", paramValue='" + paramValue + '\'' +
+                ", resultCollectConfig='" + resultCollectConfig + '\'' +
+                ", creator='" + creator + '\'' +
+                ", modifier='" + modifier + '\'' +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }

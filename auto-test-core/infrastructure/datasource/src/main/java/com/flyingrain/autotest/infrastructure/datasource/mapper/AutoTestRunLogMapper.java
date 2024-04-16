@@ -13,18 +13,18 @@ import java.util.List;
  */
 public interface AutoTestRunLogMapper {
 
-    @Insert("insert into auto_test_run_log (case_id,run_status,batch_num,executor,execute_time,run_result,case_spend_time,message) values (#{caseId},#{runStatus},#{batchNum},#{executor},#{executeTime},#{runResult},#{caseSpendTime},#{message})")
+    @Insert("insert into auto_test_run_log (case_code,run_status,batch_num,executor,execute_time,run_result,case_spend_time,message) values (#{caseCode},#{runStatus},#{batchNum},#{executor},#{executeTime},#{runResult},#{caseSpendTime},#{message})")
     int insertRunLog(AutoTestRunLogModel autoTestRunLogModel);
 
-    @Insert("<script>insert into auto_test_run_log (case_id,run_status,batch_num,executor,execute_time,run_result,case_spend_time,message) values <foreach item='item' index='index' collection='runLogs' separator=','>" +
-            "(#{item.caseId},#{item.runStatus},#{item.batchNum},#{item.executor},#{item.executeTime},#{item.runResult},#{item.caseSpendTime},#{item.message})</foreach></script>")
+    @Insert("<script>insert into auto_test_run_log (case_code,run_status,batch_num,executor,execute_time,run_result,case_spend_time,message) values <foreach item='item' index='index' collection='runLogs' separator=','>" +
+            "(#{item.caseCode},#{item.runStatus},#{item.batchNum},#{item.executor},#{item.executeTime},#{item.runResult},#{item.caseSpendTime},#{item.message})</foreach></script>")
     int insertRunLogBatch(@Param("runLogs") List<AutoTestRunLogModel> runLogModels);
 
     @SelectProvider(value = AutoTestRunLogProvider.class,method = "pageQuery")
     @Results(id = "runLogMap", value = {
             @Result(id = true, property = "id", column = "id"),
             @Result(property = "runStatus", column = "run_status"),
-            @Result(property = "caseId", column = "case_id"),
+            @Result(property = "caseCode", column = "case_code"),
             @Result(property = "batchNum", column = "batch_num"),
             @Result(property = "executor", column = "executor"),
             @Result(property = "executeTime", column = "execute_time"),

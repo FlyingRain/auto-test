@@ -17,11 +17,13 @@ public class CaseViewConvert {
         autoTestCase.setCreator(testCase.getCreator());
         autoTestCase.setModifier(testCase.getModifier());
         autoTestCase.setId(testCase.getId());
+        autoTestCase.setDesc(testCase.getDesc());
         autoTestCase.setCheckPoints(testCase.getCheckPoints());
         autoTestCase.setUpdateTime(testCase.getUpdateTime());
         autoTestCase.setResponseConfig(testCase.getResultCollectConfig());
         autoTestCase.setParamValue(testCase.getParamValue());
         autoTestCase.setName(testCase.getName());
+        autoTestCase.setCode(testCase.getCode());
         autoTestCase.setAutoTestService(ServiceViewConvert.convertModel(testCase.getService()));
         autoTestCase.setServiceId(testCase.getServiceId());
         return autoTestCase;
@@ -38,6 +40,8 @@ public class CaseViewConvert {
         testCase.setCreator(autoTestCase.getCreator());
         testCase.setModifier(autoTestCase.getModifier());
         testCase.setId(autoTestCase.getId());
+        testCase.setCode(autoTestCase.getCode());
+        testCase.setDesc(autoTestCase.getDesc());
         testCase.setCheckPoints(autoTestCase.getCheckPoints());
         testCase.setUpdateTime(autoTestCase.getUpdateTime());
         testCase.setResultCollectConfig(autoTestCase.getResponseConfig());

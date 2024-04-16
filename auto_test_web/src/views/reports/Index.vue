@@ -6,8 +6,8 @@
           <el-form-item label="批次号：">
             <el-input v-model.trim="searchForm.conditions.batchNum" placeholder="请输入批次号"></el-input>
           </el-form-item>
-          <el-form-item label="用例id：">
-            <el-input v-model.trim="searchForm.conditions.caseId" placeholder="请输入用例id"></el-input>
+          <el-form-item label="用例编码：">
+            <el-input v-model.trim="searchForm.conditions.caseCode" placeholder="请输入用例编码"></el-input>
           </el-form-item>
           <el-form-item label="状态:" prop="serviceId">
             <template>
@@ -32,7 +32,7 @@
       <el-table ref="table" :data="tableData" stripe border>
         <el-table-column prop="id" label="id" width="50"/>
         <el-table-column prop="batchNum" label="执行批次" show-overflow-tooltip/>
-        <el-table-column prop="caseId" label="用例id" show-overflow-tooltip/>
+        <el-table-column prop="caseCode" label="用例编码" show-overflow-tooltip/>
         <el-table-column prop="runStatus" label="执行状态" show-overflow-tooltip>
           <template v-slot="row">
             <span v-if="row.row.runStatus==='SUCCESS'" style="color: green"> 成功</span>
@@ -76,7 +76,7 @@ export default {
         pageSize: 10,
         conditions: {
           batchNum: '',
-          caseId: '',
+          caseCode: '',
           runStatus: ''
         }
       },

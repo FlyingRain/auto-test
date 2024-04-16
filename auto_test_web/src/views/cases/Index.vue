@@ -43,7 +43,9 @@
       <el-table ref="table" :data="tableData" stripe border>
         <el-table-column prop="id" label="id" width="50"/>
         <el-table-column prop="name" label="用例名" show-overflow-tooltip/>
+        <el-table-column prop="code" label="用例编码" show-overflow-tooltip/>
         <el-table-column prop="serviceName" label="所属服务" show-overflow-tooltip/>
+        <el-table-column prop="desc" label="描述" show-overflow-tooltip/>
         <el-table-column prop="creator" label="创建人" show-overflow-tooltip/>
         <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip/>
         <el-table-column label="操作" width="350">

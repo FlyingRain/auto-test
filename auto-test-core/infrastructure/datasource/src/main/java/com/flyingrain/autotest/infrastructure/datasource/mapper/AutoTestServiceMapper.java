@@ -2,6 +2,7 @@ package com.flyingrain.autotest.infrastructure.datasource.mapper;
 
 import com.flyingrain.autotest.common.util.PageQuery;
 import com.flyingrain.autotest.infrastructure.datasource.mapper.provider.ServiceDynamicSqlProvider;
+import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestCaseModel;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestServiceModel;
 import org.apache.ibatis.annotations.*;
 
@@ -63,4 +64,8 @@ public interface AutoTestServiceMapper {
     @Select("select * from auto_test_service")
     @ResultMap("serviceMap")
     List<AutoTestServiceModel> queryAllService();
+
+    @Select("<script>select *  from auto_test_service where id in <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>")
+    @ResultMap("serviceMap")
+    List<AutoTestServiceModel> queryServiceByIds(List<Integer> serviceIds);
 }

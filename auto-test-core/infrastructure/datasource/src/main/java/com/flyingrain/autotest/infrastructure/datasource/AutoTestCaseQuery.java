@@ -6,6 +6,8 @@ public class AutoTestCaseQuery {
 
     private String name;
 
+    private String code;
+
     private String creator;
 
     private int serviceId;
@@ -52,11 +54,20 @@ public class AutoTestCaseQuery {
         this.sceneId = sceneId;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     @Override
     public String toString() {
         return "AutoTestCaseQuery{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
                 ", creator='" + creator + '\'' +
                 ", serviceId=" + serviceId +
                 ", sceneId=" + sceneId +

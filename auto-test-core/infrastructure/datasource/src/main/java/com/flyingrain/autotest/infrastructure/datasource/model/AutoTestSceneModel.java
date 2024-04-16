@@ -14,6 +14,8 @@ public class AutoTestSceneModel {
 
     private String config;
 
+    private String operator;
+
     private Date createTime;
 
     private Date updateTime;
@@ -76,6 +78,15 @@ public class AutoTestSceneModel {
         this.updateTime = updateTime;
     }
 
+    public String getOperator() {
+
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+
     @Override
     public String toString() {
         return "AutoTestSceneModel{" +
@@ -84,6 +95,7 @@ public class AutoTestSceneModel {
                 ", sceneCode='" + sceneCode + '\'' +
                 ", desc='" + desc + '\'' +
                 ", config='" + config + '\'' +
+                ", operator='" + operator + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';

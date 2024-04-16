@@ -10,7 +10,11 @@ public class AutoTestCase {
 
     private String name;
 
+    private String code;
+
     private String paramValue;
+
+    private String desc;
 
     private String responseConfig;
 
@@ -50,6 +54,14 @@ public class AutoTestCase {
 
     public void setModifier(String modifier) {
         this.modifier = modifier;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public Date getUpdateTime() {
@@ -124,15 +136,31 @@ public class AutoTestCase {
         this.autoTestService = autoTestService;
     }
 
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
     @Override
     public String toString() {
         return "AutoTestCase{" +
                 "id=" + id +
                 ", serviceId=" + serviceId +
                 ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
                 ", paramValue='" + paramValue + '\'' +
+                ", desc='" + desc + '\'' +
                 ", responseConfig='" + responseConfig + '\'' +
                 ", checkPoints='" + checkPoints + '\'' +
+                ", caseStatus='" + caseStatus + '\'' +
+                ", autoTestService=" + autoTestService +
+                ", creator='" + creator + '\'' +
+                ", modifier='" + modifier + '\'' +
+                ", updateTime=" + updateTime +
+                ", createTime=" + createTime +
                 '}';
     }
 }

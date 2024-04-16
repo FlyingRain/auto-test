@@ -19,8 +19,10 @@ public interface AutoTestCaseMapper {
     @Results(id = "caseMap", value = {
             @Result(id = true, property = "id", column = "id"),
             @Result(property = "name", column = "name"),
+            @Result(property = "code", column = "code"),
             @Result(property = "serviceId", column = "service_id"),
             @Result(property = "caseStatus", column = "case_status"),
+            @Result(property = "desc", column = "desc"),
             @Result(property = "checkPointConfig", column = "check_point_config"),
             @Result(property = "paramValue", column = "param_value"),
             @Result(property = "resultCollectConfig", column = "result_collect_config"),
@@ -47,11 +49,15 @@ public interface AutoTestCaseMapper {
     @UpdateProvider(type = AutoTestCaseDynamicSqlProvider.class,method = "updateCase")
     int updateCaseById(@Param("caseModel") AutoTestCaseModel autoTestCaseModel);
 
-    @Insert("insert into auto_test_case (name,service_id,case_status,check_point_config,result_collect_config,param_value,modifier,creator) values " +
-            "(#{caseModel.name},#{caseModel.serviceId},#{caseModel.caseStatus},#{caseModel.checkPointConfig},#{caseModel.resultCollectConfig},#{caseModel.paramValue},#{caseModel.modifier},#{caseModel.creator})")
+    @Insert("insert into auto_test_case (name,code,service_id,case_status,`desc`,check_point_config,result_collect_config,param_value,modifier,creator) values " +
+            "(#{caseModel.name},#{caseModel.code},#{caseModel.serviceId},#{caseModel.caseStatus},#{caseModel.desc},#{caseModel.checkPointConfig},#{caseModel.resultCollectConfig},#{caseModel.paramValue},#{caseModel.modifier},#{caseModel.creator})")
     int insertCase(@Param("caseModel") AutoTestCaseModel autoTestCaseModel);
 
 
     @Delete("<script>delete from auto_test_case where id in <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>")
     int batchDel(@Param("ids") List<Integer> ids);
+
+    @Select("<script>select *  from auto_test_case where id in <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>")
+    @ResultMap("caseMap")
+    List<AutoTestCaseModel> queryCaseByIds(List<Integer> caseIds);
 }

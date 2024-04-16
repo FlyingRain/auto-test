@@ -6,22 +6,10 @@
       <el-col>
         <el-form ref="searchRef" :model="searchForm" size="small" inline>
           <el-form-item label="用例名称：" prop="name">
-            <el-input v-model.trim="searchForm.conditions.name" placeholder="请输入服务名称"/>
+            <el-input v-model.trim="searchForm.conditions.sceneName" placeholder="请输入场景名称"/>
           </el-form-item>
-          <el-form-item label="创建人：" prop="creator">
-            <el-input v-model.trim="searchForm.conditions.creator" placeholder="请输入服务编码"/>
-          </el-form-item>
-          <el-form-item label="所属服务:" prop="serviceId">
-            <template>
-              <el-select v-model="searchForm.conditions.serviceId" filterable placeholder="请选择">
-                <el-option
-                    v-for="item in appList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                </el-option>
-              </el-select>
-            </template>
+          <el-form-item label="创建人：" prop="code">
+            <el-input v-model.trim="searchForm.conditions.sceneCode" placeholder="请输入场景编码"/>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" size="small" @click="handleSearch()">查询</el-button>
@@ -39,12 +27,10 @@
       <!-- 表格 -->
       <el-table ref="table" :data="tableData" stripe border>
         <el-table-column prop="id" label="id" width="50"/>
-        <el-table-column prop="serviceName" label="服务名" show-overflow-tooltip/>
-        <el-table-column prop="serviceCode" label="服务编码" show-overflow-tooltip/>
-        <el-table-column prop="protocolType" label="协议类型" show-overflow-tooltip/>
-        <el-table-column prop="requestPath" label="请求路径" show-overflow-tooltip/>
-        <el-table-column prop="appName" label="归属应用" show-overflow-tooltip/>
-        <el-table-column prop="creator" label="创建人" show-overflow-tooltip/>
+        <el-table-column prop="sceneName" label="场景名称" show-overflow-tooltip/>
+        <el-table-column prop="sceneCode" label="场景编码" show-overflow-tooltip/>
+        <el-table-column prop="desc" label="描述" show-overflow-tooltip/>
+        <el-table-column prop="operator" label="操作人" show-overflow-tooltip/>
         <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip/>
         <el-table-column label="操作" width="250">
           <template v-slot="row">
@@ -78,16 +64,28 @@ export default {
         currentPage: 1,
         pageSize: 10,
         conditions: {
-          name: '',
-          serviceId: '',
-          creator: ''
+          sceneName: '',
+          sceneCode: ''
         }
-      },
-      appList: []
+      }
     }
   },
   created() {
     console.log('load this page')
+    this.initPage()
+  },
+  methods: {
+    async initPage() {
+      const result = await this.$axios.post('/scene/list', this.searchForm)
+      if (result.data.success) {
+        this.tableData = result.data.data.data
+      } else {
+        this.$message.error(result.data.message)
+      }
+    },
+    handleSearch() {
+      this.initPage()
+    }
   }
 }
 

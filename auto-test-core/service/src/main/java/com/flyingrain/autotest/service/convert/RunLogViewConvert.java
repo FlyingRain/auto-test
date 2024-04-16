@@ -14,7 +14,7 @@ public class RunLogViewConvert {
         autoTestRunLog.setBatchNum(runLog.getBatchNum());
         autoTestRunLog.setId(runLog.getId());
         autoTestRunLog.setExecutor(runLog.getExecutor());
-        autoTestRunLog.setCaseId(runLog.getCaseId());
+        autoTestRunLog.setCaseCode(runLog.getCaseCode());
         autoTestRunLog.setRunResult(runLog.getRunResult());
         autoTestRunLog.setCreateTime(runLog.getCreateTime());
         autoTestRunLog.setMessage(runLog.getMessage());
@@ -30,7 +30,7 @@ public class RunLogViewConvert {
         }
         RunLog runLog = new RunLog();
         runLog.setExecutor(autoTestRunLog.getExecutor());
-        runLog.setCaseId(autoTestRunLog.getCaseId());
+        runLog.setCaseCode(autoTestRunLog.getCaseCode());
         runLog.setCaseSpendTime(autoTestRunLog.getSpendTime());
         runLog.setCreateTime(autoTestRunLog.getCreateTime());
         runLog.setUpdateTime(autoTestRunLog.getUpdateTime());

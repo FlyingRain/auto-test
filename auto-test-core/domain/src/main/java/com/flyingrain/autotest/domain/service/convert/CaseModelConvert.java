@@ -16,6 +16,8 @@ public class CaseModelConvert {
         Case runCase = new Case();
         runCase.setCaseStatus(autoTestCaseModel.getCaseStatus());
         runCase.setId(autoTestCaseModel.getId());
+        runCase.setDesc(autoTestCaseModel.getDesc());
+        runCase.setCode(autoTestCaseModel.getCode());
         runCase.setCreateTime(autoTestCaseModel.getCreateTime());
         runCase.setCheckPoints(autoTestCaseModel.getCheckPointConfig());
         runCase.setCreator(autoTestCaseModel.getCreator());
@@ -36,7 +38,9 @@ public class CaseModelConvert {
         AutoTestCaseModel autoTestCaseModel = new AutoTestCaseModel();
         autoTestCaseModel.setCaseStatus(runCase.getCaseStatus());
         autoTestCaseModel.setModifier(runCase.getModifier());
+        autoTestCaseModel.setCode(runCase.getCode());
         autoTestCaseModel.setCreator(runCase.getCreator());
+        autoTestCaseModel.setDesc(runCase.getDesc());
         autoTestCaseModel.setUpdateTime(runCase.getUpdateTime());
         autoTestCaseModel.setCreator(runCase.getCreator());
         autoTestCaseModel.setName(runCase.getName());
