@@ -102,9 +102,23 @@ const router = new Router({
             {
               path: '/autotest/scene',
               meta: {
-                title: '场景编排'
+                title: '场景管理'
               },
               component: () => import('@/views/scene/Index.vue')
+            },
+            {
+              path: '/autotest/scene/addScene',
+              meta: {
+                title: '场景编排'
+              },
+              component: () => import('@/views/scene/Add.vue')
+            },
+            {
+              path: '/autotest/scene/addCase',
+              meta: {
+                title: '场景编排'
+              },
+              component: () => import('@/views/scene/Add.vue')
             },
             {
               path: '/autotest/report',

@@ -8,7 +8,7 @@
           <el-form-item label="用例名称：" prop="name">
             <el-input v-model.trim="searchForm.conditions.sceneName" placeholder="请输入场景名称"/>
           </el-form-item>
-          <el-form-item label="创建人：" prop="code">
+          <el-form-item label="场景编码：" prop="code">
             <el-input v-model.trim="searchForm.conditions.sceneCode" placeholder="请输入场景编码"/>
           </el-form-item>
           <el-form-item>
@@ -19,7 +19,7 @@
       </el-col>
       <el-col>
         <div class="opts">
-          <el-button type="primary" icon="el-icon-circle-plus" size="small" @click="changeView('/service/add')"> 新增
+          <el-button type="primary" icon="el-icon-circle-plus" size="small" @click="changeView('/autotest/scene/addScene')"> 新增
           </el-button>
         </div>
       </el-col>
@@ -34,9 +34,9 @@
         <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip/>
         <el-table-column label="操作" width="250">
           <template v-slot="row">
-            <el-button type="success" size="small" @click="changeView('/service/update',{id:row.row.id})">编辑
+            <el-button type="success" size="small" @click="changeView('/service/update',{id:row.row.id})">运行
             </el-button>
-            <el-button type="primary" size="small" @click="detail(row.row.id)"> 详情</el-button>
+            <el-button type="primary" size="small" @click="detail(row.row.id)"> 编排</el-button>
             <el-button type="danger" size="small" @click="deleteService(row.row.id)"> 删除</el-button>
           </template>
         </el-table-column>
@@ -85,6 +85,17 @@ export default {
     },
     handleSearch() {
       this.initPage()
+    },
+    handleClear() {
+      this.searchForm.conditions.sceneCode = ''
+      this.searchForm.conditions.sceneName = ''
+      this.initPage()
+    },
+    changeView(path, queryParam) {
+      this.$router.push({
+        path: path,
+        query: queryParam
+      })
     }
   }
 }

@@ -21,7 +21,7 @@ public class AutoTestCaseDynamicSqlProvider {
         AutoTestCaseQuery autoTestCaseQuery = pageQuery.getConditions();
         buildQuerySql(autoTestCaseQuery, sql);
         int currentPage = Math.max(pageQuery.getCurrentPage(), 1);
-        int pageSize = Math.max(pageQuery.getPageSize(), 10);
+        int pageSize = pageQuery.getPageSize() < 1 ? 10 : pageQuery.getPageSize();
         int offset = (currentPage - 1) * pageSize;
 
         sql.LIMIT(pageSize);

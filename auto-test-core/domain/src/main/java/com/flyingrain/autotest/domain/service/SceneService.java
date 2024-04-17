@@ -40,9 +40,17 @@ public class SceneService {
     @Autowired
     private CaseService caseService;
 
+    @Transactional
     public boolean add(Scene scene) {
         logger.info("start to add scene:[{}]", scene);
-        int count = autoTestSceneMapper.insert(SceneModelConvert.convertToModel(scene));
+        AutoTestSceneModel autoTestSceneModel = SceneModelConvert.convertToModel(scene);
+        int count = autoTestSceneMapper.insert(autoTestSceneModel);
+        scene.setId(autoTestSceneModel.getId());
+        if(!CollectionUtils.isEmpty(scene.getSceneCases())){
+            logger.info("start to add sceneCase :[{}]",scene.getSceneCases().size());
+            List<AutoTestSceneCaseModel> autoTestSceneCaseModels = scene.getSceneCases().stream().peek(sceneCase -> sceneCase.setSceneId(scene.getId())).map(SceneCaseModelConvert::convertToModel).collect(Collectors.toList());
+            autoTestCaseSceneMapper.batchInsert(autoTestSceneCaseModels);
+        }
         return count == 1;
     }
 
