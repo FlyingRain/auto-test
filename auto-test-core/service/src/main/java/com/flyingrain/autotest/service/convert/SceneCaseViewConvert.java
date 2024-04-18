@@ -12,6 +12,7 @@ public class SceneCaseViewConvert {
         }
         AutoTestSceneCase autoTestSceneCase = new AutoTestSceneCase();
         autoTestSceneCase.setCaseId(sceneCase.getCaseId());
+        autoTestSceneCase.setSceneId(sceneCase.getSceneId());
         autoTestSceneCase.setId(sceneCase.getId());
         autoTestSceneCase.setExecuteOrder(sceneCase.getExecuteOrder());
         autoTestSceneCase.setCreateTime(sceneCase.getCreateTime());

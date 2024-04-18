@@ -19,7 +19,8 @@
       </el-col>
       <el-col>
         <div class="opts">
-          <el-button type="primary" icon="el-icon-circle-plus" size="small" @click="changeView('/autotest/scene/addScene')"> 新增
+          <el-button type="primary" icon="el-icon-circle-plus" size="small"
+                     @click="changeView('/autotest/scene/addScene')"> 新增
           </el-button>
         </div>
       </el-col>
@@ -36,8 +37,9 @@
           <template v-slot="row">
             <el-button type="success" size="small" @click="changeView('/service/update',{id:row.row.id})">运行
             </el-button>
-            <el-button type="primary" size="small" @click="detail(row.row.id)"> 编排</el-button>
-            <el-button type="danger" size="small" @click="deleteService(row.row.id)"> 删除</el-button>
+            <el-button type="primary" size="small" @click="changeView('/autotest/scene/update',{id:row.row.id})"> 编排
+            </el-button>
+            <el-button type="danger" size="small" @click="deleteScene(row.row.id)"> 删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -79,6 +81,7 @@ export default {
       const result = await this.$axios.post('/scene/list', this.searchForm)
       if (result.data.success) {
         this.tableData = result.data.data.data
+        this.total = result.data.data.total
       } else {
         this.$message.error(result.data.message)
       }
@@ -95,6 +98,33 @@ export default {
       this.$router.push({
         path: path,
         query: queryParam
+      })
+    },
+    handleSizeChange(val) {
+      this.searchForm.pageSize = val
+      this.searchForm.currentPage = 1
+      this.initPage()
+    },
+    handleCurrentPageChange(val) {
+      this.searchForm.currentPage = val
+      this.initPage()
+    },
+    deleteScene(sceneId) {
+      this.$confirm('确认删除此条信息?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post('/scene/del', {}, {params: {id: sceneId}}).then(res => {
+          if (res.data.success) {
+            this.$message.success('删除成功')
+            this.tableData = this.tableData.filter(d => {
+              return !(d.id === sceneId)
+            })
+          } else {
+            this.$message.error(res.data.message)
+          }
+        })
       })
     }
   }

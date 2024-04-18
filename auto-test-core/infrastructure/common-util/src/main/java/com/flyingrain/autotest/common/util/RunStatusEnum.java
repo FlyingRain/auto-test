@@ -1,6 +1,6 @@
 package com.flyingrain.autotest.common.util;
 
-public enum RunLogStatusEnum {
+public enum RunStatusEnum {
 
     SUCCESS("SUCCESS","执行成功"),
 
@@ -15,7 +15,7 @@ public enum RunLogStatusEnum {
 
     private String desc;
 
-    RunLogStatusEnum(String code, String desc) {
+    RunStatusEnum(String code, String desc) {
         this.code = code;
         this.desc = desc;
     }

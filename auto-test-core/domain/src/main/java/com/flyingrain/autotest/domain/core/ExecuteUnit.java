@@ -2,7 +2,7 @@ package com.flyingrain.autotest.domain.core;
 
 import com.flyingrain.autotest.common.util.AutoTestResultCodeEnum;
 import com.flyingrain.autotest.common.util.CompareRuleEnum;
-import com.flyingrain.autotest.common.util.RunLogStatusEnum;
+import com.flyingrain.autotest.common.util.RunStatusEnum;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import com.flyingrain.autotest.domain.core.checkpoints.CheckPoint;
 import com.flyingrain.autotest.domain.core.executor.Executor;
@@ -46,7 +46,7 @@ public class ExecuteUnit<R> {
      *
      * @return
      */
-    public void run(ExecuteContext executeContext) {
+    public CheckResult run(ExecuteContext executeContext) {
 
         ExecuteParam executeParam = requestAssemble.assembleRequest(executeContext);
 
@@ -57,20 +57,21 @@ public class ExecuteUnit<R> {
         CheckResult checkResult = runCheckPoints(executeResult);
 
         recordRunLog(executeResult, checkResult, executeContext);
+
+        return checkResult;
     }
 
     private void recordRunLog(ExecuteResult executeResult, CheckResult checkResult, ExecuteContext executeContext) {
         Date executeTime = new Date();
         RunLog runLog = new RunLog();
         runLog.setBatchNum(executeContext.getExecuteCode());
-        runLog.setRunStatus(checkResult.getValid() ? RunLogStatusEnum.SUCCESS.getCode() : RunLogStatusEnum.FAIL.getCode());
+        runLog.setRunStatus(checkResult.getValid() ? RunStatusEnum.SUCCESS.getCode() : RunStatusEnum.FAIL.getCode());
         runLog.setExecuteTime(executeTime);
         runLog.setCaseSpendTime(executeResult.getSpendTime());
         runLog.setCaseCode(aCase.getCode());
         runLog.setMessage(checkResult.getMessage());
         if (StringUtils.hasText(executeResult.getResult())) {
-            executeResult.setResult(executeResult.getResult().length() > 1024 ? executeResult.getResult().substring(0, 1024) : executeResult.getResult());
-            runLog.setRunResult(executeResult.getResult());
+            runLog.setRunResult(executeResult.getResult().length() > 1024 ? executeResult.getResult().substring(0, 1024) : executeResult.getResult());
         }
         runLog.setExecutor(executeContext.getExecutor());
         runLogService.insertRunLog(runLog);
@@ -142,5 +143,12 @@ public class ExecuteUnit<R> {
 
     public void setaCase(Case aCase) {
         this.aCase = aCase;
+    }
+
+    @Override
+    public String toString() {
+        return "ExecuteUnit{" +
+                "aCase=" + aCase +
+                '}';
     }
 }

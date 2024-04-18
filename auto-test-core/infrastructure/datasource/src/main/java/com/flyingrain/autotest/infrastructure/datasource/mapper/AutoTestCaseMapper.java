@@ -59,5 +59,5 @@ public interface AutoTestCaseMapper {
 
     @Select("<script>select *  from auto_test_case where id in <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>")
     @ResultMap("caseMap")
-    List<AutoTestCaseModel> queryCaseByIds(List<Integer> caseIds);
+    List<AutoTestCaseModel> queryCaseByIds(@Param("ids") List<Integer> caseIds);
 }

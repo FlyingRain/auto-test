@@ -44,7 +44,8 @@ public enum AutoTestResultCodeEnum {
     TEMPLATE_ERROR("516","模板格式错误"),
 
     NOT_SUPPORT_DATA_SOURCE("518","不支持的数据源"),
-    NOT_SUPPORT_DATA_TYPE("519","不支持的数据源"),
+    NOT_SUPPORT_DATA_TYPE("519","不支持的数据类型"),
+    NOT_SUPPORT_METHOD("520","不支持的函数"),
 
 
     USER_NOT_EXIST("550", "用户不存在"),

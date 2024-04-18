@@ -11,7 +11,7 @@ import java.util.List;
 public interface AutoTestSceneMapper {
 
 
-    @Insert("insert into auto_test_scene (scene_name,config,scene_code,desc) values(#{sceneName},#{config},#{sceneCode},#{desc})")
+    @Insert("insert into auto_test_scene (scene_name,config,scene_code,`desc`) values(#{sceneName},#{config},#{sceneCode},#{desc})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     int insert(AutoTestSceneModel autoTestSceneModel);
 

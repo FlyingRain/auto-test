@@ -10,6 +10,8 @@ public class CheckPointConfig {
 
     private String script;
 
+    private String message;
+
     private List<JudgeConfig> judges;
 
     private String ref;
@@ -54,12 +56,21 @@ public class CheckPointConfig {
         this.ref = ref;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     @Override
     public String toString() {
         return "CheckPointConfig{" +
                 "checkPointType='" + checkPointType + '\'' +
                 ", sourceCode='" + sourceCode + '\'' +
                 ", script='" + script + '\'' +
+                ", message='" + message + '\'' +
                 ", judges=" + judges +
                 ", ref='" + ref + '\'' +
                 '}';

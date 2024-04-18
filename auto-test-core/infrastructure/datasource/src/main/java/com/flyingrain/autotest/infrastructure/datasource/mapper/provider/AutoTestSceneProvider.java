@@ -61,8 +61,14 @@ public class AutoTestSceneProvider {
         if (StringUtils.hasText(autoTestSceneModel.getSceneName())) {
             sql.SET("scene_name=#{sceneModel.sceneName}");
         }
-        if(StringUtils.hasText(autoTestSceneModel.getConfig())){
+        if (StringUtils.hasText(autoTestSceneModel.getConfig())) {
             sql.SET("config = #{sceneModel.config}");
+        }
+        if (StringUtils.hasText(autoTestSceneModel.getOperator())) {
+            sql.SET("operator=#{sceneModel.operator}");
+        }
+        if (StringUtils.hasText(autoTestSceneModel.getDesc())) {
+            sql.SET("`desc`= #{sceneModel.desc}");
         }
     }
 

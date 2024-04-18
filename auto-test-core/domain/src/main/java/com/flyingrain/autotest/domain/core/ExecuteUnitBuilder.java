@@ -6,6 +6,7 @@ import com.flyingrain.autotest.common.util.*;
 import com.flyingrain.autotest.common.util.constant.ProtocolTypeEnum;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import com.flyingrain.autotest.domain.core.checkpoints.CheckPoint;
+import com.flyingrain.autotest.domain.core.checkpoints.MessageCheckPoint;
 import com.flyingrain.autotest.domain.core.checkpoints.MysqlCheckPoint;
 import com.flyingrain.autotest.domain.core.checkpoints.ResultValueCheckpoint;
 import com.flyingrain.autotest.domain.core.executor.Executor;
@@ -116,6 +117,10 @@ public class ExecuteUnitBuilder implements InitializingBean {
                 resultValueCheckpoint.setCheckRule(buildRule(checkPointConfig.getJudges()));
                 resultValueCheckpoint.setCompareRuleEnum(StringUtils.hasText(checkPointConfig.getRef()) ? CompareRuleEnum.valueOf(checkPointConfig.getRef()) : null);
                 return resultValueCheckpoint;
+            case MESSAGE:
+                MessageCheckPoint messageCheckPoint = new MessageCheckPoint(checkPointConfig.getMessage());
+                messageCheckPoint.setCompareRuleEnum(StringUtils.hasText(checkPointConfig.getRef()) ? CompareRuleEnum.valueOf(checkPointConfig.getRef()) : null);
+                return messageCheckPoint;
             default:
                 throw new AutoTestException(AutoTestResultCodeEnum.NOT_SUPPORT_DATA_TYPE);
         }

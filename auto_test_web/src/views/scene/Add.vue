@@ -51,7 +51,7 @@
       <el-card class="box-card">
         <div class="button_foot">
           <el-button type="primary" @click="submit"> 提交</el-button>
-          <el-button type="info" @click="cancel"> 取消</el-button>
+          <el-button type="info" @click="$router.back()"> 取消</el-button>
         </div>
       </el-card>
     </el-form>
@@ -122,6 +122,7 @@ export default {
   data() {
     return {
       sceneModel: {
+        id: '',
         sceneName: '',
         sceneCode: '',
         desc: '',
@@ -148,6 +149,7 @@ export default {
   created() {
     if (this.$route.query.id) {
       this.isUpdate = true
+      this.querySceneDetail(this.$route.query.id)
     }
     this.initListData()
   },
@@ -178,6 +180,17 @@ export default {
         this.$message.error(result.data.message)
       }
       await this.queryCaseList()
+    },
+    async querySceneDetail(sceneId) {
+      const result = await this.$axios.get('/scene/detail', {params: {id: sceneId}})
+      if (result.data.success) {
+        this.sceneModel = result.data.data
+        if (!this.sceneModel.autoTestSceneCases) {
+          this.sceneModel.autoTestSceneCases = []
+        }
+      } else {
+        this.$message.error(result.data.message)
+      }
     },
     async queryCaseList() {
       const result = await this.$axios.post('/case/queryList', this.chooseCaseForm)
@@ -222,12 +235,17 @@ export default {
         this.sceneModel.autoTestSceneCases.push({
           caseId: this.multipleSelection[i].id,
           executeOrder: this.sceneModel.autoTestSceneCases.length,
-          autoTestCase: {
-            id: this.multipleSelection[i].id,
-            name: this.multipleSelection[i].name,
-            code: this.multipleSelection[i].code,
-            desc: this.multipleSelection[i].desc
-          }
+          sceneId: this.sceneModel.id ? this.sceneModel.id : null,
+          autoTestCase:
+              {
+                id: this.multipleSelection[i].id,
+                name:
+                this.multipleSelection[i].name,
+                code:
+                this.multipleSelection[i].code,
+                desc:
+                this.multipleSelection[i].desc
+              }
         })
       }
       console.log(JSON.stringify(this.sceneModel.autoTestSceneCases))
@@ -235,10 +253,19 @@ export default {
       this.$refs.caseTable.clearSelection()
     },
     submit() {
-
-    },
-    cancel() {
-
+      this.$refs.scene_form.validate((valid) => {
+        if (valid) {
+          var url = this.sceneModel.id ? '/scene/update' : '/scene/add'
+          this.$axios.post(url, this.sceneModel).then((result) => {
+            if (result.data.success) {
+              this.$message.success(this.sceneModel.id ? '修改成功' : '添加成功')
+              this.$router.push('/autotest/scene')
+            } else {
+              this.$message.error(result.data.message)
+            }
+          })
+        }
+      })
     },
     moveUp(caseIndex) {
       if (caseIndex === 0) {
@@ -263,10 +290,16 @@ export default {
       }
     },
     removeCase(caseIndex) {
-      for (let i = caseIndex; i < this.sceneModel.autoTestSceneCases.length; i++) {
-        this.sceneModel.autoTestSceneCases[i].executeOrder = this.sceneModel.autoTestSceneCases[i].executeOrder - 1
-      }
-      this.sceneModel.autoTestSceneCases.splice(caseIndex, 1)
+      this.$confirm('确认移除该用例?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        for (let i = caseIndex; i < this.sceneModel.autoTestSceneCases.length; i++) {
+          this.sceneModel.autoTestSceneCases[i].executeOrder = this.sceneModel.autoTestSceneCases[i].executeOrder - 1
+        }
+        this.sceneModel.autoTestSceneCases.splice(caseIndex, 1)
+      })
     }
   }
 }

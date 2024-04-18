@@ -111,6 +111,8 @@ public class CaseService {
                         runCase.setService(service);
                         break;
                     }
+                }
+                if(runCase.getService()==null){
                     throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "用例服务不存在，用例编码:" + runCase.getCode() + ",服务id：" + runCase.getServiceId());
                 }
                 return runCase;

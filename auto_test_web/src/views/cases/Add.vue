@@ -125,7 +125,12 @@
               <el-form-item label="查询脚本" :prop='"checkPoints." + index+".script"' v-show="checkPoint.showScript">
                 <el-input v-model="checkPoint.script" type="textarea"></el-input>
               </el-form-item>
-              <div v-for="(judge,idx) in checkPoint.judges" :key="'checkPoint'+'judges'+idx" class="judge">
+              <el-form-item label="原始报文" :prop='"checkPoints." + index+".message"' v-show="checkPoint.showMessage">
+                <el-input v-model="checkPoint.message" type="textarea" :autosize="{ minRows: 5}"
+                          resize="both"></el-input>
+              </el-form-item>
+              <div v-for="(judge,idx) in checkPoint.judges" :key="'checkPoint'+'judges'+idx" class="judge"
+                   v-show="checkPoint.showParam">
                 <el-form-item label="变量：" :prop="'checkPoints.'+index+'.judges.'+idx+'.param'">
                   <el-input v-model="judge.param"></el-input>
                 </el-form-item>
@@ -203,7 +208,7 @@ export default {
         serviceId: '',
         desc: '',
         responseDataType: '',
-        checkPoints: [{judges: [{logic: '', expect: '', param: ''}], sourceCode: ''}],
+        checkPoints: [{judges: [{logic: '', expect: '', param: ''}], sourceCode: '', showParam: false}],
         responseConfig: {responseParam: []},
         paramValue: []
       },
@@ -222,6 +227,10 @@ export default {
         {
           value: 'VALUE',
           label: '值校验'
+        },
+        {
+          value: 'MESSAGE',
+          label: '原始报文校验'
         },
         {
           value: 'CACHE',
@@ -367,25 +376,27 @@ export default {
       }
     },
     changeCheckPoint(checkPoint) {
-      var i = this.caseModel.checkPoints.indexOf(checkPoint)
       if (checkPoint.checkPointType === 'MYSQL' || checkPoint.checkPointType === 'CACHE') {
-        this.$set(this.rules, 'checkPoints.' + i + '.sourceCode', [{
-          required: true,
-          message: '选择数据源',
-          trigger: blur
-        }])
-        this.$set(this.rules, 'checkPoints.' + i + '.script', [{
-          required: true,
-          message: '请输入查询脚本',
-          trigger: blur
-        }])
+        this.removeCheckPointRules()
+        checkPoint.judges = [{logic: '', expect: '', param: ''}]
         checkPoint.showScript = true
-      } else {
-        this.$refs['case_from'].clearValidate(['checkPoints.' + i + '.sourceCode'])
-        this.$delete(this.rules, 'checkPoints.' + i + '.sourceCode')
-        this.$refs['case_from'].clearValidate(['checkPoints.' + i + '.script'])
-        this.$delete(this.rules, 'checkPoints.' + i + '.script')
+        checkPoint.showParam = true
+        checkPoint.showMessage = false
+        this.addCheckPointRules()
+      } else if (checkPoint.checkPointType === 'MESSAGE') {
+        this.removeCheckPointRules()
         checkPoint.showScript = false
+        checkPoint.showParam = false
+        checkPoint.showMessage = true
+        checkPoint.judges = []
+        this.addCheckPointRules()
+      } else {
+        this.removeCheckPointRules()
+        checkPoint.judges = [{logic: '', expect: '', param: ''}]
+        checkPoint.showScript = false
+        checkPoint.showParam = true
+        checkPoint.showMessage = false
+        this.addCheckPointRules()
       }
     },
     onSubmit(formName) {
@@ -427,7 +438,7 @@ export default {
       if (this.caseModel.checkPoints.length > 0) {
         this.caseModel.checkPoints[this.caseModel.checkPoints.length - 1].ref = value
       }
-      this.caseModel.checkPoints.push({judges: [{logic: '', expect: '', param: ''}], sourceCode: ''})
+      this.caseModel.checkPoints.push({judges: [{logic: '', expect: '', param: ''}], sourceCode: '', showParam: false})
       this.addCheckPointRules()
     },
     removeCheckPoint() {
@@ -466,6 +477,14 @@ export default {
             trigger: blur
           }])
         }
+        if (this.caseModel.checkPoints[i].showMessage) {
+          this.$set(this.rules, 'checkPoints.' + i + '.message', [{
+            required: true,
+            message: '请输入报文',
+            trigger: blur
+          }])
+        }
+        console.log('add judges:' + this.caseModel.checkPoints[i].judges.length)
         if (this.caseModel.checkPoints[i].judges && this.caseModel.checkPoints[i].judges.length > 0) {
           for (let j = 0; j < this.caseModel.checkPoints[i].judges.length; j++) {
             this.$set(this.rules, 'checkPoints.' + i + '.judges.' + j + '.param', [{
@@ -497,6 +516,11 @@ export default {
           this.$refs['case_from'].clearValidate(['checkPoints.' + i + '.script'])
           this.$delete(this.rules, 'checkPoints.' + i + '.script')
         }
+        if (this.caseModel.checkPoints[i].showMessage) {
+          this.$refs['case_from'].clearValidate(['checkPoints.' + i + '.message'])
+          this.$delete(this.rules, 'checkPoints.' + i + '.message')
+        }
+        console.log('remove judges:' + this.caseModel.checkPoints[i].judges.length)
         if (this.caseModel.checkPoints[i].judges && this.caseModel.checkPoints[i].judges.length > 0) {
           for (let j = 0; j < this.caseModel.checkPoints[i].judges.length; j++) {
             this.$refs['case_from'].clearValidate(['checkPoints.' + i + '.judges.' + j + '.param'])

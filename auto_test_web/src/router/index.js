@@ -114,7 +114,7 @@ const router = new Router({
               component: () => import('@/views/scene/Add.vue')
             },
             {
-              path: '/autotest/scene/addCase',
+              path: '/autotest/scene/update',
               meta: {
                 title: '场景编排'
               },

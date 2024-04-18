@@ -9,8 +9,6 @@ public class ExecuteContext {
 
     private Map<String, String> params = new HashMap<>();
 
-    private Map<String, JSONObject> results;
-
     private String executeCode;
 
     private String executor;
@@ -31,9 +29,6 @@ public class ExecuteContext {
         this.executeCode = executeCode;
     }
 
-    public Map<String, JSONObject> getResults() {
-        return results;
-    }
 
     public String getExecutor() {
         return executor;
@@ -43,7 +38,4 @@ public class ExecuteContext {
         this.executor = executor;
     }
 
-    public void setResults(Map<String, JSONObject> results) {
-        this.results = results;
-    }
 }

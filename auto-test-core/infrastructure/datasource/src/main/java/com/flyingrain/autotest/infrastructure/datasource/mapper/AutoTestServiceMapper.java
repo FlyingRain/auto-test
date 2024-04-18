@@ -67,5 +67,5 @@ public interface AutoTestServiceMapper {
 
     @Select("<script>select *  from auto_test_service where id in <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>")
     @ResultMap("serviceMap")
-    List<AutoTestServiceModel> queryServiceByIds(List<Integer> serviceIds);
+    List<AutoTestServiceModel> queryServiceByIds(@Param("ids") List<Integer> serviceIds);
 }

@@ -3,6 +3,7 @@ package com.flyingrain.autotest.common.util;
 public enum CheckTypeEnum {
 
     MYSQL,
-    VALUE
+    VALUE,
+    MESSAGE,
 
 }

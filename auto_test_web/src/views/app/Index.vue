@@ -32,6 +32,7 @@
           ref="addDialog"
           :visible.sync="dialogVisible"
           width="30%"
+          :close-on-click-modal=false
       >
         <el-form :model="addAppForm" size="small" :rules="addRules">
           <el-form-item label="应用编码：" prop="appCode">

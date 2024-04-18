@@ -53,7 +53,17 @@ public class JSONResultExtract implements ResultExtract {
                             throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "result extract error!" + keyPath);
                         }
                     }
-                    String realValue = value.getString(keys[keys.length - 1]);
+                    String realValue = null;
+                    if (isMethodKey(keys[keys.length - 1])) {
+                        realValue = executeMethod(value, keys[keys.length - 1]);
+                    } else if (isArrayKey(keys[keys.length - 1])) {
+                        String key = keys[keys.length - 1];
+                        int start = key.indexOf("[");
+                        String numberStr = key.substring(start + 1, key.length() - 1);
+                        realValue = value.getJSONArray(key.substring(0, start)).getString(Integer.parseInt(numberStr));
+                    } else {
+                        realValue = value.getString(keys[keys.length - 1]);
+                    }
                     params.put(paramMap.getValue(), realValue);
                     resultMap.put(paramMap.getValue(), realValue);
                 }
@@ -65,12 +75,19 @@ public class JSONResultExtract implements ResultExtract {
         }
     }
 
+    private String executeMethod(JSONObject value, String key) {
+        if (key.endsWith(".size()")) {
+            return String.valueOf(value.getJSONArray(key.split("\\.")[0]).size());
+        }
+        throw new AutoTestException(AutoTestResultCodeEnum.NOT_SUPPORT_METHOD);
+    }
+
     private JSONObject extractKey(String key, JSONObject jsonObject) {
         JSONObject result = null;
         if (isArrayKey(key)) {
             int start = key.indexOf("[");
             String numberStr = key.substring(start + 1, key.length() - 1);
-            result = jsonObject.getJSONArray(key.substring(start)).getJSONObject(Integer.parseInt(numberStr));
+            result = jsonObject.getJSONArray(key.substring(0, start)).getJSONObject(Integer.parseInt(numberStr));
         } else if (isMethodKey(key)) {
             throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "结果提取函数只能在最后：" + key);
         } else {
@@ -84,7 +101,7 @@ public class JSONResultExtract implements ResultExtract {
     }
 
     private boolean isArrayKey(String key) {
-        String reg = "[\\w_0-9]+\\[\\d\\]";
+        String reg = "[\\w_0-9]+\\[\\d]";
         Pattern pattern = Pattern.compile(reg);
         Matcher matcher = pattern.matcher(key);
         return matcher.matches();
