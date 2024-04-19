@@ -43,4 +43,9 @@ public interface AutoTestRunLogMapper {
     @Select("select * from auto_test_run_log where id =#{id}")
     @ResultMap("runLogMap")
     AutoTestRunLogModel queryDetail(@Param("id") Integer id);
+
+
+    @Select("select * from auto_test_run_log where batch_num=#{batchNum}")
+    @ResultMap("runLogMap")
+    List<AutoTestRunLogModel> queryByBatchNum(@Param("batchNum") String batchNum);
 }

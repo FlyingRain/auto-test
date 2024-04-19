@@ -46,7 +46,7 @@ public class ExecuteUnit<R> {
      *
      * @return
      */
-    public CheckResult run(ExecuteContext executeContext) {
+    public RunLog run(ExecuteContext executeContext) {
 
         ExecuteParam executeParam = requestAssemble.assembleRequest(executeContext);
 
@@ -56,12 +56,11 @@ public class ExecuteUnit<R> {
 
         CheckResult checkResult = runCheckPoints(executeResult);
 
-        recordRunLog(executeResult, checkResult, executeContext);
+        return recordRunLog(executeResult, checkResult, executeContext);
 
-        return checkResult;
     }
 
-    private void recordRunLog(ExecuteResult executeResult, CheckResult checkResult, ExecuteContext executeContext) {
+    private RunLog recordRunLog(ExecuteResult executeResult, CheckResult checkResult, ExecuteContext executeContext) {
         Date executeTime = new Date();
         RunLog runLog = new RunLog();
         runLog.setBatchNum(executeContext.getExecuteCode());
@@ -75,6 +74,7 @@ public class ExecuteUnit<R> {
         }
         runLog.setExecutor(executeContext.getExecutor());
         runLogService.insertRunLog(runLog);
+        return runLog;
     }
 
     private CheckResult runCheckPoints(ExecuteResult executeResult) {

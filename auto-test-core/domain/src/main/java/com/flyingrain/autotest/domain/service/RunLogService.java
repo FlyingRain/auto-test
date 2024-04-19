@@ -56,4 +56,9 @@ public class RunLogService {
         AutoTestRunLogModel autoTestRunLogModel = autoTestRunLogMapper.queryDetail(id);
         return RunLogModelConvert.convertRunLogModel(autoTestRunLogModel);
     }
+
+    public List<RunLog> queryByBatchNum(String batchNum) {
+        logger.info("query by batchNum:[{}]", batchNum);
+        return autoTestRunLogMapper.queryByBatchNum(batchNum).stream().map(RunLogModelConvert::convertRunLogModel).collect(Collectors.toList());
+    }
 }

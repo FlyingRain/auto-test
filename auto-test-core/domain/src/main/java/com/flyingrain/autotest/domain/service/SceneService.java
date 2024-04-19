@@ -44,6 +44,9 @@ public class SceneService {
     @Autowired
     private ExecuteUnitBuilder executeUnitBuilder;
 
+    @Autowired
+    private ReportService reportService;
+
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2, Runtime.getRuntime().availableProcessors() * 10, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1000));
 
     @Transactional
@@ -123,7 +126,7 @@ public class SceneService {
     }
 
     /**
-     * 执行场景
+     * 执行场景,TODO 这里可以抽象成执行计划，以适应更灵活的变更，后续实现
      * 1.构建执行上下文
      * 2.构建执行单元
      * 3.组装执行链
@@ -163,8 +166,8 @@ public class SceneService {
             for (ExecuteUnit unit : executeUnits) {
                 try {
                     count++;
-                    CheckResult checkResult = unit.run(executeContext);
-                    if (!checkResult.getValid()) {
+                    RunLog runLog = unit.run(executeContext);
+                    if (!RunStatusEnum.SUCCESS.getCode().equals(runLog.getRunResult())) {
                         success = false;
                     } else {
                         successCount++;
@@ -180,7 +183,7 @@ public class SceneService {
             executeReport.setSuccessNumber(successCount);
             executeReport.setResult(success ? RunStatusEnum.SUCCESS.getCode() : RunStatusEnum.FAIL.getCode());
             executeReport.setConsumeTime(endTime - startTime);
-            //TODO 更新报告
+            reportService.updateReport(executeReport);
         });
 
         return executeContext.getExecuteCode();
@@ -194,6 +197,8 @@ public class SceneService {
         executeReport.setBatchNum(executeContext.getExecuteCode());
         executeReport.setTitle(scene.getSceneCode());
         executeReport.setCaseNumber(scene.getSceneCases().size());
+        logger.info("generate report:[{}]", executeReport);
+        reportService.insertReport(executeReport);
         return executeReport;
     }
 
