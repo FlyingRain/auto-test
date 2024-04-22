@@ -30,8 +30,8 @@ public interface AutoTestReportMapper {
     AutoTestReportModel detail(@Param("id") int id);
 
 
-    @Insert("insert into auto_test_report(batch_num,title,env,desc,consume_time,operator,run_number,case_number,success_number,result,execute_time,create_time,update_time) values " +
-            "(#{batchNum},#{title},#{env},#{desc},#{consumTime},#{operator},#{runNumber},#{caseNumber},#{successNumber},#{result},#{executeTime},#{createTime},#{updateTime})")
+    @Insert("insert into auto_test_report(batch_num,title,env,`desc`,consume_time,operator,run_number,case_number,success_number,result,execute_time) values " +
+            "(#{batchNum},#{title},#{env},#{desc},#{consumeTime},#{operator},#{runNumber},#{caseNumber},#{successNumber},#{result},#{executeTime})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     int insert(AutoTestReportModel autoTestReportModel);
 

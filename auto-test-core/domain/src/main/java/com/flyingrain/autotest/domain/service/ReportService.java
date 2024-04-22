@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Component
 public class ReportService {
 
-    private Logger logger = LoggerFactory.getLogger(ReportService.class);
+    private final  Logger logger = LoggerFactory.getLogger(ReportService.class);
 
     @Autowired
     private AutoTestReportMapper autoTestReportMapper;

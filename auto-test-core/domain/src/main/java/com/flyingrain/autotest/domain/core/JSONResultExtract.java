@@ -1,5 +1,6 @@
 package com.flyingrain.autotest.domain.core;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.flyingrain.autotest.common.util.AutoTestResultCodeEnum;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
@@ -46,8 +47,9 @@ public class JSONResultExtract implements ResultExtract {
                     String keyPath = paramMap.getKey();
                     String[] keys = keyPath.split("\\.");
                     JSONObject value = jsonObject;
-                    for (int i = 0; i < keys.length - 1; i++) {
-                        value = extractKey(keys[i], jsonObject);
+                    int extractLen = isMethodKey(keys[keys.length - 1]) ? keys.length - 2 : keys.length - 1;
+                    for (int i = 0; i < extractLen; i++) {
+                        value = extractKey(keys[i], value);
                         if (value == null) {
                             logger.error("result param not exits!result:[{}],extract path:[{}]", resultStr, keyPath);
                             throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "result extract error!" + keyPath);
@@ -55,7 +57,7 @@ public class JSONResultExtract implements ResultExtract {
                     }
                     String realValue = null;
                     if (isMethodKey(keys[keys.length - 1])) {
-                        realValue = executeMethod(value, keys[keys.length - 1]);
+                        realValue = executeMethod(value, keys[keys.length - 2], keys[keys.length - 1]);
                     } else if (isArrayKey(keys[keys.length - 1])) {
                         String key = keys[keys.length - 1];
                         int start = key.indexOf("[");
@@ -75,9 +77,10 @@ public class JSONResultExtract implements ResultExtract {
         }
     }
 
-    private String executeMethod(JSONObject value, String key) {
-        if (key.endsWith(".size()")) {
-            return String.valueOf(value.getJSONArray(key.split("\\.")[0]).size());
+    private String executeMethod(JSONObject value, String key, String method) {
+        if (method.endsWith("size()")) {
+            JSONArray array = value.getJSONArray(key);
+            return String.valueOf(array.size());
         }
         throw new AutoTestException(AutoTestResultCodeEnum.NOT_SUPPORT_METHOD);
     }

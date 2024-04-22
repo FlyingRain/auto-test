@@ -42,10 +42,10 @@ public class HttpRequestAssemble implements RequestAssemble {
     @Override
     public ExecuteParam assembleRequest(ExecuteContext executeContext) {
 
-        //先替换case里的变量
+        //先替换case里的变量 TODO 这里的变量以后还应该包含全局变量，全局变量在初始化上下文时，由上下文携带。也就是说，服务里的变量由两个地方替换：用例和全局。
         Map<String, String> params = replaceParamValue(paramValueList, executeContext);
 
-        //校验填充字段是否满足
+        //校验填充字段是否满足,
         checkParamsPair(params, service.getParams());
 
         //再根据map替换service中的变量

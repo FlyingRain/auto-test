@@ -190,7 +190,7 @@ export default {
         this.$axios.post('/app/batchDelete', {ids: [id]}).then((res) => {
           if (res.data.success) {
             this.$message.success('删除成功')
-            location.reload()
+            this.getPageList()
           } else {
             this.$message.error(res.data.message)
           }

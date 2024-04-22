@@ -42,6 +42,7 @@ public interface SceneFacade {
     CommonResult<Boolean> delScene(@QueryParam("id") Integer sceneId);
 
     @Path("/run")
+    @AuthCheck
     @GET
     CommonResult<String> run(@QueryParam("sceneId") Integer sceneId);
 

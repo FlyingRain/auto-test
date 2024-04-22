@@ -16,6 +16,7 @@ public class ReportModelConvert {
         executeReport.setExecuteTime(autoTestReportModel.getExecuteTime());
         executeReport.setOperator(autoTestReportModel.getOperator());
         executeReport.setBatchNum(autoTestReportModel.getBatchNum());
+        executeReport.setRunNumber(autoTestReportModel.getRunNumber());
         executeReport.setCaseNumber(autoTestReportModel.getCaseNumber());
         executeReport.setSuccessNumber(autoTestReportModel.getSuccessNumber());
         executeReport.setResult(autoTestReportModel.getResult());
@@ -37,6 +38,7 @@ public class ReportModelConvert {
         autoTestReportModel.setExecuteTime(executeReport.getExecuteTime());
         autoTestReportModel.setOperator(executeReport.getOperator());
         autoTestReportModel.setBatchNum(executeReport.getBatchNum());
+        autoTestReportModel.setRunNumber(executeReport.getRunNumber());
         autoTestReportModel.setCaseNumber(executeReport.getCaseNumber());
         autoTestReportModel.setSuccessNumber(executeReport.getSuccessNumber());
         autoTestReportModel.setResult(executeReport.getResult());

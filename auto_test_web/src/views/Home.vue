@@ -71,7 +71,8 @@
               </template>
               <el-menu-item index="/autotest/scene" @click="saveActiveNav('/autotest/scene')"> 场景管理</el-menu-item>
               <el-menu-item index="/autotest/cases" @click="saveActiveNav('/autotest/cases')"> 用例管理</el-menu-item>
-              <el-menu-item index="/autotest/report" @click="saveActiveNav('/autotest/report')"> 执行流水</el-menu-item>
+              <el-menu-item index="/autotest/report" @click="saveActiveNav('/autotest/report')"> 执行报告</el-menu-item>
+              <el-menu-item index="/autotest/runlog" @click="saveActiveNav('/autotest/runlog')"> 执行流水</el-menu-item>
             </el-submenu>
             <el-menu-item index="/sourceConfig" @click="saveActiveNav('/sourceConfig')">
               <i class="el-icon-s-data"></i>

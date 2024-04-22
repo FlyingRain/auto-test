@@ -30,7 +30,7 @@ public class AutoTestSceneProvider {
 
     private void buildQueryCondition(AutoTestSceneModel autoTestSceneModel, SQL sql) {
         if (StringUtils.hasText(autoTestSceneModel.getSceneCode())) {
-            sql.WHERE("scene_code=#{pageQueryModel.conditions.sceneCode}");
+            sql.WHERE("scene_code like '${pageQueryModel.conditions.sceneCode}%'");
         }
         if (StringUtils.hasText(autoTestSceneModel.getSceneName())) {
             sql.WHERE("scene_name = #{pageQueryModel.conditions.sceneName}");

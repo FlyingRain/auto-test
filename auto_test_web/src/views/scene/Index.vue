@@ -35,7 +35,7 @@
         <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip/>
         <el-table-column label="操作" width="250">
           <template v-slot="row">
-            <el-button type="success" size="small" @click="changeView('/service/update',{id:row.row.id})">运行
+            <el-button type="success" size="small" @click="runScene(row.row.id)">运行
             </el-button>
             <el-button type="primary" size="small" @click="changeView('/autotest/scene/update',{id:row.row.id})"> 编排
             </el-button>
@@ -118,14 +118,20 @@ export default {
         this.$axios.post('/scene/del', {}, {params: {id: sceneId}}).then(res => {
           if (res.data.success) {
             this.$message.success('删除成功')
-            this.tableData = this.tableData.filter(d => {
-              return !(d.id === sceneId)
-            })
+            this.initPage()
           } else {
             this.$message.error(res.data.message)
           }
         })
       })
+    },
+    async runScene(sceneId) {
+      const result = await this.$axios.get('/scene/run', {params: {sceneId: sceneId}})
+      if (result.data.success) {
+        this.$message.success('正在执行，请稍后根据批次号：[' + result.data.data + ']至执行报告页面查询结果')
+      } else {
+        this.$message.error(result.data.message)
+      }
     }
   }
 }

@@ -73,6 +73,9 @@ public class AutoTestReportDynamicSqlProvider {
         if (StringUtils.hasText(autoTestReportModel.getResult())) {
             sql.SET("result = #{reportModel.result}");
         }
+        if (StringUtils.hasText(autoTestReportModel.getDesc())) {
+            sql.SET("`desc` = #{reportModel.desc}");
+        }
 
     }
 

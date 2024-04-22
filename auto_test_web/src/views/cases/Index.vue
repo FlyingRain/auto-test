@@ -11,8 +11,8 @@
           <el-form-item label="用例名称：" prop="name">
             <el-input v-model.trim="searchForm.conditions.name" placeholder="请输入用例名称"/>
           </el-form-item>
-          <el-form-item label="创建人：" prop="creator">
-            <el-input v-model.trim="searchForm.conditions.creator" placeholder="请输入创建人"/>
+          <el-form-item label="用例编码：" prop="code">
+            <el-input v-model.trim="searchForm.conditions.code" placeholder="请输入用例编码"/>
           </el-form-item>
           <el-form-item label="所属服务:" prop="serviceId">
             <template>
@@ -89,6 +89,7 @@ export default {
           id: '',
           name: '',
           serviceId: '',
+          code: '',
           creator: ''
         }
       },
@@ -168,7 +169,7 @@ export default {
         this.$axios.post('/case/delete', {ids: [id]}).then((res) => {
           if (res.data.success) {
             this.$message.success('删除成功')
-            this.$router.go(0)
+            this.getPageList()
           } else {
             this.$message.error(res.data.message)
           }

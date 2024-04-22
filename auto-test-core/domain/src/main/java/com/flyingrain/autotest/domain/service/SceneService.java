@@ -17,6 +17,7 @@ import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestSceneMode
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -73,6 +74,11 @@ public class SceneService {
         result.setData(autoTestSceneModelList.stream().map(SceneModelConvert::convertToDomain).collect(Collectors.toList()));
         result.setTotal(count);
         return result;
+    }
+
+    public List<Scene> queryByCaseId(List<Integer> caseId) {
+        List<AutoTestSceneModel> autoTestSceneModelList = autoTestSceneMapper.queryByCaseId(caseId);
+        return autoTestSceneModelList.stream().map(SceneModelConvert::convertToDomain).collect(Collectors.toList());
     }
 
     @Transactional
@@ -167,7 +173,7 @@ public class SceneService {
                 try {
                     count++;
                     RunLog runLog = unit.run(executeContext);
-                    if (!RunStatusEnum.SUCCESS.getCode().equals(runLog.getRunResult())) {
+                    if (!RunStatusEnum.SUCCESS.getCode().equals(runLog.getRunStatus())) {
                         success = false;
                     } else {
                         successCount++;

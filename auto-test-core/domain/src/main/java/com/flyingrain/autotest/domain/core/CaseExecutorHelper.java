@@ -55,7 +55,12 @@ public class CaseExecutorHelper {
                     if (StringUtils.hasText(value)) {
                         str = str.replace("${" + param + "}", value);
                     } else {
-                        str = str.replace("${" + param + "}", "null");
+                        //如果没有值，那么根据配置上下文，确定是替换成空字符串，还是null
+                        int index = str.indexOf("${" + param + "}");
+                        if ("\"".equals(str.substring(index - 1, index)))
+                            str = str.replace("${" + param + "}", "");
+                        else
+                            str = str.replace("${" + param + "}", "null");
                     }
                 }
             }

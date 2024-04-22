@@ -10,8 +10,10 @@ import com.flyingrain.autotest.domain.model.Service;
 import com.flyingrain.autotest.domain.model.ServiceParam;
 import com.flyingrain.autotest.domain.service.convert.ServiceModelConvert;
 import com.flyingrain.autotest.domain.service.convert.ServiceParamModelConvert;
+import com.flyingrain.autotest.infrastructure.datasource.mapper.AutoTestCaseMapper;
 import com.flyingrain.autotest.infrastructure.datasource.mapper.AutoTestServiceMapper;
 import com.flyingrain.autotest.infrastructure.datasource.mapper.AutoTestServiceParamMapper;
+import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestCaseModel;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestServiceModel;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestServiceParamModel;
 import org.slf4j.Logger;
@@ -35,6 +37,9 @@ public class ServiceManager {
 
     @Autowired
     private AutoTestServiceParamMapper serviceParamMapper;
+
+    @Autowired
+    private AutoTestCaseMapper autoTestCaseMapper;
 
 
     public PageableModel<Service> queryByPage(PageQuery<Service> servicePageQuery) {
@@ -154,7 +159,8 @@ public class ServiceManager {
     }
 
     private boolean beforeDeleteCheck(List<Integer> serviceIds) {
-        return true;
+        List<AutoTestCaseModel> cases = autoTestCaseMapper.queryByServiceIds(serviceIds);
+        return CollectionUtils.isEmpty(cases);
     }
 
     public List<Service> queryAllService() {

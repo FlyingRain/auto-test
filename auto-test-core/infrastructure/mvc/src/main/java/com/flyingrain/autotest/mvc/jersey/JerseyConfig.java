@@ -25,6 +25,7 @@ public class JerseyConfig implements ApplicationContextAware {
         resourceConfig.register(commonExceptionHandler);
         resourceConfig.register(authFilter);
         resourceConfig.register(CorsFilter.class);
+        resourceConfig.register(JacksonConfigurator.class);
         return resourceConfig;
     }
 

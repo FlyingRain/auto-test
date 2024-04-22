@@ -315,7 +315,6 @@ export default {
       }
     },
     serviceChange(value) {
-      console.log('asdfasdf---------' + value)
       for (let ser of this.serviceList) {
         if (ser.value === value) {
           if (ser.params === null) {
@@ -332,6 +331,7 @@ export default {
       if (result.data.success) {
         Object.assign(this.caseModel, result.data.data)
         this.caseModel.checkPoints = JSON.parse(result.data.data.checkPoints)
+        console.log(this.caseModel.checkPoints)
         this.caseModel.responseConfig = JSON.parse(result.data.data.responseConfig)
         this.caseModel.paramValue = JSON.parse(result.data.data.paramValue)
       } else {

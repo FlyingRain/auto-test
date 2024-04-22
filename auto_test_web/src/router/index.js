@@ -126,6 +126,13 @@ const router = new Router({
                 title: '执行报告'
               },
               component: () => import('@/views/reports/Index.vue')
+            },
+            {
+              path: '/autotest/runlog',
+              meta: {
+                title: '执行流水'
+              },
+              component: () => import('@/views/runlog/Index.vue')
             }
           ]
         }]

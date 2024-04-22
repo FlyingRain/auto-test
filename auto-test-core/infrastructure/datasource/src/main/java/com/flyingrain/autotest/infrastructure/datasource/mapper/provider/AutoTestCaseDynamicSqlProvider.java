@@ -83,7 +83,7 @@ public class AutoTestCaseDynamicSqlProvider {
             sql.SET("modifier = #{caseModel.modifier}");
         }
         if (StringUtils.hasText(autoTestCaseModel.getDesc())) {
-            sql.SET("desc=#{caseModel.desc}");
+            sql.SET("`desc`=#{caseModel.desc}");
         }
         if (autoTestCaseModel.getServiceId() != 0) {
             sql.SET("service_id = #{caseModel.serviceId}");

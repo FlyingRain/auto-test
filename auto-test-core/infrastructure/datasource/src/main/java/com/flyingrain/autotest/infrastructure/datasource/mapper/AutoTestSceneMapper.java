@@ -11,7 +11,7 @@ import java.util.List;
 public interface AutoTestSceneMapper {
 
 
-    @Insert("insert into auto_test_scene (scene_name,config,scene_code,`desc`) values(#{sceneName},#{config},#{sceneCode},#{desc})")
+    @Insert("insert into auto_test_scene (scene_name,config,scene_code,`desc`,operator) values(#{sceneName},#{config},#{sceneCode},#{desc},#{operator})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     int insert(AutoTestSceneModel autoTestSceneModel);
 
@@ -40,6 +40,11 @@ public interface AutoTestSceneMapper {
 
     @Delete("<script>delete from auto_test_scene where id in <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>")
     int batchDel(@Param("ids") List<Integer> ids);
+
+    @Select("<script>select s.id as id,s.scene_code as scene_code,s.scene_name as scene_name,s.operator as operator,s.create_time as create_time,s.update_time as update_time from auto_test_scene s join auto_test_case_scene cs on s.id=cs.scene_id where " +
+            "cs.case_id in <foreach item='item' index='index' collection='ids' open='(' separator=',' close=')'>#{item}</foreach></script>")
+    @ResultMap("sceneMap")
+    List<AutoTestSceneModel> queryByCaseId(@Param("ids") List<Integer> caseId);
 
 
 }

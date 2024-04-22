@@ -9,13 +9,13 @@ import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import com.flyingrain.autotest.domain.core.ExecuteContext;
 import com.flyingrain.autotest.domain.core.ExecuteUnit;
 import com.flyingrain.autotest.domain.core.ExecuteUnitBuilder;
-import com.flyingrain.autotest.domain.model.Case;
-import com.flyingrain.autotest.domain.model.Service;
-import com.flyingrain.autotest.domain.model.User;
+import com.flyingrain.autotest.domain.model.*;
 import com.flyingrain.autotest.domain.service.convert.CaseModelConvert;
 import com.flyingrain.autotest.infrastructure.datasource.AutoTestCaseQuery;
 import com.flyingrain.autotest.infrastructure.datasource.mapper.AutoTestCaseMapper;
+import com.flyingrain.autotest.infrastructure.datasource.mapper.AutoTestSceneMapper;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestCaseModel;
+import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestSceneModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class CaseService {
@@ -39,6 +40,9 @@ public class CaseService {
 
     @Autowired
     private ServiceManager serviceManager;
+
+    @Autowired
+    private AutoTestSceneMapper autoTestSceneMapper;
 
     public PageableModel<Case> queryByPage(PageQuery<CaseQuery> caseQueryRequestPageQuery) {
         logger.info("query request:[{}]", caseQueryRequestPageQuery);
@@ -64,7 +68,16 @@ public class CaseService {
     public int batchDel(List<Integer> ids) {
         User user = RunTimeContext.get(AutoTestConstants.USER);
         logger.info("user:[{}] del ids:[{}]", user, ids);
-        return autoTestCaseMapper.batchDel(ids);
+        List<AutoTestSceneModel> scenes = queryCaseScenes(ids);
+        if (CollectionUtils.isEmpty(scenes)) {
+            return autoTestCaseMapper.batchDel(ids);
+        } else {
+            throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "该用例有场景正在使用，请先移除场景 " + scenes.get(0).getSceneCode() + " 下的用例");
+        }
+    }
+
+    private List<AutoTestSceneModel> queryCaseScenes(List<Integer> ids) {
+        return autoTestSceneMapper.queryByCaseId(ids);
     }
 
     public int update(Case testCase) {
@@ -112,13 +125,18 @@ public class CaseService {
                         break;
                     }
                 }
-                if(runCase.getService()==null){
+                if (runCase.getService() == null) {
                     throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "用例服务不存在，用例编码:" + runCase.getCode() + ",服务id：" + runCase.getServiceId());
                 }
                 return runCase;
             }).toList();
         }
         return new ArrayList<>();
+    }
+
+    public List<Case> queryByServiceIds(List<Integer> serviceIds) {
+        List<AutoTestCaseModel> autoTestCaseModels = autoTestCaseMapper.queryByServiceIds(serviceIds);
+        return autoTestCaseModels.stream().map(CaseModelConvert::convertCaseModel).collect(Collectors.toList());
     }
 
 

@@ -26,7 +26,7 @@ public class CheckParam {
         Map<String, String> params = executeResult.getResultMap();
         String value = params.get(checkKey);
         logger.info("start to check value:[{}],expect:[{}]", value, checkValue);
-        checkResult.setMessage("check key:" + checkKey + ",value:" + value + ",expect:" + checkValue);
+        checkResult.setMessage("check key:" + checkKey + ",逻辑：value:" + value + "," + operateRuleEnum.getDesc() + "expect:" + checkValue);
         if (NumberUtils.isNumeric(value)) {
             double numberValue = Double.parseDouble(value);
             double checkNumberValue = Double.parseDouble(checkValue);

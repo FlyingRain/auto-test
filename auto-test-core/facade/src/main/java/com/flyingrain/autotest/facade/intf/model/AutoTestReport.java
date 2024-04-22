@@ -1,6 +1,7 @@
 package com.flyingrain.autotest.facade.intf.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class AutoTestReport {
 
@@ -8,13 +9,13 @@ public class AutoTestReport {
 
     private String batchNum;
 
-    private int case_number;
+    private int caseNumber;
 
     private String env;
 
-    private int success_number;
+    private int successNumber;
 
-    private int run_number;
+    private int runNumber;
 
     private String title;
 
@@ -31,6 +32,8 @@ public class AutoTestReport {
     private long consumeTime;
 
     private String result;
+
+    private List<AutoTestRunLog> runLogs;
 
 
     public int getId() {
@@ -49,24 +52,24 @@ public class AutoTestReport {
         this.batchNum = batchNum;
     }
 
-    public int getCase_number() {
-        return case_number;
+    public int getCaseNumber() {
+        return caseNumber;
     }
 
-    public void setCase_number(int case_number) {
-        this.case_number = case_number;
+    public void setCaseNumber(int caseNumber) {
+        this.caseNumber = caseNumber;
     }
 
-    public int getSuccess_number() {
-        return success_number;
+    public int getSuccessNumber() {
+        return successNumber;
     }
 
-    public void setSuccess_number(int success_number) {
-        this.success_number = success_number;
+    public void setSuccessNumber(int successNumber) {
+        this.successNumber = successNumber;
     }
 
-    public int getRun_number() {
-        return run_number;
+    public int getRunNumber() {
+        return runNumber;
     }
 
     public String getEnv() {
@@ -77,8 +80,8 @@ public class AutoTestReport {
         this.env = env;
     }
 
-    public void setRun_number(int run_number) {
-        this.run_number = run_number;
+    public void setRunNumber(int runNumber) {
+        this.runNumber = runNumber;
     }
 
     public String getTitle() {
@@ -145,15 +148,23 @@ public class AutoTestReport {
         this.result = result;
     }
 
+    public List<AutoTestRunLog> getRunLogs() {
+        return runLogs;
+    }
+
+    public void setRunLogs(List<AutoTestRunLog> runLogs) {
+        this.runLogs = runLogs;
+    }
+
     @Override
     public String toString() {
         return "AutoTestReport{" +
                 "id=" + id +
                 ", batchNum='" + batchNum + '\'' +
-                ", case_number=" + case_number +
+                ", case_number=" + caseNumber +
                 ", env='" + env + '\'' +
-                ", success_number=" + success_number +
-                ", run_number=" + run_number +
+                ", success_number=" + successNumber +
+                ", run_number=" + runNumber +
                 ", title='" + title + '\'' +
                 ", desc='" + desc + '\'' +
                 ", operator='" + operator + '\'' +
