@@ -36,6 +36,11 @@ public interface SourceConfigFacade {
 
     @POST
     @AuthCheck
+    @Path("/test")
+    CommonResult<Boolean> testConnection(AutoTestSourceConfig autoTestSourceConfig);
+
+    @POST
+    @AuthCheck
     @Path("/update")
     CommonResult<Boolean> updateSource(AutoTestSourceConfig autoTestSourceConfig);
 

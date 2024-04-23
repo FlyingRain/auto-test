@@ -33,7 +33,7 @@ public class SQLExecutorHelper {
         return queryResult;
     }
 
-    private static Connection buildMysqlConnection(MysqlSourceConfig dataSourceConfig) throws Exception {
+    public static Connection buildMysqlConnection(MysqlSourceConfig dataSourceConfig) throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver");
         return DriverManager.getConnection(dataSourceConfig.getConnectionInfo() + ":" + dataSourceConfig.getPort() + "/" + dataSourceConfig.getDataBaseName(), dataSourceConfig.getUserName(), dataSourceConfig.getPassword());
     }

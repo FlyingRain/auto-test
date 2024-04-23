@@ -49,13 +49,20 @@ public class SourceConfigFacadeImpl implements SourceConfigFacade, Resource {
 
     @Override
     public CommonResult<Boolean> addSource(AutoTestSourceConfig autoTestSourceConfig) {
-        logger.info("start to insert sourceConfig:[{}]",autoTestSourceConfig);
+        logger.info("start to insert sourceConfig:[{}]", autoTestSourceConfig);
         return CommonResult.success(sourceConfigService.insert(SourceConfigViewConvert.convertToDomain(autoTestSourceConfig)));
     }
 
     @Override
+    public CommonResult<Boolean> testConnection(AutoTestSourceConfig autoTestSourceConfig) {
+        logger.info("start to test connection:[{}]", autoTestSourceConfig);
+        sourceConfigService.testConnection(SourceConfigViewConvert.convertToDomain(autoTestSourceConfig));
+        return CommonResult.success(true);
+    }
+
+    @Override
     public CommonResult<Boolean> updateSource(AutoTestSourceConfig autoTestSourceConfig) {
-        logger.info("start to update sourceConfig:[{}]",autoTestSourceConfig);
+        logger.info("start to update sourceConfig:[{}]", autoTestSourceConfig);
         return CommonResult.success(sourceConfigService.updateById(SourceConfigViewConvert.convertToDomain(autoTestSourceConfig)));
     }
 

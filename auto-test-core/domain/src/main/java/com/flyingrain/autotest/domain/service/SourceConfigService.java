@@ -1,12 +1,14 @@
 package com.flyingrain.autotest.domain.service;
 
-import com.flyingrain.autotest.common.util.PageQuery;
-import com.flyingrain.autotest.common.util.PageableModel;
-import com.flyingrain.autotest.common.util.RunTimeContext;
+import com.alibaba.fastjson.JSONObject;
+import com.flyingrain.autotest.common.util.*;
 import com.flyingrain.autotest.common.util.constant.AutoTestConstants;
+import com.flyingrain.autotest.common.util.exception.AutoTestException;
+import com.flyingrain.autotest.domain.core.model.MysqlSourceConfig;
 import com.flyingrain.autotest.domain.model.SourceConfig;
 import com.flyingrain.autotest.domain.model.User;
 import com.flyingrain.autotest.domain.service.convert.SourceConfigConvert;
+import com.flyingrain.autotest.domain.utils.SQLExecutorHelper;
 import com.flyingrain.autotest.infrastructure.datasource.mapper.AutoTestSourceConfigMapper;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestSourceConfigModel;
 import org.slf4j.Logger;
@@ -71,6 +73,23 @@ public class SourceConfigService {
         User user = RunTimeContext.get(AutoTestConstants.USER);
         sourceConfig.setOperator(user == null ? null : user.getUserName());
         return autoTestSourceConfigMapper.updateById(SourceConfigConvert.convertToModel(sourceConfig)) == 1;
+    }
+
+    public void testConnection(SourceConfig sourceConfig) {
+        DataSourceTypeEnum dataSourceTypeEnum = DataSourceTypeEnum.valueOf(sourceConfig.getSourceType());
+        try {
+            switch (dataSourceTypeEnum) {
+                case MYSQL:
+                    MysqlSourceConfig mysqlSourceConfig = JSONObject.parseObject(sourceConfig.getConfig(), MysqlSourceConfig.class);
+                    SQLExecutorHelper.buildMysqlConnection(mysqlSourceConfig);
+                    break;
+                case REDIS:
+                    throw new AutoTestException(AutoTestResultCodeEnum.NOT_SUPPORT_DATA_SOURCE);
+            }
+        } catch (Exception e) {
+            logger.error("build connection failed!", e);
+            throw new AutoTestException(AutoTestResultCodeEnum.FAIL.getCode(), "建立连接失败：" + e.getMessage());
+        }
     }
 
 

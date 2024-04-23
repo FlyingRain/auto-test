@@ -45,6 +45,11 @@
           <el-form-item label="密码:" prop="config.password">
             <el-input v-model="sourceConfig.config.password" placeholder="请输入服务名称"></el-input>
           </el-form-item>
+          <div class="footer">
+            <el-form-item>
+              <el-button type="primary" @click="testConnect">测试连接</el-button>
+            </el-form-item>
+          </div>
         </div>
       </el-card>
       <el-card class="box-card">
@@ -140,6 +145,15 @@ export default {
           this.showMysql = true
         }
       }
+    },
+    testConnect() {
+      this.$axios.post('/sourceConfig/test', this.buildRequest()).then(res => {
+        if (res.data.success) {
+          this.$message.success('连接成功!')
+        } else {
+          this.$message.error(res.data.message)
+        }
+      })
     }
   },
   created() {
