@@ -60,7 +60,7 @@ public class HttpClientUtils {
                 return result;
             }else{
                 logger.error("send http post error!return status:[{}],result:[{}]",statusCode,result);
-                throw new AutoTestException(AutoTestResultCodeEnum.NETWORK_ERROR);
+                return result;
             }
         } catch (Exception e) {
             logger.error("send http error!", e);
@@ -86,7 +86,7 @@ public class HttpClientUtils {
                 return result;
             } else {
                 logger.error("http send status error!statusCode:[{}],result:[{}]", statusCode, result);
-                throw new AutoTestException(AutoTestResultCodeEnum.NETWORK_ERROR);
+                return result;
             }
         } catch (IOException e) {
             logger.error("send http get error!", e);

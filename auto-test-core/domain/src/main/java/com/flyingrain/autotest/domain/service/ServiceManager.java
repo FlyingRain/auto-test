@@ -1,11 +1,13 @@
 package com.flyingrain.autotest.domain.service;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.flyingrain.autotest.common.util.DynamicParamExtract;
 import com.flyingrain.autotest.common.util.PageQuery;
 import com.flyingrain.autotest.common.util.PageableModel;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import com.flyingrain.autotest.domain.model.ParamMap;
+import com.flyingrain.autotest.domain.model.ParamValue;
 import com.flyingrain.autotest.domain.model.Service;
 import com.flyingrain.autotest.domain.model.ServiceParam;
 import com.flyingrain.autotest.domain.service.convert.ServiceModelConvert;
@@ -16,6 +18,7 @@ import com.flyingrain.autotest.infrastructure.datasource.mapper.AutoTestServiceP
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestCaseModel;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestServiceModel;
 import com.flyingrain.autotest.infrastructure.datasource.model.AutoTestServiceParamModel;
+import org.glassfish.jersey.internal.guava.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -139,8 +139,31 @@ public class ServiceManager {
         List<ServiceParam> params = extractParams(service);
         if (!CollectionUtils.isEmpty(params)) {
             serviceParamMapper.batchInsert(params.stream().map(ServiceParamModelConvert::convertServiceParam).collect(Collectors.toList()));
+        } else {
+            params = new ArrayList<>();
         }
+        updateCase(service.getId(), params);
         return autoTestServiceMapper.updateServiceById(ServiceModelConvert.convertService(service));
+    }
+
+    private void updateCase(int id, List<ServiceParam> params) {
+        List<AutoTestCaseModel> caseModels = autoTestCaseMapper.queryByServiceIds(Collections.singletonList(id));
+        caseModels.forEach(autoTestCaseModel -> {
+            String paramValue = autoTestCaseModel.getParamValue();
+            List<ParamValue> paramValueList = StringUtils.hasText(paramValue) ? JSONArray.parseArray(paramValue, ParamValue.class) : new ArrayList<>();
+            List<ParamValue> newParam = params.stream().map(serviceParam -> {
+                ParamValue p = new ParamValue();
+                p.setName(serviceParam.getParam());
+                for (ParamValue old : paramValueList) {
+                    if (serviceParam.getParam().equals(old.getName())) {
+                        p.setValue(old.getValue());
+                    }
+                }
+                return p;
+            }).toList();
+            autoTestCaseModel.setParamValue(JSONArray.toJSONString(newParam));
+            autoTestCaseMapper.updateCaseById(autoTestCaseModel);
+        });
     }
 
     public int batchDelete(List<Integer> serviceIds, String operator) {

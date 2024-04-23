@@ -59,6 +59,7 @@ public class HttpExecutor implements Executor<String> {
         } catch (Exception e) {
             logger.error("run result failed!", e);
             executeResult.setSuccess(false);
+            executeResult.setResult(e.toString());
         }
     }
 
@@ -71,6 +72,7 @@ public class HttpExecutor implements Executor<String> {
         } catch (Exception e) {
             logger.error("run result failed!", e);
             executeResult.setSuccess(false);
+            executeResult.setResult(e.toString());
         }
     }
 }
