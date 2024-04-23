@@ -27,4 +27,12 @@ public class HttpExecuteParam extends ExecuteParam<String>{
     public void setRequestTypeEnum(HTTPRequestTypeEnum requestTypeEnum) {
         this.requestTypeEnum = requestTypeEnum;
     }
+
+    @Override
+    public String toString() {
+        return "HttpExecuteParam{" +
+                "headers=" + headers +
+                ", requestTypeEnum=" + requestTypeEnum +
+                '}';
+    }
 }

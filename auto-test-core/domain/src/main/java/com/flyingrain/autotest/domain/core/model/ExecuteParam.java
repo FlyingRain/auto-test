@@ -21,4 +21,12 @@ public class ExecuteParam<T> {
     public void setBody(T body) {
         this.body = body;
     }
+
+    @Override
+    public String toString() {
+        return "ExecuteParam{" +
+                "path='" + path + '\'' +
+                ", body=" + body +
+                '}';
+    }
 }

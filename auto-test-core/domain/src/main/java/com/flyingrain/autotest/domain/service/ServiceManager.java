@@ -25,7 +25,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -100,7 +102,7 @@ public class ServiceManager {
     }
 
     private List<ServiceParam> extractParams(Service service) {
-        List<String> params = new ArrayList<>();
+        Set<String> params = new HashSet<>();
         String requestUrl = service.getRequestUrl();
         if (StringUtils.hasText(requestUrl)) {
             List<String> tempUrl = DynamicParamExtract.extractParam(requestUrl);

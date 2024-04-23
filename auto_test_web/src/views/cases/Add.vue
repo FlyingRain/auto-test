@@ -334,6 +334,7 @@ export default {
         console.log(this.caseModel.checkPoints)
         this.caseModel.responseConfig = JSON.parse(result.data.data.responseConfig)
         this.caseModel.paramValue = JSON.parse(result.data.data.paramValue)
+        this.addCheckPointRules()
       } else {
         this.$message.error(result.data.message)
       }
@@ -403,18 +404,39 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           var url = this.caseModel.id ? '/case/update' : '/case/insert'
-          this.$axios.post(url, this.buildRequest()).then((res) => {
-            if (res.data.success) {
-              this.$message.success('保存成功')
-              this.$router.push('/autotest/cases')
-            } else {
-              this.$message.error('保存失败，' + res.data.message)
-            }
-          })
+          if (this.validCheckPoints()) {
+            this.$axios.post(url, this.buildRequest()).then((res) => {
+              if (res.data.success) {
+                this.$message.success('保存成功')
+                this.$router.push('/autotest/cases')
+              } else {
+                this.$message.error('保存失败，' + res.data.message)
+              }
+            })
+          }
         } else {
           return false
         }
       })
+    },
+    validCheckPoints() {
+      for (let checkpoint of this.caseModel.checkPoints) {
+        if (checkpoint.checkPointType === 'VALUE') {
+          for (let judge of checkpoint.judges) {
+            var valid = false
+            for (let result of this.caseModel.responseConfig.responseParam) {
+              if (result.value === judge.param) {
+                valid = true
+              }
+            }
+            if (!valid) {
+              this.$message.error('校验点配置错误！变量[' + judge.param + ']需先在返回值提取处配置！')
+              return false
+            }
+          }
+        }
+      }
+      return true
     },
     buildRequest() {
       const requestVar = {}
@@ -485,6 +507,7 @@ export default {
           }])
         }
         console.log('add judges:' + this.caseModel.checkPoints[i].judges.length)
+        console.log(this.caseModel.checkPoints[i].judges)
         if (this.caseModel.checkPoints[i].judges && this.caseModel.checkPoints[i].judges.length > 0) {
           for (let j = 0; j < this.caseModel.checkPoints[i].judges.length; j++) {
             this.$set(this.rules, 'checkPoints.' + i + '.judges.' + j + '.param', [{
