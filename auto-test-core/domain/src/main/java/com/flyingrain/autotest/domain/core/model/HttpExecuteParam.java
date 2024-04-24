@@ -33,6 +33,6 @@ public class HttpExecuteParam extends ExecuteParam<String>{
         return "HttpExecuteParam{" +
                 "headers=" + headers +
                 ", requestTypeEnum=" + requestTypeEnum +
-                '}';
+                "} " + super.toString();
     }
 }
