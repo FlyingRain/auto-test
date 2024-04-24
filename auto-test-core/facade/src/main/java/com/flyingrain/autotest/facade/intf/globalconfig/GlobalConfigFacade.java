@@ -5,6 +5,7 @@ import com.flyingrain.autotest.common.util.PageQuery;
 import com.flyingrain.autotest.common.util.PageableModel;
 import com.flyingrain.autotest.facade.intf.model.AutoTestGlobalConfig;
 import com.flyingrain.autotest.facade.intf.requests.BatchDelRequest;
+import com.flyingrain.autotest.mvc.jersey.AuthCheck;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
@@ -17,6 +18,7 @@ public interface GlobalConfigFacade {
 
 
     @Path("/insert")
+    @AuthCheck
     @POST
     CommonResult<Boolean> insert(AutoTestGlobalConfig autoTestGlobalConfig);
 
@@ -26,11 +28,14 @@ public interface GlobalConfigFacade {
 
 
     @Path("/update")
+    @AuthCheck
+
     @POST
     CommonResult<Boolean> update(AutoTestGlobalConfig autoTestGlobalConfig);
 
     @POST
     @Path("/batchDel")
+    @AuthCheck
     CommonResult<Integer> batchDel(BatchDelRequest batchDelRequest);
 
     @GET
