@@ -50,12 +50,12 @@ public class GlobalConfigService {
     }
 
     public int insert(GlobalConfig globalConfig) {
-        logger.info("start to add GlobalConfig:[{}]", globalConfig);
         User user = RunTimeContext.get(AutoTestConstants.USER);
         if (user == null) {
             throw new AutoTestException(AutoTestResultCodeEnum.NOT_LOGIN);
         }
         globalConfig.setOperator(user.getUserName());
+        logger.info("start to add GlobalConfig:[{}]", globalConfig);
         return globalConfigMapper.insert(GlobalConfigModelConvert.convertToModel(globalConfig));
     }
 

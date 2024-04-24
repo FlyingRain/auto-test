@@ -10,7 +10,7 @@ import java.util.List;
 public interface AutoTestGlobalConfigMapper {
 
 
-    @Insert("insert into (param_value,param_key,param_name,operator) values(#{paramValue},#{paramKey},#{paramName},#{operator})")
+    @Insert("insert into auto_test_global_config (param_value,param_key,param_name,operator) values (#{paramValue},#{paramKey},#{paramName},#{operator})")
     int insert(AutoTestGlobalConfigModel autoTestGlobalConfigModel);
 
     @SelectProvider(value = AutoTestGlobalConfigDynamicSqlProvider.class, method = "queryByPage")
