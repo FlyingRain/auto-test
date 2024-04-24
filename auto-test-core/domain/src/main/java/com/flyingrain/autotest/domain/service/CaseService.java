@@ -24,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,9 @@ public class CaseService {
 
     @Autowired
     private AutoTestSceneMapper autoTestSceneMapper;
+
+    @Autowired
+    private GlobalConfigService globalConfigService;
 
     public PageableModel<Case> queryByPage(PageQuery<CaseQuery> caseQueryRequestPageQuery) {
         logger.info("query request:[{}]", caseQueryRequestPageQuery);
@@ -94,16 +98,28 @@ public class CaseService {
 
     public String run(Integer caseId) {
         Case testCase = queryDetail(caseId);
-        ExecuteContext executeContext = new ExecuteContext();
         logger.info("start to build executeUnit caseId:[{}]", caseId);
         ExecuteUnit executeUnit = executeUnitBuilder.buildExecuteUnit(testCase);
         String runId = UUID.randomUUID().toString().replace("-", "");
-        executeContext.setExecuteCode(runId);
         User user = RunTimeContext.get(AutoTestConstants.USER);
-        executeContext.setExecutor(user == null ? null : user.getUserName());
+        ExecuteContext executeContext = buildExecuteContext(runId, user);
         logger.info("start to run case:[{}]", executeUnit);
         executeUnit.run(executeContext);
         return runId;
+    }
+
+    private ExecuteContext buildExecuteContext(String runId, User user) {
+        ExecuteContext executeContext = new ExecuteContext();
+        executeContext.setExecuteCode(runId);
+        executeContext.setExecutor(user == null ? null : user.getUserName());
+        Map<String, String> params = executeContext.getParams();
+        List<GlobalConfig> globalConfigList = globalConfigService.queryAll();
+        if (!CollectionUtils.isEmpty(globalConfigList)) {
+            globalConfigList.forEach(globalConfig -> {
+                params.put(globalConfig.getParamKey(), globalConfig.getParamValue());
+            });
+        }
+        return executeContext;
     }
 
     /**

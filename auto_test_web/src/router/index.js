@@ -72,6 +72,13 @@ const router = new Router({
           component: () => import('@/views/source/Add.vue')
         },
         {
+          path: '/globalConfig',
+          meta: {
+            title: '全局变量设置'
+          },
+          component: () => import('@/views/globalconfig/Index.vue')
+        },
+        {
           path: '/autotest',
           meta: {
             title: '自动化测试'

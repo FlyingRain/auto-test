@@ -78,6 +78,11 @@
               <i class="el-icon-s-data"></i>
               <span slot="title">数据源配置</span>
             </el-menu-item>
+            <el-menu-item index="/globalConfig" @click="saveActiveNav('/globalConfig')">
+              <i class="el-icon-s-data"></i>
+              <span slot="title">全局变量配置</span>
+            </el-menu-item>
+
           </el-menu>
         </el-aside>
         <!-- 主体部分 -->

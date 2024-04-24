@@ -1,0 +1,174 @@
+<template>
+  <div class="content">
+    <el-card shadow="never" style="margin-top: 10px">
+      <el-col>
+
+        <el-form ref="searchForm" :model="globalConfig" size="small" inline>
+          <el-form-item label="参数名称">
+            <el-input v-model.trim="globalConfig.conditions.paramName" placeholder="请输入参数名称"></el-input>
+          </el-form-item>
+          <el-form-item label="参数key">
+            <el-input v-model.trim="globalConfig.conditions.paramKey" placeholder="请输入参数key"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="el-icon-search" size="small" @click="handleSearch()">查询</el-button>
+            <el-button icon="el-icon-refresh-right" size="small" @click="handleClear()">重置</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-card>
+    <el-card shadow="never" style="margin-top: 5px">
+      <div class="opts">
+        <el-button type="primary" icon="el-icon-circle-plus" size="small" @click="dialogVisible = true"> 新增
+        </el-button>
+      </div>
+      <el-form ref="configForm" :model="list" size="small" inline>
+
+        <el-row :gutter="10" style="width: 60%">
+          <el-col style="width: 20%">
+            <span class="title">参数key</span>
+          </el-col>
+          <el-col style="width: 20%">
+            <span class="title">参数值</span>
+          </el-col>
+          <el-col style="width: 30%">
+            <span class="title">参数名称</span>
+          </el-col>
+          <el-col style="width: 30%">
+            <span class="title">操作</span>
+          </el-col>
+        </el-row>
+        <div v-for="(config,index) in list.globalConfigs" :key="index"
+             style="width: 100%;display: flex">
+          <el-row :gutter="10" style="width: 60%">
+            <el-col style="width: 20%;margin-top: 7px">
+              <el-form-item :prop="'globalConfigs.'+index+'.paramKey'">
+                <el-input v-model="config.paramKey" :disabled="true"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col style="width: 20%;margin-top: 7px">
+              <el-form-item :prop="'globalConfigs.'+index+'.paramValue'">
+                <el-input v-model="config.paramValue" :disabled="canEdit"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col style="width: 30%;margin-top: 7px">
+              <el-form-item :prop="'globalConfigs.'+index+'.paramName'">
+                <el-input v-model="config.paramName" :disabled="canEdit"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col style="width: 30%;margin-top: 7px">
+              <el-button size="small" type="primary" v-if="canEdit" @click="changeEdit(false)"> 编辑</el-button>
+              <el-button size="small" type="primary" v-if="canEdit" @click="deleteConfig(config)"> 删除</el-button>
+              <el-button size="small" type="success" v-if="!canEdit" @click="saveUpdate(config)"> 确定</el-button>
+              <el-button size="small" type="info" v-if="!canEdit" @click="changeEdit(true)"> 取消</el-button>
+            </el-col>
+          </el-row>
+        </div>
+      </el-form>
+      <el-dialog
+          title="新增应用"
+          ref="addDialog"
+          :visible.sync="dialogVisible"
+          width="30%"
+          :close-on-click-modal=false
+      >
+        <el-form :model="globalConfigForm" size="small" :rules="addRules">
+          <el-form-item label="参数key：" prop="paramKey" label-width="120px">
+            <span>global_</span>
+            <el-input v-model.trim="globalConfigForm.paramKey" placeholder="请输入应用编码" style="width: 70%"/>
+          </el-form-item>
+          <el-form-item label="参数值：" prop="paramValue" label-width="120px">
+            <el-input v-model.trim="globalConfigForm.paramValue" placeholder="请输入应用名称" style="width: 80%"/>
+          </el-form-item>
+          <el-form-item label="参数名称：" prop="paramName" label-width="120px">
+            <el-input v-model.trim="globalConfigForm.paramName" placeholder="请输入负责人" style="width: 80%"/>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="addGlobalConfig">确 定</el-button>
+    </span>
+      </el-dialog>
+    </el-card>
+
+  </div>
+
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      globalConfig: {
+        currentPage: 1,
+        pageSize: 10,
+        conditions: {
+          paramName: '',
+          paramKey: ''
+        }
+      },
+      list: {globalConfigs: [{paramKey: 'asdf', paramValue: 'asfd', paramName: 'fasd'}]},
+      canEdit: true,
+      dialogVisible: false,
+      globalConfigForm: {
+        paramKey: '',
+        paramValue: '',
+        paramName: ''
+      },
+      addRules: {
+        paramKey: [{required: true, message: '请输入参数key', trigger: 'blur'}],
+        paramValue: [{required: true, message: '请输入参数值', trigger: 'blur'}]
+      }
+    }
+  },
+  created() {
+    this.initData()
+  },
+  methods: {
+    changeEdit(opt) {
+      console.log('sdcasdc')
+      this.canEdit = opt
+    },
+    saveUpdate(config) {
+      console.log(config)
+    },
+    deleteConfig(config) {
+      console.log(config)
+    },
+    async initData() {
+      const result = await this.$axios.get('/globalConfig/queryAll')
+      if (result.data.success) {
+        this.list.globalConfigs = result.data.data
+      } else {
+        this.$message.error(result.data.message)
+      }
+    },
+    addGlobalConfig() {
+      var gConfig = {}
+      Object.assign(gConfig, this.globalConfigForm)
+      gConfig.paramKey = 'global_' + this.globalConfigForm.paramKey
+      this.$axios.post('/globalConfig/insert', gConfig).then(res => {
+        if (res.data.success) {
+          this.initData()
+          this.dialogVisible = false
+        } else {
+          this.$message.error(res.data.message)
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style>
+.title {
+  font-size: 14px;
+}
+
+.opts {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+</style>

@@ -48,6 +48,9 @@ public class SceneService {
     @Autowired
     private ReportService reportService;
 
+
+    @Autowired
+    private GlobalConfigService globalConfigService;
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() * 2, Runtime.getRuntime().availableProcessors() * 10, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1000));
 
     @Transactional
@@ -218,6 +221,13 @@ public class SceneService {
         String batchNum = scene.getSceneCode() + "_" + UUID.randomUUID().toString().replace("-", "");
         executeContext.setExecutor(user.getUserName());
         executeContext.setExecuteCode(batchNum);
+        Map<String, String> params = executeContext.getParams();
+        List<GlobalConfig> globalConfigList = globalConfigService.queryAll();
+        if (!CollectionUtils.isEmpty(globalConfigList)) {
+            globalConfigList.forEach(globalConfig -> {
+                params.put(globalConfig.getParamKey(), globalConfig.getParamValue());
+            });
+        }
         return executeContext;
     }
 }
