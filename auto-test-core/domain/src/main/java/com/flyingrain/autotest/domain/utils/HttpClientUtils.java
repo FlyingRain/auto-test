@@ -64,7 +64,7 @@ public class HttpClientUtils {
             }
         } catch (Exception e) {
             logger.error("send http error!", e);
-            throw new AutoTestException(AutoTestResultCodeEnum.NETWORK_ERROR, e);
+            throw new AutoTestException(AutoTestResultCodeEnum.NETWORK_ERROR.getCode(), e.getMessage());
         }
     }
 
@@ -90,7 +90,7 @@ public class HttpClientUtils {
             }
         } catch (IOException e) {
             logger.error("send http get error!", e);
-            throw new AutoTestException(AutoTestResultCodeEnum.NETWORK_ERROR, e);
+            throw new AutoTestException(AutoTestResultCodeEnum.NETWORK_ERROR.getCode(), e.getMessage());
         }
     }
 

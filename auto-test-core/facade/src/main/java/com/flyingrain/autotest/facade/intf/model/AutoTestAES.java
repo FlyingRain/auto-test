@@ -5,7 +5,7 @@ public class AutoTestAES {
     private String key;
 
     private String iv;
-    private String originStr;
+    private Object originStr;
 
     private String encryptStr;
 
@@ -17,7 +17,7 @@ public class AutoTestAES {
         this.key = key;
     }
 
-    public String getOriginStr() {
+    public Object getOriginStr() {
         return originStr;
     }
 
@@ -29,7 +29,7 @@ public class AutoTestAES {
         this.iv = iv;
     }
 
-    public void setOriginStr(String originStr) {
+    public void setOriginStr(Object originStr) {
         this.originStr = originStr;
     }
 
