@@ -12,14 +12,12 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 
 /**
  * 统一异常处理
  */
 @Provider
-@Component
 public class CommonExceptionHandler implements ExceptionMapper<Exception> {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonExceptionHandler.class);
