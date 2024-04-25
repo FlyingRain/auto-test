@@ -22,7 +22,7 @@ public class DynamicParamExtract {
             if (Character.toString(str.charAt(i)).equals("{") && Character.toString(str.charAt(i - 1)).equals("$")) {
                 if (startIndex != 0) {
                     logger.error("param format error!at str index:[{}]", i);
-                    throw new AutoTestException(AutoTestResultCodeEnum.TEMPLATE_ERROR);
+                    throw new AutoTestException(AutoTestResultCodeEnum.TEMPLATE_ERROR.getCode(),"服务不支持嵌套，嵌套请在用例配置");
                 }
                 startIndex = i + 1;
             }

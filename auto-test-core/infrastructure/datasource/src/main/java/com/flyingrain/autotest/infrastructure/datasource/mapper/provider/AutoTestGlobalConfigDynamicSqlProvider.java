@@ -70,6 +70,9 @@ public class AutoTestGlobalConfigDynamicSqlProvider {
         if (StringUtils.hasText(autoTestGlobalConfigModel.getParamValue())) {
             sql.SET("param_value=#{globalModel.paramValue}");
         }
+        if (StringUtils.hasText(autoTestGlobalConfigModel.getParamValue())) {
+            sql.SET("param_name=#{globalModel.paramName}");
+        }
     }
 
 }

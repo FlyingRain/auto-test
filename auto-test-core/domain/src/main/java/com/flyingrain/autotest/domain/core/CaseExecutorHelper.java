@@ -1,18 +1,23 @@
 package com.flyingrain.autotest.domain.core;
 
 import com.alibaba.fastjson.JSONArray;
-import com.flyingrain.autotest.common.util.DynamicParamExtract;
+import com.flyingrain.autotest.common.util.AutoTestResultCodeEnum;
+import com.flyingrain.autotest.common.util.DynamicParamTypeEnum;
+import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import com.flyingrain.autotest.domain.model.Case;
 import com.flyingrain.autotest.domain.model.ParamValue;
 import com.flyingrain.autotest.domain.model.Service;
+import com.flyingrain.autotest.domain.utils.FunctionExecuteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class CaseExecutorHelper {
@@ -50,24 +55,76 @@ public class CaseExecutorHelper {
 
     public static String replaceParam(Map<String, String> params, String str) {
         if (StringUtils.hasText(str)) {
-            List<String> dynamicParams = DynamicParamExtract.extractParam(str);
-            if (!CollectionUtils.isEmpty(dynamicParams)) {
-                for (String param : dynamicParams) {
-                    String value = params.get(param);
-                    if (StringUtils.hasText(value)) {
-                        str = str.replace("${" + param + "}", value);
+            Stack<Integer> index = new Stack<>();
+            int cursor = 1;
+            try {
+                while (cursor < str.length()) {
+                    StringBuilder temp = new StringBuilder(str);
+                    if (Character.toString(str.charAt(cursor)).equals("{") && Character.toString(str.charAt(cursor - 1)).equals("$")) {
+                        index.push(cursor + 1);
+                        cursor++;
+                    } else if (Character.toString(str.charAt(cursor)).equals("}") && !index.isEmpty()) {
+                        int startIndex = index.pop();
+                        String atomicParam = str.substring(startIndex, cursor);
+                        String value = calculateValue(atomicParam, params);
+                        if (value == null) {
+                            logger.warn("atomicParam value is null![{}]", atomicParam);
+                            if (temp.charAt(startIndex - 3) == '"')
+                                value = "";
+                            else value = "null";
+                        }
+                        temp.replace(startIndex - 2, cursor + 1, value);
+                        str = temp.toString();
+                        int resultLen = StringUtils.hasText(value) ? value.length() : 0;
+                        cursor = startIndex - 2 + resultLen;
                     } else {
-                        //如果没有值，那么根据配置上下文，确定是替换成空字符串，还是null
-                        int index = str.indexOf("${" + param + "}");
-                        if ("\"".equals(str.substring(index - 1, index)))
-                            str = str.replace("${" + param + "}", "");
-                        else
-                            str = str.replace("${" + param + "}", "null");
+                        cursor++;
                     }
                 }
+            } catch (Exception e) {
+                logger.error("replace param happen error", e);
+                throw new AutoTestException(AutoTestResultCodeEnum.DYNAMIC_PARAM_ERROR);
+            }
+            if (!index.isEmpty()) {
+                logger.error("replace param error! remain index:[{}],str:[{}]", index.pop(), str);
+                throw new AutoTestException(AutoTestResultCodeEnum.DYNAMIC_PARAM_ERROR);
             }
         }
         return str;
+    }
+
+    private static String calculateValue(String atomicParam, Map<String, String> params) {
+        logger.info("start to calculate atomic param:[{}]", atomicParam);
+        DynamicParamTypeEnum dynamicParamTypeEnum = extractParamType(atomicParam);
+        switch (dynamicParamTypeEnum) {
+            case FUNCTION:
+                int functionStart = atomicParam.indexOf("(");
+                int functionEnd = atomicParam.indexOf(")");
+                String functionName = atomicParam.substring(0, functionStart);
+                String[] functionParams = null;
+                if (functionStart + 1 < functionEnd) {
+                    functionParams = atomicParam.substring(functionStart + 1, functionEnd).split(",");
+                }
+                String value = FunctionExecuteHelper.executeFunction(functionName, functionParams);
+                logger.info("execute function value:[{}]", value);
+                return value;
+            case PARAM:
+                return params.get(atomicParam);
+            default:
+                logger.error("not support type:[{}]", atomicParam);
+                throw new AutoTestException(AutoTestResultCodeEnum.DYNAMIC_PARAM_ERROR);
+        }
+    }
+
+
+    public static DynamicParamTypeEnum extractParamType(String param) {
+        String reg = "[\\w]+\\([\\w\\d,': -]+\\)";
+        Pattern pattern = Pattern.compile(reg);
+        Matcher matcher = pattern.matcher(param);
+        if (matcher.matches()) {
+            return DynamicParamTypeEnum.FUNCTION;
+        }
+        return DynamicParamTypeEnum.PARAM;
     }
 
 

@@ -24,3 +24,9 @@ spring:
       test-on-return: false
       max-pool-prepared-statement-per-connection-size: 20
     type: com.alibaba.druid.pool.DruidDataSource
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
+    time-zone: GMT+8
+    default-property-inclusion: non-null
+    date-format: yyyy-MM-dd HH:mm:ss

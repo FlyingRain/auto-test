@@ -47,6 +47,7 @@ public enum AutoTestResultCodeEnum {
     NOT_SUPPORT_DATA_TYPE("519","不支持的数据类型"),
     NOT_SUPPORT_METHOD("520","不支持的函数"),
     NOT_SUPPORT_SQL("521","不支持的sql"),
+    DYNAMIC_PARAM_ERROR("522","动态参数值格式错误"),
 
 
 
