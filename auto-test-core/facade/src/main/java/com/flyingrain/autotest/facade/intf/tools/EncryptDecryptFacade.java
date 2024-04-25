@@ -30,11 +30,11 @@ public interface EncryptDecryptFacade {
     CommonResult<String> base64Decode(AutoTestEncryptDecrypt autoTestEncryptDecrypt);
 
 
-    @Path("/base64/urlEncode")
+    @Path("/url/encode")
     @POST
     CommonResult<String> urlEncode(AutoTestEncryptDecrypt autoTestEncryptDecrypt);
 
-    @Path("/base64/urlDecode")
+    @Path("/url/decode")
     @POST
     CommonResult<String> urlDecode(AutoTestEncryptDecrypt autoTestEncryptDecrypt);
 
