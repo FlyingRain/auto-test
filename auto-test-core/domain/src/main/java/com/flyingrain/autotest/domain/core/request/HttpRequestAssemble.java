@@ -42,7 +42,7 @@ public class HttpRequestAssemble implements RequestAssemble {
     @Override
     public ExecuteParam assembleRequest(ExecuteContext executeContext) {
 
-        //先替换case里的变量 TODO 这里的变量以后还应该包含全局变量，全局变量在初始化上下文时，由上下文携带。也就是说，服务里的变量由两个地方替换：用例和全局。
+        //先替换case里的变量
         Map<String, String> params = replaceParamValue(paramValueList, executeContext);
 
         //校验填充字段是否满足,
@@ -85,18 +85,24 @@ public class HttpRequestAssemble implements RequestAssemble {
 
 
     private Map<String, String> replaceParamValue(List<ParamValue> paramValueList, ExecuteContext executeContext) {
-        Map<String, String> params = new HashMap<>();
+        Map<String, String> params = new HashMap<>(executeContext.getParams());
         if (CollectionUtils.isEmpty(paramValueList)) {
             return params;
         }
         paramValueList.forEach(paramValue -> {
-            String value = paramValue.getValue();
-            if (isDynamicVar(value)) {
-                value = replaceValue(value, executeContext);
+            if (!isGlobalKey(paramValue.getName())) {
+                String value = paramValue.getValue();
+                if (isDynamicVar(value)) {
+                    value = replaceValue(value, executeContext);
+                }
+                params.put(paramValue.getName(), value);
             }
-            params.put(paramValue.getName(), value);
         });
         return params;
+    }
+
+    private boolean isGlobalKey(String value) {
+        return value.startsWith("global_");
     }
 
     private String replaceValue(String value, ExecuteContext executeContext) {

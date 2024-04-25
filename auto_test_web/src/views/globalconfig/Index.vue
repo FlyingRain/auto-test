@@ -22,7 +22,7 @@
         <el-button type="primary" icon="el-icon-circle-plus" size="small" @click="dialogVisible = true"> 新增
         </el-button>
       </div>
-      <el-form ref="configForm" :model="list" size="small" inline>
+      <el-form ref="configForm" :model="list" size="small" :key="formKey" inline>
 
         <el-row :gutter="10" style="width: 60%">
           <el-col style="width: 20%">
@@ -48,19 +48,21 @@
             </el-col>
             <el-col style="width: 20%;margin-top: 7px">
               <el-form-item :prop="'globalConfigs.'+index+'.paramValue'">
-                <el-input v-model="config.paramValue" :disabled="canEdit"></el-input>
+                <el-input v-model="config.paramValue" :disabled="config.canEdit"></el-input>
               </el-form-item>
             </el-col>
             <el-col style="width: 30%;margin-top: 7px">
               <el-form-item :prop="'globalConfigs.'+index+'.paramName'">
-                <el-input v-model="config.paramName" :disabled="canEdit"></el-input>
+                <el-input v-model="config.paramName" :disabled="config.canEdit"></el-input>
               </el-form-item>
             </el-col>
             <el-col style="width: 30%;margin-top: 7px">
-              <el-button size="small" type="primary" v-if="canEdit" @click="changeEdit(false)"> 编辑</el-button>
-              <el-button size="small" type="primary" v-if="canEdit" @click="deleteConfig(config)"> 删除</el-button>
-              <el-button size="small" type="success" v-if="!canEdit" @click="saveUpdate(config)"> 确定</el-button>
-              <el-button size="small" type="info" v-if="!canEdit" @click="changeEdit(true)"> 取消</el-button>
+              <el-button size="small" type="primary" v-if="config.canEdit" @click="changeEdit(config)"> 编辑</el-button>
+              <el-button size="small" type="primary" v-if="config.canEdit" @click="deleteConfig(config)"> 删除
+              </el-button>
+              <el-button size="small" type="success" v-if="!config.canEdit" @click="saveUpdate(config)"> 确定
+              </el-button>
+              <el-button size="small" type="info" v-if="!config.canEdit" @click="changeEdit(config)"> 取消</el-button>
             </el-col>
           </el-row>
         </div>
@@ -96,6 +98,8 @@
 </template>
 
 <script>
+import {debounce} from 'lodash'
+
 export default {
   data() {
     return {
@@ -107,8 +111,8 @@ export default {
           paramKey: ''
         }
       },
-      list: {globalConfigs: [{paramKey: 'asdf', paramValue: 'asfd', paramName: 'fasd'}]},
-      canEdit: true,
+      formKey: 0,
+      list: {globalConfigs: [{paramKey: 'asdf', paramValue: 'asfd', paramName: 'fasd', canEdit: true}]},
       dialogVisible: false,
       globalConfigForm: {
         paramKey: '',
@@ -126,13 +130,15 @@ export default {
   },
   methods: {
     changeEdit(opt) {
-      console.log('sdcasdc')
-      this.canEdit = opt
+      var idx = this.list.globalConfigs.indexOf(opt)
+      this.list.globalConfigs[idx].canEdit = !this.list.globalConfigs[idx].canEdit
+      this.formKey = this.formKey + 1
     },
     saveUpdate(config) {
       this.$axios.post('/globalConfig/update', config).then(res => {
         if (res.data.success) {
-          this.canEdit = true
+          config.canEdit = true
+          this.formKey = this.formKey + 1
           this.$message.success('更新成功')
         } else {
           this.$message.error(res.data.message)
@@ -159,12 +165,16 @@ export default {
       const result = await this.$axios.get('/globalConfig/queryAll')
       if (result.data.success) {
         this.list.globalConfigs = result.data.data
+        for (let c of this.list.globalConfigs) {
+          c.canEdit = true
+        }
       } else {
         this.$message.error(result.data.message)
       }
     },
-    addGlobalConfig() {
+    addGlobalConfig: debounce(function () {
       var gConfig = {}
+      console.log(this.globalConfigForm)
       Object.assign(gConfig, this.globalConfigForm)
       gConfig.paramKey = 'global_' + this.globalConfigForm.paramKey
       this.$axios.post('/globalConfig/insert', gConfig).then(res => {
@@ -175,8 +185,23 @@ export default {
           this.$message.error(res.data.message)
         }
       })
+    }, 300),
+    handleSearch() {
+      this.$axios.post('/globalConfig/queryByPage', this.globalConfig).then((res) => {
+        if (res.data.success) {
+          this.list.globalConfigs = res.data.data.data
+        } else {
+          this.$message.error(res.data.message)
+        }
+      })
+    },
+    handleClear() {
+      this.globalConfig.conditions.paramKey = ''
+      this.globalConfig.conditions.paramName = ''
+      this.initData()
     }
   }
+
 }
 </script>
 

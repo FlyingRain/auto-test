@@ -76,7 +76,8 @@
           </el-form-item>
           <el-form-item label="请求体模板:" prop="requestModel">
             <el-input style="width: 100%" maxlength="1000" show-word-limit type="textarea"
-                      v-model="service.requestModel" placeholder="请输入请求体模板"></el-input>
+                      v-model="service.requestModel" placeholder="请输入请求体模板" :autosize="{ minRows: 5}"
+                      resize="both"></el-input>
           </el-form-item>
         </div>
       </el-card>
@@ -94,6 +95,8 @@
 </template>
 
 <script>
+import {debounce} from 'lodash'
+
 export default {
   data() {
     return {
@@ -236,7 +239,7 @@ export default {
         }])
       }
     },
-    onSubmit(formName) {
+    onSubmit: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let url = this.service.id ? '/service/update' : '/service/add'
@@ -253,7 +256,7 @@ export default {
           return false
         }
       })
-    },
+    }, 300),
     buildRequest() {
       const request = {}
       Object.assign(request, this.service)

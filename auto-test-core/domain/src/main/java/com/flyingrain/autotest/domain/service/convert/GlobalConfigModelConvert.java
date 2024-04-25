@@ -32,6 +32,7 @@ public class GlobalConfigModelConvert {
         autoTestGlobalConfigModel.setParamValue(globalConfig.getParamValue());
         autoTestGlobalConfigModel.setCreateTime(globalConfig.getCreateTime());
         autoTestGlobalConfigModel.setUpdateTime(globalConfig.getUpdateTime());
+        autoTestGlobalConfigModel.setOperator(globalConfig.getOperator());
         return autoTestGlobalConfigModel;
     }
 }

@@ -118,6 +118,8 @@
 </template>
 
 <script>
+import {debounce} from 'lodash'
+
 export default {
   data() {
     return {
@@ -229,7 +231,7 @@ export default {
     getRowKey(row) {
       return row.id
     },
-    addSceneCase() {
+    addSceneCase: debounce(function () {
       for (let i = 0; i < this.multipleSelection.length; i++) {
         console.log('..................' + i)
         this.sceneModel.autoTestSceneCases.push({
@@ -251,8 +253,8 @@ export default {
       console.log(JSON.stringify(this.sceneModel.autoTestSceneCases))
       this.dialogVisible = false
       this.$refs.caseTable.clearSelection()
-    },
-    submit() {
+    }, 300),
+    submit: debounce(function () {
       this.$refs.scene_form.validate((valid) => {
         if (valid) {
           var url = this.sceneModel.id ? '/scene/update' : '/scene/add'
@@ -266,7 +268,7 @@ export default {
           })
         }
       })
-    },
+    }, 300),
     moveUp(caseIndex) {
       if (caseIndex === 0) {
         this.$message.warning('已经是第一个了')

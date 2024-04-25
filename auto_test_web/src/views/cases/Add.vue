@@ -35,7 +35,7 @@
           <span>参数配置</span>
         </div>
         <div>
-          <div v-for="(param,index) in caseModel.paramValue" :key="index">
+          <div v-for="(param,index) in caseModel.paramValue" :key="index" v-if="!param.name.includes('global_')">
             <el-row :gutter="10" style="width: 100%">
               <el-col :span="6">
                 <el-form-item :label="'参数:'">
@@ -198,6 +198,8 @@
 </template>
 
 <script>
+import {debounce} from 'lodash'
+
 export default {
   data() {
     return {
@@ -400,7 +402,7 @@ export default {
         this.addCheckPointRules()
       }
     },
-    onSubmit(formName) {
+    onSubmit: debounce(function (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           var url = this.caseModel.id ? '/case/update' : '/case/insert'
@@ -418,7 +420,7 @@ export default {
           return false
         }
       })
-    },
+    }, 300),
     validCheckPoints() {
       for (let checkpoint of this.caseModel.checkPoints) {
         if (checkpoint.checkPointType === 'VALUE') {
