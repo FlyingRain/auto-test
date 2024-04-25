@@ -58,6 +58,7 @@ public class AutoTestGlobalConfigDynamicSqlProvider {
         SQL sql = new SQL();
         sql.UPDATE("auto_test_global_config");
         buildUpdateSQL(autoTestGlobalConfigModel, sql);
+        sql.WHERE("id=#{globalModel.id}");
         logger.info("update global config sql:[{}]", sql);
         return sql.toString();
     }

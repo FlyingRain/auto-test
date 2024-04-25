@@ -190,6 +190,9 @@ export default {
       this.$axios.post('/globalConfig/queryByPage', this.globalConfig).then((res) => {
         if (res.data.success) {
           this.list.globalConfigs = res.data.data.data
+          for (let c of this.list.globalConfigs) {
+            c.canEdit = true
+          }
         } else {
           this.$message.error(res.data.message)
         }
