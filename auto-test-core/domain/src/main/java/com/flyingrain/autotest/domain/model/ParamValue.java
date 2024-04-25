@@ -5,6 +5,10 @@ public class ParamValue {
 
     private String value;
 
+    public boolean isGlobal(){
+        return name.startsWith("global_");
+    }
+
     public String getName() {
         return name;
     }

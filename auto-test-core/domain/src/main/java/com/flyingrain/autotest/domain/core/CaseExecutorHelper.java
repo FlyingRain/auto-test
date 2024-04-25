@@ -30,7 +30,9 @@ public class CaseExecutorHelper {
             try {
                 List<ParamValue> paramValueList = JSONArray.parseArray(runCase.getParamValue()).toJavaList(ParamValue.class);
                 paramValueList.forEach(paramValue -> {
-                    params.put(paramValue.getName(), paramValue.getValue());
+                    if (!paramValue.isGlobal()) {
+                        params.put(paramValue.getName(), paramValue.getValue());
+                    }
                 });
             } catch (Exception e) {
                 logger.error("parse case paramValue failed!case value:[{}]", runCase.getParamValue());

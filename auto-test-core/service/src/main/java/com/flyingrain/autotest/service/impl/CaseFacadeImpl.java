@@ -99,7 +99,7 @@ public class CaseFacadeImpl implements CaseFacade, Resource {
     @Override
     public CommonResult<AutoTestCase> detail(Integer id) {
         Case testCase = caseService.queryDetail(id);
-        CaseExecutorHelper.fillDynamicParam(testCase, new HashMap<>());
+
         return CommonResult.success(CaseViewConvert.convertCaseModel(testCase));
     }
 

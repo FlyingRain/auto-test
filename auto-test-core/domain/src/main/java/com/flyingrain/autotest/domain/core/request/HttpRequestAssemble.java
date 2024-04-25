@@ -90,7 +90,7 @@ public class HttpRequestAssemble implements RequestAssemble {
             return params;
         }
         paramValueList.forEach(paramValue -> {
-            if (!isGlobalKey(paramValue.getName())) {
+            if (!paramValue.isGlobal()) {
                 String value = paramValue.getValue();
                 if (isDynamicVar(value)) {
                     value = replaceValue(value, executeContext);

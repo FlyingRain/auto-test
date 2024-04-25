@@ -6,6 +6,7 @@ import com.flyingrain.autotest.common.util.PageableModel;
 import com.flyingrain.autotest.common.util.RunTimeContext;
 import com.flyingrain.autotest.common.util.constant.AutoTestConstants;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
+import com.flyingrain.autotest.domain.core.CaseExecutorHelper;
 import com.flyingrain.autotest.domain.core.ExecuteContext;
 import com.flyingrain.autotest.domain.core.ExecuteUnit;
 import com.flyingrain.autotest.domain.core.ExecuteUnitBuilder;
@@ -22,10 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -93,6 +91,9 @@ public class CaseService {
         Case testCase = CaseModelConvert.convertCaseModel(autoTestCaseMapper.queryCaseById(caseId));
         Service service = serviceManager.queryById(testCase.getServiceId());
         testCase.setService(service);
+        Map<String,String> params = new HashMap<>();
+        fillGlobal(params);
+        CaseExecutorHelper.fillDynamicParam(testCase, params);
         return testCase;
     }
 
@@ -113,13 +114,17 @@ public class CaseService {
         executeContext.setExecuteCode(runId);
         executeContext.setExecutor(user == null ? null : user.getUserName());
         Map<String, String> params = executeContext.getParams();
+        fillGlobal(params);
+        return executeContext;
+    }
+
+    private void fillGlobal(Map<String, String> params) {
         List<GlobalConfig> globalConfigList = globalConfigService.queryAll();
         if (!CollectionUtils.isEmpty(globalConfigList)) {
             globalConfigList.forEach(globalConfig -> {
                 params.put(globalConfig.getParamKey(), globalConfig.getParamValue());
             });
         }
-        return executeContext;
     }
 
     /**
