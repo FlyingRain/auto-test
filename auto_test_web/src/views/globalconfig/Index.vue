@@ -130,10 +130,30 @@ export default {
       this.canEdit = opt
     },
     saveUpdate(config) {
-      console.log(config)
+      this.$axios.post('/globalConfig/update', config).then(res => {
+        if (res.data.success) {
+          this.canEdit = true
+          this.$message.success('更新成功')
+        } else {
+          this.$message.error(res.data.message)
+        }
+      })
     },
     deleteConfig(config) {
-      console.log(config)
+      this.$confirm('确认删除此全局变量?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios.post('/globalConfig/batchDel', {ids: [config.id]}).then(res => {
+          if (res.data.success) {
+            this.$message.success('删除成功')
+            this.initData()
+          } else {
+            this.$message.error(res.data.message)
+          }
+        })
+      })
     },
     async initData() {
       const result = await this.$axios.get('/globalConfig/queryAll')
