@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,7 +82,8 @@ public class SourceConfigService {
             switch (dataSourceTypeEnum) {
                 case MYSQL:
                     MysqlSourceConfig mysqlSourceConfig = JSONObject.parseObject(sourceConfig.getConfig(), MysqlSourceConfig.class);
-                    SQLExecutorHelper.buildMysqlConnection(mysqlSourceConfig);
+                    Connection connection = SQLExecutorHelper.buildMysqlConnection(mysqlSourceConfig);
+                    connection.close();
                     break;
                 case REDIS:
                     throw new AutoTestException(AutoTestResultCodeEnum.NOT_SUPPORT_DATA_SOURCE);
