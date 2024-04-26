@@ -47,17 +47,33 @@ public class ExecuteUnit<R> {
      * @return
      */
     public RunLog run(ExecuteContext executeContext) {
+        try {
+            ExecuteParam executeParam = requestAssemble.assembleRequest(executeContext);
 
-        ExecuteParam executeParam = requestAssemble.assembleRequest(executeContext);
+            ExecuteResult executeResult = executor.execute(executeParam);
 
-        ExecuteResult executeResult = executor.execute(executeParam);
+            resultExtract.extractResult(executeResult, executeContext);
 
-        resultExtract.extractResult(executeResult, executeContext);
+            CheckResult checkResult = runCheckPoints(executeResult);
 
-        CheckResult checkResult = runCheckPoints(executeResult);
+            return recordRunLog(executeResult, checkResult, executeContext);
+        } catch (Exception e) {
+            logger.error("execute unit happen unexpect error!",e);
+            return saveError(executeContext,e.getMessage());
+        }
 
-        return recordRunLog(executeResult, checkResult, executeContext);
+    }
 
+    private RunLog saveError(ExecuteContext executeContext, String message) {
+        RunLog runLog= new RunLog();
+        runLog.setRunStatus( RunStatusEnum.FAIL.getCode());
+        runLog.setBatchNum(executeContext.getExecuteCode());
+        runLog.setExecutor(executeContext.getExecutor());
+        runLog.setCaseCode(aCase.getCode());
+        runLog.setExecuteTime(new Date());
+        runLog.setRunResult(message);
+        runLogService.insertRunLog(runLog);
+        return runLog;
     }
 
     private RunLog recordRunLog(ExecuteResult executeResult, CheckResult checkResult, ExecuteContext executeContext) {

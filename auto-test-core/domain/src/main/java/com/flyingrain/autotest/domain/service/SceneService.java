@@ -184,6 +184,7 @@ public class SceneService {
                 } catch (Exception e) {
                     logger.error("execute unit error！", e);
                     logger.error("error unit  info :[{}]", unit);
+                    success = false;
                     break;
                 }
             }

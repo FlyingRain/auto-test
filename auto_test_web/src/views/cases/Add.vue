@@ -12,8 +12,18 @@
           <el-form-item label="用例编码:" prop="code">
             <el-input v-model="caseModel.code" placeholder="请输入用例编码" :disabled="canModified"></el-input>
           </el-form-item>
+          <el-form-item label="所属应用:" prop="serviceId">
+            <el-select v-model="appId" placeholder="请选择应用" @change='appChange' filterable :disabled="canModified">
+              <el-option
+                  v-for="item in appList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="所属服务:" prop="serviceId">
-            <el-select v-model="caseModel.serviceId" placeholder="请选择所属服务" @change='serviceChange' filterable>
+            <el-select v-model="caseModel.serviceId" placeholder="请选择所属服务" @change='serviceChange' filterable :disabled="canModified">
               <el-option
                   v-for="item in serviceList"
                   :key="item.value"
@@ -203,6 +213,7 @@ import {debounce} from 'lodash'
 export default {
   data() {
     return {
+      appId: '',
       caseModel: {
         id: '',
         name: '',
@@ -221,6 +232,7 @@ export default {
       serviceList: [],
       dataFormat: [{value: 'JSON', label: 'JSON'}, {value: 'XML', label: 'XML'}],
       sourceList: [],
+      appList: [],
       checkPointType: [
         {
           value: 'MYSQL',
@@ -290,8 +302,8 @@ export default {
     this.addCheckPointRules()
   },
   methods: {
-    async getAppList() {
-      const result = await this.$axios.get('service/all')
+    async getServiceList(appId) {
+      const result = await this.$axios.get('service/query', {params: {appId: appId}})
       if (result.data.success) {
         const appInfos = result.data.data
         for (const item of appInfos) {
@@ -301,6 +313,16 @@ export default {
             params: item.autoTestServiceParams,
             responseDataType: item.responseDataType
           })
+        }
+      } else {
+        this.$message.error(result.data.message)
+      }
+    },
+    async getAppList() {
+      const result = await this.$axios.get('app/all')
+      if (result.data.success) {
+        for (var appData of result.data.data) {
+          this.appList.push({label: appData.appName, value: appData.id})
         }
       } else {
         this.$message.error(result.data.message)
@@ -322,11 +344,18 @@ export default {
           if (ser.params === null) {
             console.log('no param' + ser.name)
           } else {
-            this.caseModel.paramValue = ser.params
+            this.caseModel.paramValue = ser.params.filter(serviceParam => {
+              const regex = /^\w+\([_\w-,': ]+\)+$/
+              return !(serviceParam.name.includes('global_') || regex.test(serviceParam.name))
+            })
           }
           this.caseModel.responseConfig.responseDataType = ser.responseDataType
         }
       }
+    },
+    appChange(value) {
+      this.cleanChoose()
+      this.getServiceList(value)
     },
     async getCaseDetail(id) {
       const result = await this.$axios.get('/case/detail', {params: {id: id}})
@@ -337,9 +366,18 @@ export default {
         this.caseModel.responseConfig = JSON.parse(result.data.data.responseConfig)
         this.caseModel.paramValue = JSON.parse(result.data.data.paramValue)
         this.addCheckPointRules()
+        this.appId = this.caseModel.autoTestService.appId
+        // this.cleanChoose()
+        await this.getServiceList(this.appId)
       } else {
         this.$message.error(result.data.message)
       }
+    },
+    cleanChoose() {
+      this.serviceList = []
+      this.caseModel.serviceId = ''
+      this.caseModel.paramValue = 0
+      this.caseModel.responseConfig.responseDataType = ''
     },
     addResult() {
       this.removeRulesForHeaders()

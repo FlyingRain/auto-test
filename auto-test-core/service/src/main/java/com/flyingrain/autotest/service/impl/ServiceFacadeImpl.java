@@ -11,6 +11,7 @@ import com.flyingrain.autotest.facade.intf.requests.BatchDelRequest;
 import com.flyingrain.autotest.facade.intf.service.ServiceFacade;
 import com.flyingrain.autotest.mvc.jersey.Resource;
 import com.flyingrain.autotest.service.convert.ServiceViewConvert;
+import org.glassfish.jersey.internal.guava.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,6 +100,13 @@ public class ServiceFacadeImpl implements ServiceFacade, Resource {
     public CommonResult<List<AutoTestService>> queryAllService() {
         List<Service> services = serviceManager.queryAllService();
         return CommonResult.success(services.stream().map(ServiceViewConvert::convertModel).collect(Collectors.toList()));
+    }
+
+    @Override
+    public CommonResult<List<AutoTestService>> queryByAppId(Integer appId) {
+        List<Service> services = serviceManager.queryByAppIds(Collections.singletonList(appId));
+        List<AutoTestService> autoTestServices = services.stream().peek(serviceManager::fillServiceParam).map(ServiceViewConvert::convertModel).collect(Collectors.toList());
+        return CommonResult.success(autoTestServices);
     }
 
     private void checkParam(AutoTestService autoTestService) {

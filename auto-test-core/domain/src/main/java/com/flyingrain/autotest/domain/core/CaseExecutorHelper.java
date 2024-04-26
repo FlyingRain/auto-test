@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -30,13 +31,14 @@ public class CaseExecutorHelper {
      * @param runCase
      */
     public static void fillDynamicParam(Case runCase, Map<String, String> params) {
+        Map<String,String> caseParam = new HashMap<>(params);
         Service service = runCase.getService();
         if (StringUtils.hasText(runCase.getParamValue())) {
             try {
                 List<ParamValue> paramValueList = JSONArray.parseArray(runCase.getParamValue()).toJavaList(ParamValue.class);
                 paramValueList.forEach(paramValue -> {
                     if (!paramValue.isGlobal()) {
-                        params.put(paramValue.getName(), paramValue.getValue());
+                        caseParam.put(paramValue.getName(), paramValue.getValue());
                     }
                 });
             } catch (Exception e) {
@@ -44,7 +46,7 @@ public class CaseExecutorHelper {
                 logger.error("exception:", e);
             }
         }
-        fillService(service, params);
+        fillService(service, caseParam);
     }
 
     public static void fillService(Service service, Map<String, String> params) {
@@ -69,7 +71,7 @@ public class CaseExecutorHelper {
                         String value = calculateValue(atomicParam, params);
                         if (value == null) {
                             logger.warn("atomicParam value is null![{}]", atomicParam);
-                            if (temp.charAt(startIndex - 3) == '"')
+                            if ((startIndex - 3 >= 0) && temp.charAt(startIndex - 3) == '"')
                                 value = "";
                             else value = "null";
                         }
@@ -118,7 +120,7 @@ public class CaseExecutorHelper {
 
 
     public static DynamicParamTypeEnum extractParamType(String param) {
-        String reg = "[\\w]+\\([\\w\\d,': -]+\\)";
+        String reg = "[\\w]+\\([\\w\\d,': -/=]*\\)";
         Pattern pattern = Pattern.compile(reg);
         Matcher matcher = pattern.matcher(param);
         if (matcher.matches()) {

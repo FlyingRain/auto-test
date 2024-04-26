@@ -48,19 +48,17 @@ public class HttpRequestAssemble implements RequestAssemble {
         //校验填充字段是否满足,
         checkParamsPair(params, service.getParams());
 
-        //再根据map替换service中的变量
-        CaseExecutorHelper.fillService(service, params);
-
-        //根据填充完的service生成执行参数
-        return generateExecuteParam();
+        //再根据map和service生成相应的请求
+//        CaseExecutorHelper.fillService(service, params);
+        return generateExecuteParam(params);
     }
 
-    private ExecuteParam generateExecuteParam() {
+    private ExecuteParam generateExecuteParam(Map<String, String> params) {
         HttpExecuteParam httpExecuteParam = new HttpExecuteParam();
-        httpExecuteParam.setPath(service.getRequestUrl());
-        httpExecuteParam.setHeaders(extractHeaders(service.getHeaders()));
+        httpExecuteParam.setPath(CaseExecutorHelper.replaceParam(params, service.getRequestUrl()));
+        httpExecuteParam.setHeaders(extractHeaders(CaseExecutorHelper.replaceParam(params, service.getHeaders())));
         httpExecuteParam.setRequestTypeEnum(HTTPRequestTypeEnum.valueOf(service.getRequestType()));
-        httpExecuteParam.setBody(service.getRequestDataModule());
+        httpExecuteParam.setBody(CaseExecutorHelper.replaceParam(params, service.getRequestDataModule()));
         return httpExecuteParam;
     }
 

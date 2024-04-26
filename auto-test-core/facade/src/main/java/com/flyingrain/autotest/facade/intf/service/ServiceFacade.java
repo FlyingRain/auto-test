@@ -46,4 +46,8 @@ public interface ServiceFacade {
     @Path("/all")
     CommonResult<List<AutoTestService>> queryAllService();
 
+    @GET
+    @Path("/query")
+    CommonResult<List<AutoTestService>> queryByAppId(@QueryParam("appId") Integer appId);
+
 }

@@ -70,7 +70,7 @@ public class ServiceManager {
         return service;
     }
 
-    private void fillServiceParam(Service service) {
+    public void fillServiceParam(Service service) {
         List<AutoTestServiceParamModel> autoTestServiceParamModels = serviceParamMapper.queryServiceParams(service.getId());
         if (!CollectionUtils.isEmpty(autoTestServiceParamModels)) {
             List<ServiceParam> serviceParams = autoTestServiceParamModels.stream().map(ServiceParamModelConvert::convertModel).collect(Collectors.toList());

@@ -74,11 +74,19 @@
           <el-form-item>
             <el-button style="width: 100%;" type="warning" icon="el-icon-plus" @click="addHeader"/>
           </el-form-item>
-          <el-form-item label="请求体模板:" prop="requestModel">
-            <el-input style="width: 100%" maxlength="1000" show-word-limit type="textarea"
-                      v-model="service.requestModel" placeholder="请输入请求体模板" :autosize="{ minRows: 5}"
-                      resize="both"></el-input>
+          <el-form-item>
+            <el-radio-group v-model="radio" @change="requestBodyChange">
+              <el-radio :label="1">form-data</el-radio>
+              <el-radio :label="2">raw</el-radio>
+            </el-radio-group>
           </el-form-item>
+          <div>
+            <el-form-item label="请求体模板:" prop="requestModel">
+              <el-input style="width: 100%" maxlength="1000" show-word-limit type="textarea"
+                        v-model="service.requestModel" placeholder="请输入请求体模板" :autosize="{ minRows: 5}"
+                        resize="both"></el-input>
+            </el-form-item>
+          </div>
         </div>
       </el-card>
       <el-card class="box-card">
@@ -115,6 +123,7 @@ export default {
         requestModel: ''
 
       },
+      radio: 2,
       appList: [],
       dataFormat: [{value: 'JSON', label: 'JSON'}, {value: 'XML', label: 'XML'}],
       requestTypes: [
@@ -276,6 +285,12 @@ export default {
         request.requestType = this.service.requestType[0]
       }
       return request
+    },
+    requestBodyChange(value) {
+      console.log('ratio change ' + value)
+      if (value === 1) {
+
+      }
     }
   }
 
