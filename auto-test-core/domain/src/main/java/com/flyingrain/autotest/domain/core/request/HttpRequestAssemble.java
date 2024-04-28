@@ -1,11 +1,13 @@
 package com.flyingrain.autotest.domain.core.request;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.flyingrain.autotest.common.util.AutoTestResultCodeEnum;
 import com.flyingrain.autotest.common.util.constant.HTTPRequestTypeEnum;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import com.flyingrain.autotest.domain.core.CaseExecutorHelper;
 import com.flyingrain.autotest.domain.core.ExecuteContext;
+import com.flyingrain.autotest.domain.core.executor.HttpRequestBody;
 import com.flyingrain.autotest.domain.core.model.ExecuteParam;
 import com.flyingrain.autotest.domain.core.model.HttpExecuteParam;
 import com.flyingrain.autotest.domain.model.ParamMap;
@@ -58,7 +60,9 @@ public class HttpRequestAssemble implements RequestAssemble {
         httpExecuteParam.setPath(CaseExecutorHelper.replaceParam(params, service.getRequestUrl()));
         httpExecuteParam.setHeaders(extractHeaders(CaseExecutorHelper.replaceParam(params, service.getHeaders())));
         httpExecuteParam.setRequestTypeEnum(HTTPRequestTypeEnum.valueOf(service.getRequestType()));
-        httpExecuteParam.setBody(CaseExecutorHelper.replaceParam(params, service.getRequestDataModule()));
+        String bodyStr = CaseExecutorHelper.replaceParam(params, service.getRequestDataModule());
+        HttpRequestBody requestBody = JSONObject.parseObject(bodyStr, HttpRequestBody.class);
+        httpExecuteParam.setBody(requestBody);
         return httpExecuteParam;
     }
 

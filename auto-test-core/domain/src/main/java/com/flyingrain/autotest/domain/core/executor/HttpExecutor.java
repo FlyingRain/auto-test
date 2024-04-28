@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component("HTTP")
-public class HttpExecutor implements Executor<String> {
+public class HttpExecutor implements Executor<HttpRequestBody> {
 
     private final Logger logger = LoggerFactory.getLogger(HttpExecutor.class);
 
     @Override
-    public ExecuteResult execute(ExecuteParam<String> executeParam) {
+    public ExecuteResult execute(ExecuteParam<HttpRequestBody> executeParam) {
         logger.info("start to send params：[{}]", executeParam);
         ExecuteResult executeResult = new ExecuteResult();
         try {
@@ -25,7 +25,7 @@ public class HttpExecutor implements Executor<String> {
             String url = executeParam.getPath();
             HTTPRequestTypeEnum httpRequestTypeEnum = httpExecuteParam.getRequestTypeEnum();
             Map<String, String> headers = httpExecuteParam.getHeaders();
-            String body = httpExecuteParam.getBody();
+            HttpRequestBody body = httpExecuteParam.getBody();
             long startTime = System.currentTimeMillis();
             switch (httpRequestTypeEnum) {
                 case GET:
@@ -50,7 +50,7 @@ public class HttpExecutor implements Executor<String> {
         return executeResult;
     }
 
-    private void runPost(String url, Map<String, String> headers, String body, ExecuteResult executeResult) {
+    private void runPost(String url, Map<String, String> headers, HttpRequestBody body, ExecuteResult executeResult) {
         try {
             String result = HttpClientUtils.post(url, body, headers);
             logger.info("run post result:[{}]", result);

@@ -75,16 +75,69 @@
             <el-button style="width: 100%;" type="warning" icon="el-icon-plus" @click="addHeader"/>
           </el-form-item>
           <el-form-item>
-            <el-radio-group v-model="radio" @change="requestBodyChange">
+            <el-radio-group v-model="service.requestModel.requestBodyType" @change="requestBodyChange">
               <el-radio :label="1">form-data</el-radio>
               <el-radio :label="2">raw</el-radio>
             </el-radio-group>
           </el-form-item>
-          <div>
+          <div v-show="service.requestModel.requestBodyType===2">
             <el-form-item label="请求体模板:" prop="requestModel">
               <el-input style="width: 100%" maxlength="1000" show-word-limit type="textarea"
-                        v-model="service.requestModel" placeholder="请输入请求体模板" :autosize="{ minRows: 5}"
+                        v-model="service.requestModel.content" placeholder="请输入请求体模板" :autosize="{ minRows: 5}"
                         resize="both"></el-input>
+            </el-form-item>
+          </div>
+          <div v-show="service.requestModel.requestBodyType===1" :key="bodyKey">
+            <el-form-item label="Form表单:">
+            </el-form-item>
+
+            <el-form-item v-for="(entity,index) in service.requestModel.entities" :key="'entity'+index"
+                          style="width: 100%">
+              <el-row :gutter="10" style="width: 100%">
+                <el-col :span="6">
+                  <el-form-item :label="'key:'" :prop="'requestModel.entities.'+index+'.key'" label-width="120px">
+                    <el-input v-model="entity.key"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                  <el-form-item :label="'类型:'" :prop="'requestModel.entities.'+index+'.type'">
+                    <el-select v-model="entity.type" filterable placeholder="请选参数类型" @change='entityTypeChange'>
+                      <el-option
+                          v-for="item in entityType"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item :label="'value:'" :prop="'requestModel.entities.'+index+'.value'">
+                    <el-input v-model="entity.value"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="2">
+                  <el-upload
+                      v-if="entity.type==='FILE'"
+                      action="#"
+                      :http-request="handleFileUpload"
+                      :data="entity"
+                      :on-change="handleChange"
+                      :file-list="fileList">
+                    <el-tooltip class="item" effect="dark" content="只能上传jpg/png文件，且不超过500kb"
+                                placement="top-start">
+                      <el-button size="small" type="primary">点击上传</el-button>
+                    </el-tooltip>
+                  </el-upload>
+                </el-col>
+                <el-col :span="2">
+                  <el-button type="info" size="small" @click.prevent="removeEntity(entity)">删除</el-button>
+                </el-col>
+              </el-row>
+
+            </el-form-item>
+            <el-form-item>
+              <el-button style="width: 100%;" type="warning" icon="el-icon-plus" @click="addEntity"/>
             </el-form-item>
           </div>
         </div>
@@ -120,9 +173,11 @@ export default {
         headers: [
           {key: 'Content-Type', value: 'application/json'}
         ],
-        requestModel: ''
+        requestModel: {requestBodyType: 2, content: '', entities: [{key: '', value: '', type: ''}]}
 
       },
+      bodyKey: 1,
+      fileList: [],
       radio: 2,
       appList: [],
       dataFormat: [{value: 'JSON', label: 'JSON'}, {value: 'XML', label: 'XML'}],
@@ -150,6 +205,15 @@ export default {
         }, {
           value: 'DUBBO',
           label: 'DUBBO'
+        }
+      ],
+      entityType: [
+        {
+          value: 'TEXT',
+          label: '文本'
+        }, {
+          value: 'FILE',
+          label: '文件'
         }
       ],
       rules: {
@@ -202,10 +266,20 @@ export default {
     async getServiceDetail(id) {
       const result = await this.$axios.get('/service/detail', {params: {id: id}})
       if (result.data.success) {
-        console.log(JSON.parse(result.data.data.headers))
         Object.assign(this.service, result.data.data)
         if (result.data.data.headers) {
           this.service.headers = JSON.parse(result.data.data.headers)
+          var newModel = JSON.parse(result.data.data.requestModel)
+          console.log(this.service.requestModel)
+          if (newModel.requestBodyType) {
+            this.service.requestModel = newModel
+          } else {
+            this.service.requestModel = {
+              requestBodyType: 2,
+              content: result.data.data.requestModel,
+              entities: [{key: '', value: '', type: ''}]
+            }
+          }
         }
       }
     },
@@ -216,7 +290,6 @@ export default {
         value: ''
       })
       this.addRulesForHeaders()
-      console.log(this.rules)
     },
     removeHeader(item) {
       this.removeRulesForHeaders()
@@ -269,6 +342,7 @@ export default {
     buildRequest() {
       const request = {}
       Object.assign(request, this.service)
+      request.requestModel = ''
       if (this.service.headers) {
         request.headers = JSON.stringify(this.service.headers)
       }
@@ -284,13 +358,74 @@ export default {
       if (this.service.requestType && Array.isArray(this.service.requestType)) {
         request.requestType = this.service.requestType[0]
       }
+      if (this.service.requestModel.content) {
+        request.requestModel = JSON.stringify(this.service.requestModel)
+      }
       return request
     },
     requestBodyChange(value) {
+      this.service.requestModel.requestBodyType = value
       console.log('ratio change ' + value)
-      if (value === 1) {
-
+      var haveType = false
+      for (let headerConfig of this.service.headers) {
+        if (headerConfig.key === 'Content-Type') {
+          haveType = true
+          if (value === 1) {
+            headerConfig.value = 'multipart/form-data'
+          } else if (value === 2) {
+            headerConfig.value = 'application/json'
+          }
+        }
       }
+      if (!haveType) {
+        if (this.service.headers || this.service.headers.length === 0) {
+          if (value === 1) {
+            this.service.headers = [{key: 'Content-Type', value: 'multipart/form-data'}]
+          } else if (value === 2) {
+            this.service.headers = [{key: 'Content-Type', value: 'application/json'}]
+          }
+        } else {
+          if (value === 1) {
+            this.service.headers.push({key: 'Content-Type', value: 'multipart/form-data'})
+          } else if (value === 2) {
+            this.service.headers.push({key: 'Content-Type', value: 'application/json'})
+          }
+        }
+      }
+      if (value === 1) {
+        if (!this.service.requestModel.entities) {
+          this.service.requestModel.entities = [{key: '', value: '', type: ''}]
+        }
+      }
+    },
+    entityTypeChange() {
+      this.bodyKey = this.bodyKey + 1
+    },
+    handleFileUpload(params) {
+      let entity = params.data
+      console.log(entity)
+      let fileName = params.file.name
+      let encodedFile = new File([params.file], encodeURI(encodeURI(fileName)))
+      var formData = new FormData()
+      formData.append('file', encodedFile)
+      this.$axios.post('/file/upload', formData, {headers: {'Content-Type': 'multipart/form-data'}}).then(res => {
+        if (res.data.success) {
+          this.$message.success('上传成功!')
+          entity.value = res.data.data
+          this.bodyKey = this.bodyKey + 1
+        } else {
+          this.$message.error(res.data.message)
+        }
+      })
+    },
+    removeEntity(entity) {
+      var index = this.service.requestModel.entities.indexOf(entity)
+      if (index !== -1) {
+        this.service.requestModel.entities.splice(index, 1)
+      }
+    },
+    addEntity() {
+      this.service.requestModel.entities.push({key: '', value: '', type: ''})
     }
   }
 

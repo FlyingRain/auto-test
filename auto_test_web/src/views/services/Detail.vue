@@ -57,7 +57,6 @@ export default {
     async getServiceDetail() {
       const result = await this.$axios.get('/service/detail', {params: {id: this.formData.id}})
       if (result.data.success) {
-        console.log(result.data.data)
         Object.assign(this.formData, result.data.data)
         if (this.formData.headers) {
           this.formData.headers = JSON.parse(this.formData.headers)

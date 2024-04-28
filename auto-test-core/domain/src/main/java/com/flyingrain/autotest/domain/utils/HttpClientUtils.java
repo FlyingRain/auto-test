@@ -1,7 +1,10 @@
 package com.flyingrain.autotest.domain.utils;
 
 import com.flyingrain.autotest.common.util.AutoTestResultCodeEnum;
+import com.flyingrain.autotest.common.util.RequestBodyTypeEnum;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
+import com.flyingrain.autotest.domain.core.executor.HttpEntityModel;
+import com.flyingrain.autotest.domain.core.executor.HttpRequestBody;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
@@ -10,6 +13,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -19,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,31 +46,53 @@ public class HttpClientUtils {
     private static final CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(cm).setDefaultRequestConfig(requestConfig).build();
 
 
-    public static String post(String url, String data,
+    public static String post(String url, HttpRequestBody data,
                               Map<String, String> headerMap) {
         HttpPost httppost = new HttpPost(url);
-        if (headerMap != null) {
-            for (Map.Entry<String, String> entry : headerMap.entrySet()) {
-                httppost.setHeader(entry.getKey(), entry.getValue());
-            }
-        }
-        if (null != data && !"".equals(data)) {
-            httppost.setEntity(new StringEntity(data, StandardCharsets.UTF_8));
-        }
+        initPost(data, headerMap, httppost);
         try (CloseableHttpResponse response = httpClient.execute(httppost, HttpClientContext.create());) {
             int statusCode = response.getStatusLine().getStatusCode();
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, "utf-8");
-            if(statusCode==HttpStatus.SC_OK){
+            if (statusCode == HttpStatus.SC_OK) {
                 return result;
-            }else{
-                logger.error("send http post error!return status:[{}],result:[{}]",statusCode,result);
+            } else {
+                logger.error("send http post error!return status:[{}],result:[{}]", statusCode, result);
                 return result;
             }
         } catch (Exception e) {
             logger.error("send http error!", e);
             throw new AutoTestException(AutoTestResultCodeEnum.NETWORK_ERROR.getCode(), e.getMessage());
         }
+    }
+
+    private static void initPost(HttpRequestBody data, Map<String, String> headerMap, HttpPost httppost) {
+        RequestBodyTypeEnum bodyTypeEnum = data.getRequestBodyTypeEnum();
+        if (bodyTypeEnum == null) {
+            bodyTypeEnum = RequestBodyTypeEnum.TEXT;
+        }
+        if (headerMap != null) {
+            for (Map.Entry<String, String> entry : headerMap.entrySet()) {
+                httppost.setHeader(entry.getKey(), entry.getValue());
+            }
+        }
+        switch (bodyTypeEnum) {
+            case FORM:
+                MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+                List<HttpEntityModel> httpEntityModels = data.getEntities();
+                for (HttpEntityModel httpModel : httpEntityModels) {
+
+                }
+                break;
+            case TEXT:
+                if (null != data.getContent() && !"".equals(data.getContent())) {
+                    httppost.setEntity(new StringEntity(data.getContent(), StandardCharsets.UTF_8));
+                }
+                break;
+            default:
+                throw new AutoTestException(AutoTestResultCodeEnum.NOT_SUPPORT_DATA_TYPE);
+        }
+
     }
 
 

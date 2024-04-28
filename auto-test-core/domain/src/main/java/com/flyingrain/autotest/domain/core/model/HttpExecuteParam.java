@@ -1,10 +1,11 @@
 package com.flyingrain.autotest.domain.core.model;
 
 import com.flyingrain.autotest.common.util.constant.HTTPRequestTypeEnum;
+import com.flyingrain.autotest.domain.core.executor.HttpRequestBody;
 
 import java.util.Map;
 
-public class HttpExecuteParam extends ExecuteParam<String>{
+public class HttpExecuteParam extends ExecuteParam<HttpRequestBody>{
 
 
     private Map<String,String> headers;
