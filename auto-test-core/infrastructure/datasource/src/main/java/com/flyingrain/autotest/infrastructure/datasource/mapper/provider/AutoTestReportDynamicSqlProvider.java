@@ -76,6 +76,9 @@ public class AutoTestReportDynamicSqlProvider {
         if (StringUtils.hasText(autoTestReportModel.getDesc())) {
             sql.SET("`desc` = #{reportModel.desc}");
         }
+        if (StringUtils.hasText(autoTestReportModel.getEnv())) {
+            sql.SET("`env` = #{reportModel.env}");
+        }
 
     }
 

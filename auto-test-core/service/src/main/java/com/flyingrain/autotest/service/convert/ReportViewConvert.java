@@ -27,7 +27,7 @@ public class ReportViewConvert {
         autoTestReport.setExecuteTime(executeReport.getExecuteTime());
         autoTestReport.setConsumeTime(executeReport.getConsumeTime());
         autoTestReport.setTitle(executeReport.getTitle());
-        if (!CollectionUtils.isEmpty(autoTestReport.getRunLogs())) {
+        if (!CollectionUtils.isEmpty(executeReport.getRunLogs())) {
             autoTestReport.setRunLogs(executeReport.getRunLogs().stream().map(RunLogViewConvert::convertToView).collect(Collectors.toList()));
         }
         return autoTestReport;
@@ -52,7 +52,7 @@ public class ReportViewConvert {
         executeReport.setExecuteTime(autoTestReport.getExecuteTime());
         executeReport.setConsumeTime(autoTestReport.getConsumeTime());
         executeReport.setTitle(autoTestReport.getTitle());
-        if (!CollectionUtils.isEmpty(executeReport.getRunLogs())) {
+        if (!CollectionUtils.isEmpty(autoTestReport.getRunLogs())) {
             executeReport.setRunLogs(autoTestReport.getRunLogs().stream().map(RunLogViewConvert::convertToDomain).collect(Collectors.toList()));
         }
         return executeReport;

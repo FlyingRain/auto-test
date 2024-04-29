@@ -135,6 +135,13 @@ const router = new Router({
               component: () => import('@/views/reports/Index.vue')
             },
             {
+              path: '/autotest/report/detail',
+              meta: {
+                title: '报告预览'
+              },
+              component: () => import('@/views/reports/Detail.vue')
+            },
+            {
               path: '/autotest/runlog',
               meta: {
                 title: '执行流水'

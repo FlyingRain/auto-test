@@ -45,7 +45,9 @@
         </el-table-column>
         <el-table-column label="操作" width="250">
           <template v-slot="row">
-            <el-button type="success" size="small" @click="detail(row.row.id)"> 预览</el-button>
+            <el-button type="success" size="small" @click="changeView('/autotest/report/detail',{id:row.row.id})">
+              预览
+            </el-button>
             <el-button type="primary" size="small" @click="download(row.row.id)"> 下载</el-button>
           </template>
         </el-table-column>
@@ -120,6 +122,12 @@ export default {
         link.click()
       }).catch(error => {
         this.$message.error(error)
+      })
+    },
+    changeView(path, queryParam) {
+      this.$router.push({
+        path: path,
+        query: queryParam
       })
     }
   }
