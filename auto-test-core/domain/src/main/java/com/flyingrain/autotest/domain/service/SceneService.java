@@ -169,7 +169,7 @@ public class SceneService {
 
         executor.execute(() -> {
             int count = 0;
-            long startTime = System.currentTimeMillis() / 1000;
+            long startTime = System.currentTimeMillis()  ;
             boolean success = true;
             int successCount = 0;
             for (ExecuteUnit unit : executeUnits) {
@@ -188,7 +188,7 @@ public class SceneService {
                     break;
                 }
             }
-            long endTime = System.currentTimeMillis() / 1000;
+            long endTime = System.currentTimeMillis()  ;
             executeReport.setRunNumber(count);
             executeReport.setSuccessNumber(successCount);
             executeReport.setResult(success ? RunStatusEnum.SUCCESS.getCode() : RunStatusEnum.FAIL.getCode());
