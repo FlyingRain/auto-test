@@ -8,12 +8,6 @@ public class HttpEntityModel {
 
     private String value;
 
-    public HttpEntityModel(String key, String type, String value) {
-        this.key = key;
-        this.type = type;
-        this.value = value;
-    }
-
     public String getKey() {
         return key;
     }

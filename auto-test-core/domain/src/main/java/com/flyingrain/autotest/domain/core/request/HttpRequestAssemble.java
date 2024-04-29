@@ -3,6 +3,7 @@ package com.flyingrain.autotest.domain.core.request;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.flyingrain.autotest.common.util.AutoTestResultCodeEnum;
+import com.flyingrain.autotest.common.util.RequestBodyTypeEnum;
 import com.flyingrain.autotest.common.util.constant.HTTPRequestTypeEnum;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import com.flyingrain.autotest.domain.core.CaseExecutorHelper;
@@ -62,6 +63,12 @@ public class HttpRequestAssemble implements RequestAssemble {
         httpExecuteParam.setRequestTypeEnum(HTTPRequestTypeEnum.valueOf(service.getRequestType()));
         String bodyStr = CaseExecutorHelper.replaceParam(params, service.getRequestDataModule());
         HttpRequestBody requestBody = JSONObject.parseObject(bodyStr, HttpRequestBody.class);
+        //这里做新老版本适配，迁移完成后这段代码可以删除
+        if (requestBody.getRequestBodyTypeEnum() == null) {
+            requestBody.setContent(bodyStr);
+            requestBody.setRequestBodyTypeEnum(RequestBodyTypeEnum.TEXT);
+            requestBody.setRequestBodyType(RequestBodyTypeEnum.TEXT.getCode());
+        }
         httpExecuteParam.setBody(requestBody);
         return httpExecuteParam;
     }

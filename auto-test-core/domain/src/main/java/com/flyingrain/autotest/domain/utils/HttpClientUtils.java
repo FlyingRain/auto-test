@@ -12,7 +12,9 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -21,7 +23,11 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +53,7 @@ public class HttpClientUtils {
 
 
     public static String post(String url, HttpRequestBody data,
-                              Map<String, String> headerMap) {
+                              Map<String, String> headerMap) throws FileNotFoundException {
         HttpPost httppost = new HttpPost(url);
         initPost(data, headerMap, httppost);
         try (CloseableHttpResponse response = httpClient.execute(httppost, HttpClientContext.create());) {
@@ -66,7 +72,7 @@ public class HttpClientUtils {
         }
     }
 
-    private static void initPost(HttpRequestBody data, Map<String, String> headerMap, HttpPost httppost) {
+    private static void initPost(HttpRequestBody data, Map<String, String> headerMap, HttpPost httppost) throws FileNotFoundException {
         RequestBodyTypeEnum bodyTypeEnum = data.getRequestBodyTypeEnum();
         if (bodyTypeEnum == null) {
             bodyTypeEnum = RequestBodyTypeEnum.TEXT;
@@ -78,11 +84,26 @@ public class HttpClientUtils {
         }
         switch (bodyTypeEnum) {
             case FORM:
+                // 设置边界
+                String boundary = "---------------------------7de2f2a0e01ae";
+                String contentType = "multipart/form-data; boundary=" + boundary;
+                httppost.setHeader("Content-Type", contentType);
                 MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+                multipartEntityBuilder.setBoundary(boundary);
+                multipartEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 List<HttpEntityModel> httpEntityModels = data.getEntities();
                 for (HttpEntityModel httpModel : httpEntityModels) {
-
+                    if ("TEXT".equals(httpModel.getType())) {
+                        multipartEntityBuilder.addTextBody(httpModel.getKey(), httpModel.getValue());
+                    }
+                    if ("FILE".equals(httpModel.getType())) {
+                        String filePath = URLDecoder.decode(httpModel.getValue(), StandardCharsets.UTF_8);
+                        File file = new File(filePath);
+                        String fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
+                        multipartEntityBuilder.addBinaryBody(httpModel.getKey(), file, ContentType.DEFAULT_BINARY, URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+                    }
                 }
+                httppost.setEntity(multipartEntityBuilder.build());
                 break;
             case TEXT:
                 if (null != data.getContent() && !"".equals(data.getContent())) {

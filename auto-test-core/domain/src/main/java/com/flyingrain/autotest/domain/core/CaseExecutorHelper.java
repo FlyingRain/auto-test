@@ -129,5 +129,9 @@ public class CaseExecutorHelper {
         return DynamicParamTypeEnum.PARAM;
     }
 
+    public static boolean isDynamicVar(String str) {
+        return StringUtils.hasText(str) && str.contains("${");
+    }
+
 
 }

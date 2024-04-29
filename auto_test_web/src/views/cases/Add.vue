@@ -23,7 +23,8 @@
             </el-select>
           </el-form-item>
           <el-form-item label="所属服务:" prop="serviceId">
-            <el-select v-model="caseModel.serviceId" placeholder="请选择所属服务" @change='serviceChange' filterable :disabled="canModified">
+            <el-select v-model="caseModel.serviceId" placeholder="请选择所属服务" @change='serviceChange' filterable
+                       :disabled="canModified">
               <el-option
                   v-for="item in serviceList"
                   :key="item.value"
@@ -40,7 +41,7 @@
         </div>
       </el-card>
 
-      <el-card class="box-card">
+      <el-card class="box-card" :key="bodyKey">
         <div slot="header">
           <span>参数配置</span>
         </div>
@@ -53,9 +54,29 @@
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item :label="'值:'">
-                  <el-input v-model="param.value"></el-input>
-                </el-form-item>
+                <div v-if="!param.name.startsWith('file_')">
+                  <el-form-item :label="'值:'">
+                    <el-input v-model="param.value"></el-input>
+                  </el-form-item>
+                </div>
+                <div v-if="param.name.startsWith('file_')">
+                  <el-form-item :label="'值:'">
+                    <el-input v-model="param.fileName" ref="file_name" disabled></el-input>
+                  </el-form-item>
+                </div>
+              </el-col>
+              <el-col :span="4">
+                <el-upload
+                    v-if="param.name.startsWith('file_')"
+                    action="#"
+                    :http-request="handleFileUpload"
+                    :data="param"
+                    :file-list="fileList">
+                  <el-tooltip class="item" effect="dark" content="只能上传jpg/png文件，且不超过500kb"
+                              placement="top-start">
+                    <el-button size="small" type="primary">点击上传</el-button>
+                  </el-tooltip>
+                </el-upload>
               </el-col>
             </el-row>
           </div>
@@ -214,6 +235,7 @@ export default {
   data() {
     return {
       appId: '',
+      fileList: [],
       caseModel: {
         id: '',
         name: '',
@@ -228,6 +250,7 @@ export default {
       canModified: false,
       lType: '',
       lType2: '',
+      bodyKey: 1,
       showScript: false,
       serviceList: [],
       dataFormat: [{value: 'JSON', label: 'JSON'}, {value: 'XML', label: 'XML'}],
@@ -595,6 +618,25 @@ export default {
           }
         }
       }
+    },
+    handleFileUpload(params) {
+      let entity = params.data
+      let fileName = params.file.name
+      console.log('fileName:-----' + fileName)
+      let encodedFile = new File([params.file], encodeURI(encodeURI(fileName)))
+      var formData = new FormData()
+      formData.append('file', encodedFile)
+      this.$axios.post('/file/upload', formData, {headers: {'Content-Type': 'multipart/form-data'}}).then(res => {
+        if (res.data.success) {
+          this.$message.success('上传成功!')
+          entity.fileName = fileName
+          entity.value = encodeURI(res.data.data)
+
+          this.bodyKey = this.bodyKey + 1
+        } else {
+          this.$message.error(res.data.message)
+        }
+      })
     }
   }
 

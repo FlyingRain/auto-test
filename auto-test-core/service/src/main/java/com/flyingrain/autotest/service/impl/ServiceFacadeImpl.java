@@ -1,8 +1,13 @@
 package com.flyingrain.autotest.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.flyingrain.autotest.common.util.*;
 import com.flyingrain.autotest.common.util.constant.AutoTestConstants;
+import com.flyingrain.autotest.common.util.constant.ProtocolTypeEnum;
 import com.flyingrain.autotest.common.util.exception.AutoTestException;
+import com.flyingrain.autotest.domain.core.CaseExecutorHelper;
+import com.flyingrain.autotest.domain.core.executor.HttpEntityModel;
+import com.flyingrain.autotest.domain.core.executor.HttpRequestBody;
 import com.flyingrain.autotest.domain.model.Service;
 import com.flyingrain.autotest.domain.model.User;
 import com.flyingrain.autotest.domain.service.ServiceManager;
@@ -124,6 +129,29 @@ public class ServiceFacadeImpl implements ServiceFacade, Resource {
         }
         if (!StringUtils.hasText(autoTestService.getProtocolType())) {
             throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), "协议类型为空");
+        }
+        String requestModelStr = autoTestService.getRequestModel();
+        ProtocolTypeEnum protocolTypeEnum = ProtocolTypeEnum.valueOf(autoTestService.getProtocolType());
+        switch (protocolTypeEnum) {
+            case HTTP:
+                HttpRequestBody httpRequestBody = JSONObject.parseObject(requestModelStr, HttpRequestBody.class);
+                if (!CollectionUtils.isEmpty(httpRequestBody.getEntities())) {
+                    for (HttpEntityModel entity : httpRequestBody.getEntities()) {
+                        if (!StringUtils.hasText(entity.getKey()) || !StringUtils.hasText(entity.getValue())) {
+                            throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), "form表单的key和value不能为空");
+                        }
+                        if ("FILE".equals(entity.getType()) && CaseExecutorHelper.isDynamicVar(entity.getValue())) {
+                            if (!entity.getValue().contains("file_")) {
+                                throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), "文件变量必须以file_开头：" + entity.getKey());
+                            }
+                        }
+                    }
+                }
+                break;
+            case DUBBO:
+                break;
+            case ROCKETMQ:
+                break;
         }
     }
 

@@ -113,7 +113,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item :label="'value:'" :prop="'requestModel.entities.'+index+'.value'">
-                    <el-input v-model="entity.value"></el-input>
+                    <el-input v-model="entity.fileName"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="2">
@@ -173,7 +173,7 @@ export default {
         headers: [
           {key: 'Content-Type', value: 'application/json'}
         ],
-        requestModel: {requestBodyType: 2, content: '', entities: [{key: '', value: '', type: ''}]}
+        requestModel: {requestBodyType: 2, content: '', entities: [{key: '', value: '', type: '', fileName: ''}]}
 
       },
       bodyKey: 1,
@@ -358,9 +358,7 @@ export default {
       if (this.service.requestType && Array.isArray(this.service.requestType)) {
         request.requestType = this.service.requestType[0]
       }
-      if (this.service.requestModel.content) {
-        request.requestModel = JSON.stringify(this.service.requestModel)
-      }
+      request.requestModel = JSON.stringify(this.service.requestModel)
       return request
     },
     requestBodyChange(value) {
@@ -411,7 +409,8 @@ export default {
       this.$axios.post('/file/upload', formData, {headers: {'Content-Type': 'multipart/form-data'}}).then(res => {
         if (res.data.success) {
           this.$message.success('上传成功!')
-          entity.value = res.data.data
+          entity.fileName = fileName
+          entity.value = encodeURI(res.data.data)
           this.bodyKey = this.bodyKey + 1
         } else {
           this.$message.error(res.data.message)

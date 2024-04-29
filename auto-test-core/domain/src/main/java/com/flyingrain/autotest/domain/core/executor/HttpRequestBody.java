@@ -45,4 +45,14 @@ public class HttpRequestBody {
         this.requestBodyType = requestBodyType;
         this.requestBodyTypeEnum = RequestBodyTypeEnum.codeOf(requestBodyType);
     }
+
+    @Override
+    public String toString() {
+        return "HttpRequestBody{" +
+                "requestBodyTypeEnum=" + requestBodyTypeEnum +
+                ", requestBodyType=" + requestBodyType +
+                ", content='" + content + '\'' +
+                ", entities=" + entities +
+                '}';
+    }
 }
