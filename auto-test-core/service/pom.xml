@@ -22,10 +22,6 @@
             <artifactId>facade</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itextpdf</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.example</groupId>
             <artifactId>domain</artifactId>
         </dependency>

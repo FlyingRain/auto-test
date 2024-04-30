@@ -36,6 +36,8 @@
         <apach.lang.version>3.14.0</apach.lang.version>
         <fast.json.version>2.0.47</fast.json.version>
         <pdf.version>5.5.13.3</pdf.version>
+        <pdf.kernel.version>8.0.3</pdf.kernel.version>
+
     </properties>
 
     <dependencies>
@@ -73,11 +75,16 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- add all iText modules -->
             <dependency>
                 <groupId>com.itextpdf</groupId>
-                <artifactId>itextpdf</artifactId>
-                <version>${pdf.version}</version>
+                <artifactId>itext-core</artifactId>
+                <version>${pdf.kernel.version}</version>
+                <type>pom</type>
             </dependency>
+
+
+
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
