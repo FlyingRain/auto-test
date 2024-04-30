@@ -4,14 +4,14 @@
       <el-col>
         <el-form ref="reportSearch" :model="searchForm" size="small" inline>
           <el-form-item label="数据源名称：">
-            <el-input v-model.trim="searchForm.conditions.name" placeholder="请输入批次号"></el-input>
+            <el-input v-model.trim="searchForm.conditions.name" placeholder="请输入数据源名称"></el-input>
           </el-form-item>
           <el-form-item label="数据源编码：">
-            <el-input v-model.trim="searchForm.conditions.code" placeholder="请输入用例id"></el-input>
+            <el-input v-model.trim="searchForm.conditions.code" placeholder="请输入数据源编码"></el-input>
           </el-form-item>
           <el-form-item label="数据源类型:" prop="sourceType">
             <template>
-              <el-select v-model="searchForm.conditions.sourceType" filterable placeholder="请选择状态">
+              <el-select v-model="searchForm.conditions.sourceType" filterable placeholder="请选择类型">
                 <el-option
                     v-for="item in sourceTypes"
                     :key="item.value"

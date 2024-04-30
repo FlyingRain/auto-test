@@ -68,22 +68,22 @@
         </div>
       </el-form>
       <el-dialog
-          title="新增应用"
+          title="新增变量"
           ref="addDialog"
           :visible.sync="dialogVisible"
           width="30%"
           :close-on-click-modal=false
       >
-        <el-form :model="globalConfigForm" size="small" :rules="addRules">
+        <el-form :model="globalConfigForm" ref="configForm" size="small" :rules="addRules">
           <el-form-item label="参数key：" prop="paramKey" label-width="120px">
             <span>global_</span>
-            <el-input v-model.trim="globalConfigForm.paramKey" placeholder="请输入应用编码" style="width: 70%"/>
+            <el-input v-model.trim="globalConfigForm.paramKey" placeholder="请输入参数Key" style="width: 70%"/>
           </el-form-item>
           <el-form-item label="参数值：" prop="paramValue" label-width="120px">
-            <el-input v-model.trim="globalConfigForm.paramValue" placeholder="请输入应用名称" style="width: 80%"/>
+            <el-input v-model.trim="globalConfigForm.paramValue" placeholder="请输入参数值" style="width: 80%"/>
           </el-form-item>
           <el-form-item label="参数名称：" prop="paramName" label-width="120px">
-            <el-input v-model.trim="globalConfigForm.paramName" placeholder="请输入负责人" style="width: 80%"/>
+            <el-input v-model.trim="globalConfigForm.paramName" placeholder="请输入参数名称" style="width: 80%"/>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -173,16 +173,22 @@ export default {
       }
     },
     addGlobalConfig: debounce(function () {
-      var gConfig = {}
-      console.log(this.globalConfigForm)
-      Object.assign(gConfig, this.globalConfigForm)
-      gConfig.paramKey = 'global_' + this.globalConfigForm.paramKey
-      this.$axios.post('/globalConfig/insert', gConfig).then(res => {
-        if (res.data.success) {
-          this.initData()
-          this.dialogVisible = false
+      this.$refs.configForm.validate((valid) => {
+        if (valid) {
+          var gConfig = {}
+          console.log(this.globalConfigForm)
+          Object.assign(gConfig, this.globalConfigForm)
+          gConfig.paramKey = 'global_' + this.globalConfigForm.paramKey
+          this.$axios.post('/globalConfig/insert', gConfig).then(res => {
+            if (res.data.success) {
+              this.initData()
+              this.dialogVisible = false
+            } else {
+              this.$message.error(res.data.message)
+            }
+          })
         } else {
-          this.$message.error(res.data.message)
+          return false
         }
       })
     }, 300),

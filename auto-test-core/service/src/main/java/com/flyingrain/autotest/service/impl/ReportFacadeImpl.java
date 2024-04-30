@@ -77,7 +77,7 @@ public class ReportFacadeImpl implements ReportFacade, Resource {
 
             PdfWriter pdfWriter = new PdfWriter("test.pdf");
             PdfDocument pdfdocument = new PdfDocument(pdfWriter);
-            Document document = new Document(pdfdocument, PageSize.A4);
+            Document document = new Document(pdfdocument, new PageSize(842.0F,842.0F));
             PdfFont font = PdfFontFactory.createFont("STSongStd-Light", "UniGB-UCS2-H", PdfFontFactory.EmbeddingStrategy.PREFER_NOT_EMBEDDED);
 
             Paragraph paragraph = new Paragraph("测试报告").setFont(font).setFontColor(new DeviceRgb(39, 157, 241)).setFontSize(20).setTextAlignment(TextAlignment.CENTER).setBold();
