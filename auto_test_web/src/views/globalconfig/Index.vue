@@ -58,7 +58,7 @@
             </el-col>
             <el-col style="width: 30%;margin-top: 7px">
               <el-button size="small" type="primary" v-if="config.canEdit" @click="changeEdit(config)"> 编辑</el-button>
-              <el-button size="small" type="primary" v-if="config.canEdit" @click="deleteConfig(config)"> 删除
+              <el-button size="small" type="danger" v-if="config.canEdit" @click="deleteConfig(config)"> 删除
               </el-button>
               <el-button size="small" type="success" v-if="!config.canEdit" @click="saveUpdate(config)"> 确定
               </el-button>
