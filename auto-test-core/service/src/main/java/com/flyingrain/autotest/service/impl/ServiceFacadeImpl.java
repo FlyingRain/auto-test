@@ -85,6 +85,7 @@ public class ServiceFacadeImpl implements ServiceFacade, Resource {
             logger.error("update key is empty!");
             return CommonResult.fail(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), AutoTestResultCodeEnum.PARAM_ERROR.getMessage());
         }
+        checkParam(autoTestService);
         User user = getUserInfo();
         logger.info("user:[{}],update service:[{}]", user.getUserName(), autoTestService);
         int count = serviceManager.updateServiceById(ServiceViewConvert.convertView(autoTestService));

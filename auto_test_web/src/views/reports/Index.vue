@@ -116,8 +116,11 @@ export default {
       this.$axios.get('/report/download', {params: {id: id}, responseType: 'blob'}).then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data]))
         const link = document.createElement('a')
+        console.log(response)
+        const disposition = response.headers['content-disposition']
+        let fileName = disposition.substring(disposition.indexOf('filename=') + 9, disposition.length)
         link.href = url
-        link.setAttribute('download', 'test111.pdf')
+        link.setAttribute('download', decodeURI(fileName))
         document.body.appendChild(link)
         link.click()
       }).catch(error => {

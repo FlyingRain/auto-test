@@ -113,22 +113,8 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item :label="'value:'" :prop="'requestModel.entities.'+index+'.value'">
-                    <el-input v-model="entity.fileName"></el-input>
+                    <el-input v-model="entity.value" placeholder="请输入文件变量名称"></el-input>
                   </el-form-item>
-                </el-col>
-                <el-col :span="2">
-                  <el-upload
-                      v-if="entity.type==='FILE'"
-                      action="#"
-                      :http-request="handleFileUpload"
-                      :data="entity"
-                      :on-change="handleChange"
-                      :file-list="fileList">
-                    <el-tooltip class="item" effect="dark" content="只能上传jpg/png文件，且不超过500kb"
-                                placement="top-start">
-                      <el-button size="small" type="primary">点击上传</el-button>
-                    </el-tooltip>
-                  </el-upload>
                 </el-col>
                 <el-col :span="2">
                   <el-button type="info" size="small" @click.prevent="removeEntity(entity)">删除</el-button>

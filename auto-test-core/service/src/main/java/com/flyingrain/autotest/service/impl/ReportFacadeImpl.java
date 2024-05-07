@@ -35,8 +35,11 @@ import org.springframework.util.StringUtils;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,10 +77,12 @@ public class ReportFacadeImpl implements ReportFacade, Resource {
     public Response generateReportFile(Integer id) {
         ExecuteReport executeReport = reportService.detail(id);
         try {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日HH时mm分ss秒");
+            String fileName = "测试报告_" + dateFormat.format(new Date()) + ".pdf";
 
-            PdfWriter pdfWriter = new PdfWriter("test.pdf");
+            PdfWriter pdfWriter = new PdfWriter(fileName);
             PdfDocument pdfdocument = new PdfDocument(pdfWriter);
-            Document document = new Document(pdfdocument, new PageSize(842.0F,842.0F));
+            Document document = new Document(pdfdocument, new PageSize(842.0F, 842.0F));
             PdfFont font = PdfFontFactory.createFont("STSongStd-Light", "UniGB-UCS2-H", PdfFontFactory.EmbeddingStrategy.PREFER_NOT_EMBEDDED);
 
             Paragraph paragraph = new Paragraph("测试报告").setFont(font).setFontColor(new DeviceRgb(39, 157, 241)).setFontSize(20).setTextAlignment(TextAlignment.CENTER).setBold();
@@ -94,10 +99,10 @@ public class ReportFacadeImpl implements ReportFacade, Resource {
             document.add(logTable.setMarginTop(10));
             document.close();
 
-            InputStream outputStream = new FileInputStream("test.pdf");
+            InputStream outputStream = new FileInputStream(fileName);
             Response.ResponseBuilder response = Response.ok(outputStream);
-            String fileName = "asdf.pdf";
-            response.header("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            response.header("Content-Disposition", "attachment; filename=" + URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+            response.header("Access-Control-Expose-Headers", "*");
             return response.build();
         } catch (Exception e) {
             logger.error("create pdf failed!", e);
@@ -125,13 +130,13 @@ public class ReportFacadeImpl implements ReportFacade, Resource {
                 table.addCell(new Cell().add(new Paragraph(runLog.getCaseCode())));
                 if (RunStatusEnum.SUCCESS.getCode().equals(runLog.getRunStatus())) {
                     table.addCell(new Cell().add(new Paragraph("成功").setFontColor(new DeviceRgb(8, 214, 8))));
-                }else if(RunStatusEnum.FAIL.getCode().equals(runLog.getRunStatus())){
+                } else if (RunStatusEnum.FAIL.getCode().equals(runLog.getRunStatus())) {
                     table.addCell(new Cell().add(new Paragraph("失败")).setFontColor(new DeviceRgb(255, 17, 17)));
-                }else if(RunStatusEnum.EXECUTING.getCode().equals(runLog.getRunStatus())){
+                } else if (RunStatusEnum.EXECUTING.getCode().equals(runLog.getRunStatus())) {
                     table.addCell(new Cell().add(new Paragraph("执行中").setFontColor(new DeviceRgb(0, 0, 238))));
                 }
                 table.addCell(new Cell().add(new Paragraph(String.valueOf(runLog.getCaseSpendTime()))));
-                table.addCell(new Cell().add(new Paragraph(StringUtils.hasText(runLog.getMessage())?runLog.getMessage():"")));
+                table.addCell(new Cell().add(new Paragraph(StringUtils.hasText(runLog.getMessage()) ? runLog.getMessage() : "")));
                 table.addCell(new Cell().add(new Paragraph(dateFormat.format(runLog.getExecuteTime()))));
             });
 

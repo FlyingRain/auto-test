@@ -46,6 +46,10 @@ public class AutoTestCaseDynamicSqlProvider {
             sql.LEFT_OUTER_JOIN("auto_test_case_scene as s on c.id = s.case_id");
             sql.WHERE("s.scene_id = #{queryCondition.conditions.sceneId}");
         }
+        if(autoTestCaseQuery.getAppId()!=0){
+            sql.LEFT_OUTER_JOIN("auto_test_service ser on ser.id=c.service_id").LEFT_OUTER_JOIN("auto_test_application a on a.id=ser.app_id");
+            sql.WHERE("ser.app_id=#{queryCondition.conditions.appId}");
+        }
         if (autoTestCaseQuery.getId() != 0) {
             sql.WHERE("c.id = #{queryCondition.conditions.id}");
         }

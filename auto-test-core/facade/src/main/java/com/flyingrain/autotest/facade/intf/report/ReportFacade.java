@@ -29,6 +29,6 @@ public interface ReportFacade {
 
     @GET
     @Path("/download")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Produces({MediaType.APPLICATION_OCTET_STREAM})
     Response generateReportFile(@QueryParam("id") Integer id);
 }

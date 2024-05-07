@@ -169,6 +169,7 @@ public class CaseService {
         autoTestCaseQuery.setCode(conditions.getCode());
         autoTestCaseQuery.setCreator(conditions.getCreator());
         autoTestCaseQuery.setSceneId(conditions.getSceneId());
+        autoTestCaseQuery.setAppId(conditions.getAppId());
         return autoTestCaseQuery;
     }
 }

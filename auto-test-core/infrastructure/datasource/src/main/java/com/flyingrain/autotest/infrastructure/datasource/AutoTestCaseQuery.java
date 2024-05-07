@@ -14,6 +14,8 @@ public class AutoTestCaseQuery {
 
     private int sceneId;
 
+    private int appId;
+
     public int getId() {
         return id;
     }
@@ -62,6 +64,14 @@ public class AutoTestCaseQuery {
         this.code = code;
     }
 
+    public int getAppId() {
+        return appId;
+    }
+
+    public void setAppId(int appId) {
+        this.appId = appId;
+    }
+
     @Override
     public String toString() {
         return "AutoTestCaseQuery{" +
@@ -71,6 +81,7 @@ public class AutoTestCaseQuery {
                 ", creator='" + creator + '\'' +
                 ", serviceId=" + serviceId +
                 ", sceneId=" + sceneId +
+                ", appId=" + appId +
                 '}';
     }
 }

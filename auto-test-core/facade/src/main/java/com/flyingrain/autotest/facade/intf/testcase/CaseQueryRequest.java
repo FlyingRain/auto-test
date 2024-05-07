@@ -6,6 +6,16 @@ public class CaseQueryRequest extends AutoTestCase {
 
     private int sceneId;
 
+    private int appId;
+
+    public int getAppId() {
+        return appId;
+    }
+
+    public void setAppId(int appId) {
+        this.appId = appId;
+    }
+
     public int getSceneId() {
         return sceneId;
     }
@@ -18,6 +28,7 @@ public class CaseQueryRequest extends AutoTestCase {
     public String toString() {
         return "CaseQueryRequest{" +
                 "sceneId=" + sceneId +
-                '}';
+                ", appId=" + appId +
+                "} " + super.toString();
     }
 }

@@ -8,11 +8,22 @@
           <el-form-item label="用例id：" prop="id">
             <el-input v-model.trim="searchForm.conditions.id" placeholder="请输入用例id"/>
           </el-form-item>
-          <el-form-item label="用例名称：" prop="name">
-            <el-input v-model.trim="searchForm.conditions.name" placeholder="请输入用例名称"/>
-          </el-form-item>
+<!--          <el-form-item label="用例名称：" prop="name">-->
+<!--            <el-input v-model.trim="searchForm.conditions.name" placeholder="请输入用例名称"/>-->
+<!--          </el-form-item>-->
           <el-form-item label="用例编码：" prop="code">
             <el-input v-model.trim="searchForm.conditions.code" placeholder="请输入用例编码"/>
+          </el-form-item>
+          <el-form-item label="所属应用:" prop="serviceId">
+            <el-select v-model.trim="searchForm.conditions.appId" placeholder="请选择应用" @change='appChange'
+                       filterable>
+              <el-option
+                  v-for="item in appList"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="所属服务:" prop="serviceId">
             <template>
@@ -90,10 +101,12 @@ export default {
           name: '',
           serviceId: '',
           code: '',
-          creator: ''
+          creator: '',
+          appId: ''
         }
       },
-      serviceList: []
+      serviceList: [],
+      appList: []
     }
   },
   created() {
@@ -101,6 +114,32 @@ export default {
     this.initPage()
   },
   methods: {
+    async getAppList() {
+      const result = await this.$axios.get('app/all')
+      if (result.data.success) {
+        for (var appData of result.data.data) {
+          this.appList.push({label: appData.appName, value: appData.id})
+        }
+      } else {
+        this.$message.error(result.data.message)
+      }
+    },
+    async getServiceList(appId) {
+      const result = await this.$axios.get('service/query', {params: {appId: appId}})
+      if (result.data.success) {
+        const appInfos = result.data.data
+        for (const item of appInfos) {
+          this.serviceList.push({
+            value: item.id,
+            label: item.serviceName,
+            params: item.autoTestServiceParams,
+            responseDataType: item.responseDataType
+          })
+        }
+      } else {
+        this.$message.error(result.data.message)
+      }
+    },
     changeView(path, queryParam) {
       this.$router.push({
         path: path,
@@ -108,16 +147,8 @@ export default {
       })
     },
     async initPage() {
-      const result = await this.$axios.get('/service/all')
-      if (result.data.success) {
-        const services = result.data.data
-        for (const ser of services) {
-          this.serviceList.push({label: ser.serviceName, value: ser.id})
-        }
-        await this.getPageList()
-      } else {
-        this.$message.error('查询服务列表失败,' + result.data.message)
-      }
+      await this.getPageList()
+      await this.getAppList()
     },
     handleSizeChange(val) {
       this.searchForm.pageSize = val
@@ -135,6 +166,8 @@ export default {
     handleClear() {
       this.searchForm.conditions.name = ''
       this.searchForm.conditions.serviceId = ''
+      this.serviceList = []
+      this.searchForm.conditions.appId = ''
       this.searchForm.conditions.creator = ''
       this.searchForm.conditions.id = ''
       this.getPageList()
@@ -184,6 +217,14 @@ export default {
           this.$message.error('执行失败:' + res.data.message)
         }
       })
+    },
+    cleanChoose() {
+      this.serviceList = []
+      this.searchForm.conditions.serviceId = ''
+    },
+    appChange(appId) {
+      this.cleanChoose()
+      this.getServiceList(appId)
     }
   }
 }
