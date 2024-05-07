@@ -135,14 +135,16 @@ public class ServiceFacadeImpl implements ServiceFacade, Resource {
         switch (protocolTypeEnum) {
             case HTTP:
                 HttpRequestBody httpRequestBody = JSONObject.parseObject(requestModelStr, HttpRequestBody.class);
-                if (!CollectionUtils.isEmpty(httpRequestBody.getEntities())) {
-                    for (HttpEntityModel entity : httpRequestBody.getEntities()) {
-                        if (!StringUtils.hasText(entity.getKey()) || !StringUtils.hasText(entity.getValue())) {
-                            throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), "form表单的key和value不能为空");
-                        }
-                        if ("FILE".equals(entity.getType()) && CaseExecutorHelper.isDynamicVar(entity.getValue())) {
-                            if (!entity.getValue().contains("file_")) {
-                                throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), "文件变量必须以file_开头：" + entity.getKey());
+                if (httpRequestBody.getRequestBodyTypeEnum() == RequestBodyTypeEnum.FORM) {
+                    if (!CollectionUtils.isEmpty(httpRequestBody.getEntities())) {
+                        for (HttpEntityModel entity : httpRequestBody.getEntities()) {
+                            if (!StringUtils.hasText(entity.getKey()) || !StringUtils.hasText(entity.getValue())) {
+                                throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), "form表单的key和value不能为空");
+                            }
+                            if ("FILE".equals(entity.getType()) && CaseExecutorHelper.isDynamicVar(entity.getValue())) {
+                                if (!entity.getValue().contains("file_")) {
+                                    throw new AutoTestException(AutoTestResultCodeEnum.PARAM_ERROR.getCode(), "文件变量必须以file_开头：" + entity.getKey());
+                                }
                             }
                         }
                     }
