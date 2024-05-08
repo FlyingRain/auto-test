@@ -192,7 +192,7 @@ export default {
         }
         const {data: res} = await this.$axios.post('/user/updatePassword', this.editPasswordForm)
         if (res.success) {
-          this.$message.success('密码修改成功，跳转到登陆页面')
+          this.$message.success('密码修改成功，跳转到登录页面')
           sessionStorage.clear()
           await this.$router.push('/login')
         } else {

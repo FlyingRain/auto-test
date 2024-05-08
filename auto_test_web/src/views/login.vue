@@ -3,8 +3,8 @@
     <!-- login card -->
     <el-card class="login_card">
       <el-image class="logo_image" :src="logo_url" fit="cover"></el-image>
-      <p class="login_title">登 陆</p>
-      <p class="login_desc">欢迎登陆飞羽自动化测试平台</p>
+      <p class="login_title">登 录</p>
+      <p class="login_desc">欢迎登录飞羽自动化测试平台</p>
       <el-form ref="ruleForm" :model="form" :rules="rules">
         <el-form-item prop="userName">
           <el-input placeholder="请输入账号" v-model="form.userName" prefix-icon="el-icon-user"/>
