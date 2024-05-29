@@ -79,6 +79,13 @@ const router = new Router({
           component: () => import('@/views/globalconfig/Index.vue')
         },
         {
+          path: '/order',
+          meta: {
+            title: '创建订单'
+          },
+          component: () => import('@/views/order/Index.vue')
+        },
+        {
           path: '/autotest',
           meta: {
             title: '自动化测试'

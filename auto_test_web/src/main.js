@@ -24,7 +24,7 @@ Vue.config.productionTip = false
 Vue.prototype.$axios = axios
 Vue.prototype.$cookies = cookies
 // 设置接口请求的前缀地址
-axios.defaults.baseURL = 'http://43.134.105.46:8081/autotest'
+axios.defaults.baseURL = 'http://111.231.64.229:8081/autotest'
 // 全局设置token
 axios.interceptors.request.use(function (config) {
   let ctoken = cookies.get('token')

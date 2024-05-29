@@ -82,6 +82,10 @@
               <i class="el-icon-s-tools"></i>
               <span slot="title">全局变量</span>
             </el-menu-item>
+            <el-menu-item index="/order" @click="saveActiveNav('/order')">
+              <i class="el-icon-s-tools"></i>
+              <span slot="title">订单管理</span>
+            </el-menu-item>
 
           </el-menu>
         </el-aside>

@@ -13,6 +13,8 @@ import org.springframework.context.ApplicationContext;
 @SpringBootApplication
 public class ApplicationStarter {
 
+
+
     private static final Logger logger = LoggerFactory.getLogger(ApplicationStarter.class);
 
     public static void main(String[] args) {
