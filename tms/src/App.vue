@@ -6,8 +6,13 @@
         <div class="element">
           <span class="tip">运单号：</span>
           <el-input size="small" style="width: 160px !important;" placeholder="运单号" v-model="sendOrder.orderNo"/>
-          <span class="tip">客户单号：</span>
-          <el-input size="small" style="width: 160px !important;" placeholder="客户单号"/>
+          <span class="tip">业务类型：</span>
+          <el-select size="small" style="width: 160px !important;" placeholder="零担/专业/整车">
+            <el-option key="1" value="1" label="零担"/>
+            <el-option key="1" value="1" label="专线"/>
+            <el-option key="1" value="1" label="整车"/>
+            <el-option key="1" value="1" label="自提"/>
+          </el-select>
           <span class="tip">寄件时间：</span>
           <el-input size="small" style="width: 160px !important;" disabled v-model="sendOrder.sendTime"/>
           <div style="height: 24px;display: flex;align-items: center;margin-left: 5px">
