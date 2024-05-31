@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.flyingrain.autotest.common.util.HttpUtil;
 import com.flyingrain.autotest.common.util.ObjectToMapUtil;
 import com.flyingrain.autotest.common.util.RunTimeContext;
+import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import com.flyingrain.autotest.facade.intf.model.oder.SendOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -82,6 +84,9 @@ public class YunDaPriceQuery {
 
         String weightQueryUrl = "http://inms.yunda56.com:3351/ky_inms/public/index.php/weight.html";
         YunDaWeightCalcu yunDaWeightCalcu = YunDaWeightCalcu.fromSendOrder(sendOrder);
+        if(!StringUtils.hasText(yunDaDesAddressInfo.getTarget_center_code())){
+            throw new AutoTestException("500","目的地地址错误，无法识别");
+        }
         yunDaWeightCalcu.setBuyerDestinationDotCode(yunDaDesAddressInfo.getTarget_center_code());
         String weight = HttpUtil.postFormUrlEncoded(weightQueryUrl, headers, ObjectToMapUtil.ObjToMap(yunDaWeightCalcu));
         logger.info("query yunda weight :[{}]", weight);
