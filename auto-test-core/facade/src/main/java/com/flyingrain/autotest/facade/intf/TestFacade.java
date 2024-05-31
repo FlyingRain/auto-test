@@ -3,9 +3,7 @@ package com.flyingrain.autotest.facade.intf;
 
 import com.flyingrain.autotest.common.util.CommonResult;
 import com.flyingrain.autotest.facade.intf.model.AutoTestIn;
-import com.flyingrain.autotest.facade.intf.model.oder.ChannelCompare;
-import com.flyingrain.autotest.facade.intf.model.oder.City;
-import com.flyingrain.autotest.facade.intf.model.oder.SendOrder;
+import com.flyingrain.autotest.facade.intf.model.oder.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
@@ -26,10 +24,18 @@ public interface TestFacade {
 
     @POST
     @Path("/compare")
-    ChannelCompare compare(SendOrder sendOrder);
+    CommonResult<List<ChannelCompare>> compare(SendOrder sendOrder);
 
     @GET
-        @Path("/getRelativeCity")
+    @Path("/getRelativeCity")
     CommonResult<List<City>> getRelativeCities(@QueryParam("relativeId")Integer relativeId);
+
+    @GET
+    @Path("/queryCityByName")
+    CommonResult<City> queryCityByName(@QueryParam("cityName")String name);
+
+    @GET
+    @Path("/analysis/addr")
+    CommonResult<UserContactInfo> analysisAddr(@QueryParam("addr") String address);
 
 }

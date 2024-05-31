@@ -12,7 +12,6 @@ public class UserContactInfo {
 
     private String customerId;
 
-    private String detailArea;
 
     public String getTelNo() {
         return telNo;
@@ -46,13 +45,6 @@ public class UserContactInfo {
         this.customerId = customerId;
     }
 
-    public String getDetailArea() {
-        return detailArea;
-    }
-
-    public void setDetailArea(String detailArea) {
-        this.detailArea = detailArea;
-    }
 
     @Override
     public String toString() {
@@ -61,7 +53,6 @@ public class UserContactInfo {
                 ", sendName='" + sendName + '\'' +
                 ", address=" + address +
                 ", customerId='" + customerId + '\'' +
-                ", detailArea='" + detailArea + '\'' +
                 '}';
     }
 }

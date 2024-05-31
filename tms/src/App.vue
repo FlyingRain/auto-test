@@ -1,17 +1,42 @@
 <template>
+  <el-dialog
+      title="承运商详情"
+      ref="businessDialog"
+      v-model="dialogVisible"
+      width="30%"
+      :close-on-click-modal=false
+  >
+    <el-descriptions :column=1>
+      <el-descriptions-item label="承运商名称:">{{ dialogData.channelName }}</el-descriptions-item>
+      <el-descriptions-item label="承运商报价:">{{ dialogData.channelPrice.total }}</el-descriptions-item>
+      <el-descriptions-item label="承运商报价明细:">{{ dialogData.channelPrice.otherDetail }}</el-descriptions-item>
+      <el-descriptions-item label="网点信息:">{{ dialogData.siteAddress }}</el-descriptions-item>
+      <el-descriptions-item label="目的地距离:">{{ dialogData.distance }}</el-descriptions-item>
+      <el-descriptions-item label="网点负责人:">{{ dialogData.siteManagerName }}</el-descriptions-item>
+      <el-descriptions-item label="网点描述:">{{ dialogData.siteDes }}</el-descriptions-item>
+      <el-descriptions-item label="查件电话:">{{ dialogData.queryGoodPhone }}</el-descriptions-item>
+      <el-descriptions-item label="网点负责人电话:">{{ dialogData.sitePhone }}</el-descriptions-item>
+      <el-descriptions-item label="派送及区域详情:">{{ dialogData.specialInfo }}</el-descriptions-item>
+    </el-descriptions>
+    <span slot="footer" class="dialog-footer" style="display: flex;justify-content: end">
+         <el-button @click="dialogVisible = false">关闭</el-button>
+        </span>
+  </el-dialog>
   <el-form :model="sendOrder">
     <div class="global-back">
-      <div class="box-card" style="width: 74.5%;height: 80px">
+
+      <div class="box-card" style="width: 1428px;height: 80px">
         <div class="card-title"><span class="tip">基础信息 </span></div>
         <div class="element">
           <span class="tip">运单号：</span>
           <el-input size="small" style="width: 160px !important;" placeholder="运单号" v-model="sendOrder.orderNo"/>
           <span class="tip">业务类型：</span>
-          <el-select size="small" style="width: 160px !important;" placeholder="零担/专业/整车">
+          <el-select size="small" style="width: 160px !important;" placeholder="零担/专业/整车"
+                     v-model="sendOrder.businessType">
             <el-option key="1" value="1" label="零担"/>
-            <el-option key="1" value="1" label="专线"/>
-            <el-option key="1" value="1" label="整车"/>
-            <el-option key="1" value="1" label="自提"/>
+            <el-option key="2" value="2" label="专线"/>
+            <el-option key="3" value="3" label="整车"/>
+            <el-option key="4" value="4" label="自提"/>
           </el-select>
           <span class="tip">寄件时间：</span>
           <el-input size="small" style="width: 160px !important;" disabled v-model="sendOrder.sendTime"/>
@@ -21,11 +46,13 @@
             </el-icon>
           </div>
           <span class="tip">开单人：</span>
-          <el-input size="small" style="width: 160px !important;" placeholder="开单人"/>
+          <el-input size="small" style="width: 160px !important;" placeholder="开单人"
+                    v-model="sendOrder.receiveAccNo"/>
           <span class="tip">服务方式：</span>
-          <el-select size="small" style="width: 160px !important;" placeholder="自提/派送">
-            <el-option key="1" label="自提"/>
-            <el-option key="2" label="派送"/>
+          <el-select size="small" style="width: 160px !important;" placeholder="自提/派送"
+                     v-model="sendOrder.serviceType">
+            <el-option key="1" label="自提" value="1"/>
+            <el-option key="2" label="派送" value="2"/>
           </el-select>
           <span class="tip">收件员：</span>
           <el-select size="small" style="width: 150px !important;" allow-create
@@ -38,6 +65,7 @@
                 :value="item.value">
             </el-option>
           </el-select>
+
         </div>
       </div>
       <div style="display: flex;flex-wrap: nowrap">
@@ -66,10 +94,12 @@
                   <el-input size="small" v-model="sendOrder.sendInfo.sendName" placeholder="寄件人"/>
                   <span class="tip">寄件公司：</span>
                   <el-input size="small" style="width: 160px !important;" placeholder="寄件公司"/>
+
                 </div>
                 <div class="element">
                   <span class="tip">寄件电话：</span>
-                  <el-input size="small" style="width: 225px !important;" placeholder="输入联系方式"/>
+                  <el-input size="small" style="width: 225px !important;" placeholder="输入联系方式"
+                            v-model="sendOrder.sendInfo.telNo"/>
                 </div>
                 <div class="element">
                   <span class="tip">寄方地址：</span>
@@ -115,9 +145,11 @@
                 </div>
                 <div class="element">
                   <span class="tip">详细地址：</span>
-                  <el-input size="small" style="width: 335px !important;" placeholder="详细地址"
-                            v-model="sendOrder.sendInfo.detailArea"/>
-                  <el-button style="margin-left: 10px" size="small" type="primary"> 解析</el-button>
+                  <el-input size="small" style="width: 335px !important;"
+                            placeholder="例:小明17626111111广东省广州市荔湾区方式东漖街道花地大道中22号首层"
+                            v-model="sendOrder.sendInfo.address.detailAddr"/>
+                  <el-button style="margin-left: 10px" size="small" type="primary" @click="analysisAddr('1')"> 解析
+                  </el-button>
                 </div>
                 <div class="element">
                   <span class="tip">证件类型：</span>
@@ -157,9 +189,10 @@
 
                 <div class="element">
                   <span class="tip"><span class="star">*</span>收件人：</span>
-                  <el-input size="small" v-model="sendOrder.orderNo" placeholder="收件人"/>
+                  <el-input size="small" v-model="sendOrder.receiverInfo.receiverName" placeholder="收件人"/>
                   <span class="tip">收件电话：</span>
-                  <el-input size="small" style="width: 225px !important;" placeholder="输入联系方式"/>
+                  <el-input size="small" style="width: 225px !important;" placeholder="输入联系方式"
+                            v-model="sendOrder.receiverInfo.telNo"/>
                 </div>
 
                 <div class="element">
@@ -206,8 +239,11 @@
                 </div>
                 <div class="element">
                   <span class="tip">详细地址：</span>
-                  <el-input size="small" style="width: 335px !important;" placeholder="详细地址"/>
-                  <el-button style="margin-left: 10px" size="small" type="primary"> 解析</el-button>
+                  <el-input size="small" style="width: 335px !important;"
+                            placeholder="例:小明17626111111广东省广州市荔湾区方式东漖街道花地大道中22号首层"
+                            v-model="sendOrder.receiverInfo.address.detailAddr"/>
+                  <el-button style="margin-left: 10px" size="small" type="primary" @click="analysisAddr('2')"> 解析
+                  </el-button>
                 </div>
 
                 <div class="element">
@@ -224,7 +260,7 @@
             <div class="card-content">
               <div class="element">
                 <span class="tip">货物名称：</span>
-                <el-input size="small" type="text" placeholder="货物名称"/>
+                <el-input size="small" type="text" placeholder="货物名称" v-model="sendOrder.goodsInfo.goodName"/>
                 <span class="tip">包装类型：</span>
                 <el-select size="small" v-model="sendOrder.goodsInfo.wrapType" filterable placeholder="包装">
                   <el-option
@@ -235,22 +271,37 @@
                   </el-option>
                 </el-select>
                 <span class="tip">数量：</span>
-                <el-input size="small" type="text" placeholder="数量"/>
+                <el-input size="small" type="text" placeholder="数量" v-model="sendOrder.goodsInfo.count"/>
                 <span class="tip">重量(kg)：</span>
-                <el-input size="small" type="text" placeholder="重量"/>
+                <el-input size="small" type="text" placeholder="重量" v-model="sendOrder.goodsInfo.weight"/>
                 <span class="tip">体积(M³)：</span>
-                <el-input size="small" type="text" placeholder="货物名称"/>
+                <el-input size="small" type="text" placeholder="体积" v-model="sendOrder.goodsInfo.volume"/>
 
-                <el-button size="small" type="primary" style="margin-left: 10px">新增</el-button>
+                <el-button size="small" type="primary" style="margin-left: 10px" @click="addGood">新增</el-button>
                 <el-button size="small" type="danger" style="margin-left: 10px">删除</el-button>
               </div>
             </div>
           </div>
-          <div class="box-card" style="width: 1015px;height: 80px">
+          <div class="box-card" style="width: 1015px;">
             <div class="card-title"><span class="tip">承运商 </span></div>
             <div class="card-content">
-              <div style="display: flex; width: 100%; justify-content: flex-end ">
-                <el-button size="small" type="primary">一键比价</el-button>
+              <el-table ref="table" :data="tableData" style="font-size: 11px;margin-top: 10px" stripe border>
+                <el-table-column prop="channelName" label="渠道名称" width="100" show-overflow-tooltip/>
+                <el-table-column prop="channelPrice.total" label="总成本" width="80" show-overflow-tooltip/>
+                <el-table-column prop="channelPrice.total" label="平台报价" width="80" show-overflow-tooltip/>
+                <el-table-column prop="siteAddress" label="匹配网点" show-overflow-tooltip/>
+                <el-table-column prop="channelPrice.otherDetail" label="价格明细" show-overflow-tooltip/>
+                <el-table-column prop="specialInfo" label="派送区域详情" show-overflow-tooltip/>
+                <el-table-column prop="siteManagerName" label="站点联系人" show-overflow-tooltip/>
+                <el-table-column prop="name" label="操作" show-overflow-tooltip>
+                  <template v-slot="row">
+                    <el-button type="primary" size="small" @click="detail(row.row)"> 详情</el-button>
+                    <el-button type="success" size="small" @click="deleteCase(row.row.id)"> 选择</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <div style="display: flex; margin-top: 10px; width: 100%; justify-content: flex-end ">
+                <el-button size="small" type="primary" @click="comparePrice">一键比价</el-button>
               </div>
             </div>
           </div>
@@ -288,7 +339,8 @@
                   <el-option key="2" label="寄付" value="2"/>
                 </el-select>
                 <span class="tip">保价额：</span>
-                <el-input size="small" type="text" placeholder="保价">
+                <el-input size="small" type="text" placeholder="保价" v-model="sendOrder.addedValue.insureAmount"
+                          @input="checkValue">
                 </el-input>
               </div>
 
@@ -362,6 +414,8 @@
 
       </div>
     </div>
+
+
   </el-form>
 </template>
 
@@ -373,6 +427,8 @@ export default {
   data() {
     return {
       sendOrder: {
+        businessType: '',
+        serviceType: '',
         orderNo: '',
         customerNo: '',
         sendTime: '',
@@ -387,9 +443,9 @@ export default {
             province: '',
             city: '',
             area: '',
-            county: ''
-          },
-          detailArea: ''
+            county: '',
+            detailAddr: ''
+          }
         },
         receiverInfo: {
           customerId: '',
@@ -401,9 +457,9 @@ export default {
             province: '',
             city: '',
             area: '',
-            county: ''
-          },
-          detailArea: ''
+            county: '',
+            detailAddr: ''
+          }
         },
         goodsInfo: {
           goodName: '',
@@ -416,6 +472,7 @@ export default {
           backOrderType: '',
           backOrderNo: '',
           upstairs: '',
+          insureAmount: '',
           upstairsLayer: '',
           settleType: '',
           arrivePayAmount: '',
@@ -431,6 +488,8 @@ export default {
         },
         cost: {}
       },
+      dialogVisible: false,
+      tableData: [],
       loading: false,
       searchQuery: '',
       customers: ['老王', '老李'],
@@ -446,10 +505,29 @@ export default {
       rec_areas: [],
       rec_counties: [],
       province: '',
-      wrapTypeList: [{value: 1, label: '箱子'}]
+      wrapTypeList: [
+        {value: 1, label: '纸箱'},
+        {value: 2, label: '托盘'},
+        {value: 3, label: '塑料桶'},
+        {value: 4, label: '纸筒'},
+        {value: 5, label: '木箱'}, {value: 6, label: '泡沫箱'}, {value: 7, label: '铁桶'},],
+      dialogData: {
+        channelName: '',
+        siteAddress: '',
+        sitePhone: '',
+        siteManagerName: '',
+        specialInfo: '',
+        targetSite: '',
+        channelPrice: {total: '', otherDetail: ''}
+      }
     }
   },
   methods: {
+    detail(row) {
+      console.log(row)
+      this.dialogData = row
+      this.dialogVisible = true
+    },
     filterResults() {
       console.log('asdfasfd')
       this.filteredResults = this.customers.filter(result => {
@@ -471,59 +549,176 @@ export default {
     padZero(num) {
       return num < 10 ? '0' + num : num
     },
-    async queryCity(id, sender, type) {
+    checkValue(value) {
+      if (!this.$myGlobal.onlyNumber(value)) {
+        this.sendOrder.addedValue.insureAmount = ''
+      }
+
+    },
+    async queryCity(name, sender, type) {
+      console.log('start to update ' + name)
+      var id
+      if (type === '0') {
+        id = 0
+      } else {
+        if (sender) {
+          if (type === '1') {
+            for (let province of this.provinces) {
+              if (province.value.includes(name)) {
+                id = province.key
+              }
+            }
+            this.cities = []
+            this.areas = []
+            this.counties = []
+          } else if (type === '2') {
+            for (let city of this.cities) {
+              if (city.value.includes(name)) {
+                id = city.key
+              }
+            }
+            this.areas = []
+            this.counties = []
+          } else if (type === '3') {
+            for (let area of this.areas) {
+              if (area.value.includes(name)) {
+                id = area.key
+              }
+            }
+            this.counties = []
+          }
+        } else {
+          if (type === '1') {
+            for (let province of this.provinces) {
+              if (province.value.includes(name)) {
+                id = province.key
+              }
+            }
+            this.rec_cities = []
+            this.rec_areas = []
+            this.rec_counties = []
+          } else if (type === '2') {
+            for (let city of this.rec_cities) {
+              if (city.value.includes(name)) {
+                id = city.key
+              }
+            }
+            this.rec_areas = []
+            this.rec_counties = []
+          } else if (type === '3') {
+            for (let area of this.rec_areas) {
+              if (area.value.includes(name)) {
+                id = area.key
+              }
+            }
+            this.rec_counties = []
+          }
+        }
+      }
+      console.log('end id ' + id)
+
+
       const result = await this.$axios.get('/getRelativeCity', {params: {relativeId: id}})
       if (result.data.success) {
         var city_data_list = result.data.data
         if (type === '0') {
           for (let c of city_data_list) {
-            this.provinces.push({value: c.id, label: c.name, key: c.id})
+            this.provinces.push({value: c.name, label: c.name, key: c.id})
           }
+          return
         }
         console.log(id + ' ,' + sender + ' ,' + type + ' ,' + city_data_list.length)
         if (sender) {
-          if (type === '1') {
-            this.cities = []
-            this.areas = []
-            this.counties = []
-          } else if (type === '2') {
-            this.areas = []
-            this.counties = []
-          } else if (type === '3') {
-            this.counties = []
-          }
           for (let c of city_data_list) {
             console.log(type === '1')
             if (type === '1') {
-              this.cities.push({value: c.id, label: c.name, key: c.id})
+              this.cities.push({value: c.name, label: c.name, key: c.id})
             } else if (type === '2') {
-              this.areas.push({value: c.id, label: c.name, key: c.id})
+              this.areas.push({value: c.name, label: c.name, key: c.id})
             } else if (type === '3') {
-              this.counties.push({value: c.id, label: c.name, key: c.id})
+              this.counties.push({value: c.name, label: c.name, key: c.id})
             }
           }
         } else {
-          if (type === '1') {
-            this.rec_cities = []
-            this.rec_areas = []
-            this.rec_counties = []
-          } else if (type === '2') {
-            this.rec_areas = []
-            this.rec_counties = []
-          } else if (type === '3') {
-            this.rec_counties = []
-          }
+
           for (let c of city_data_list) {
             if (type === '1') {
-              this.rec_cities.push({value: c.id, label: c.name, key: c.id})
+              this.rec_cities.push({value: c.name, label: c.name, key: c.id})
             } else if (type === '2') {
-              this.rec_areas.push({value: c.id, label: c.name, key: c.id})
+              this.rec_areas.push({value: c.name, label: c.name, key: c.id})
             } else if (type === '3') {
-              this.rec_counties.push({value: c.id, label: c.name, key: c.id})
+              this.rec_counties.push({value: c.name, label: c.name, key: c.id})
             }
           }
         }
       }
+
+    },
+    async comparePrice() {
+      const result = await this.$axios.post('/compare', this.sendOrder)
+      if (result.data.success) {
+        this.tableData = result.data.data
+      } else {
+        this.$message.error(result.data.message)
+      }
+    },
+    addGood() {
+      this.dialogVisible = true
+    },
+    async analysisAddr(type) {
+      var addr
+      if (type === '1') {
+        addr = this.sendOrder.sendInfo.address.detailAddr
+      } else if (type === '2') {
+        addr = this.sendOrder.receiverInfo.address.detailAddr
+      }
+      const res = await this.$axios.get('/analysis/addr', {params: {addr: addr}})
+      if (res.data.success) {
+        if (type === '1') {
+          await this.queryCity(res.data.data.address.province, true, "1")
+          this.sendOrder.sendInfo.address.province = res.data.data.address.province
+
+
+          var send_cityName
+          if (this.$myGlobal.isDirectCity(res.data.data.address.city)) {
+            send_cityName = '市辖区'
+          } else {
+            send_cityName = res.data.data.address.city
+          }
+          await this.queryCity(send_cityName, true, "2")
+          this.sendOrder.sendInfo.address.city = send_cityName
+
+
+          await this.queryCity(res.data.data.address.area, true, "3")
+          this.sendOrder.sendInfo.address.area = res.data.data.address.area
+
+          this.sendOrder.sendInfo.address.detailAddr = res.data.data.address.detailAddr
+          this.sendOrder.sendInfo.telNo = res.data.data.telNo
+          this.sendOrder.sendInfo.sendName = res.data.data.sendName
+        } else if (type === '2') {
+
+          await this.queryCity(res.data.data.address.province, false, "1")
+          this.sendOrder.receiverInfo.address.province = res.data.data.address.province
+          var cityName
+          if (this.$myGlobal.isDirectCity(res.data.data.address.city)) {
+            cityName = '市辖区'
+          } else {
+            cityName = res.data.data.address.city
+          }
+          await this.queryCity(cityName, false, "2")
+          this.sendOrder.receiverInfo.address.city = cityName
+
+
+          await this.queryCity(res.data.data.address.area, false, "3")
+          this.sendOrder.receiverInfo.address.area = res.data.data.address.area
+          this.sendOrder.receiverInfo.address.detailAddr = res.data.data.address.detailAddr
+          this.sendOrder.receiverInfo.telNo = res.data.data.telNo
+          this.sendOrder.receiverInfo.receiverName = res.data.data.sendName
+        }
+      } else {
+        this.$message.error(res.data.message)
+      }
+
     }
   },
   created() {

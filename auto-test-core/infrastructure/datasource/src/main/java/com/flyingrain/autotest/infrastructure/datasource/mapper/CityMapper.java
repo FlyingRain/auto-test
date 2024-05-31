@@ -1,10 +1,8 @@
 package com.flyingrain.autotest.infrastructure.datasource.mapper;
 
 import com.flyingrain.autotest.infrastructure.datasource.model.CityModel;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import jakarta.ws.rs.QueryParam;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -18,4 +16,12 @@ public interface CityMapper {
     })
     List<CityModel> queryRelativeCity(@Param("relativeId") Integer relativeId);
 
+    @Select("select * from city_data where `name`=#{cityName}")
+    @ResultMap("cityMap")
+    CityModel queryCityByName(@QueryParam("cityName") String cityName);
+
+
+    @Select("select * from city_data where id=#{id}")
+    @ResultMap("cityMap")
+    CityModel queryCityById(@QueryParam("id") Integer Id);
 }

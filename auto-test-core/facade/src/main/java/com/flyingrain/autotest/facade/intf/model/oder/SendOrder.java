@@ -14,9 +14,12 @@ public class SendOrder {
 
     private UserContactInfo sendInfo;
 
-    private UserContactInfo receiveInfo;
+    private UserContactInfo receiverInfo;
 
     private GoodInfo goodsInfo;
+
+    private AddedValue addedValue;
+
 
     public String getCustomerId() {
         return customerId;
@@ -66,12 +69,20 @@ public class SendOrder {
         this.sendInfo = sendInfo;
     }
 
-    public UserContactInfo getReceiveInfo() {
-        return receiveInfo;
+    public UserContactInfo getReceiverInfo() {
+        return receiverInfo;
     }
 
-    public void setReceiveInfo(UserContactInfo receiveInfo) {
-        this.receiveInfo = receiveInfo;
+    public void setReceiverInfo(UserContactInfo receiverInfo) {
+        this.receiverInfo = receiverInfo;
+    }
+
+    public AddedValue getAddedValue() {
+        return addedValue;
+    }
+
+    public void setAddedValue(AddedValue addedValue) {
+        this.addedValue = addedValue;
     }
 
     public GoodInfo getGoodsInfo() {
@@ -91,7 +102,7 @@ public class SendOrder {
                 ", sendTime='" + sendTime + '\'' +
                 ", receiveNo='" + receiveNo + '\'' +
                 ", sendInfo=" + sendInfo +
-                ", receiveInfo=" + receiveInfo +
+                ", receiveInfo=" + receiverInfo +
                 ", goodsInfo=" + goodsInfo +
                 '}';
     }

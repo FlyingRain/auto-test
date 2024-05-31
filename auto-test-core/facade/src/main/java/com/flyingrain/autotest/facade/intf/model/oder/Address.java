@@ -8,7 +8,10 @@ public class Address {
 
     private String area;
 
-    private String county;
+    private String county = "";
+
+    private String detailAddr;
+
 
     public String getProvince() {
         return province;
@@ -42,6 +45,14 @@ public class Address {
         this.county = county;
     }
 
+    public String getDetailAddr() {
+        return detailAddr;
+    }
+
+    public void setDetailAddr(String detailAddr) {
+        this.detailAddr = detailAddr;
+    }
+
     @Override
     public String toString() {
         return "Address{" +
@@ -49,6 +60,7 @@ public class Address {
                 ", city='" + city + '\'' +
                 ", area='" + area + '\'' +
                 ", county='" + county + '\'' +
+                ", detailAddr='" + detailAddr + '\'' +
                 '}';
     }
 }

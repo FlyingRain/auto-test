@@ -2,6 +2,9 @@ package com.flyingrain.autotest.service.model;
 
 import com.flyingrain.autotest.facade.intf.model.oder.Address;
 
+import java.util.List;
+import java.util.Map;
+
 public class YunDaAddressQuery {
     private String BuyerProvince;
     private String BuyerCity;
@@ -20,8 +23,11 @@ public class YunDaAddressQuery {
     private String SettleNumber;
 
 
+
+
+
     public static YunDaAddressQuery fromAddress(Address address){
-        String addressInfo = address.getProvince()+address.getCity()+address.getArea();
+        String addressInfo = address.getProvince()+address.getCity()+address.getArea() + address.getCounty()+address.getDetailAddr();
         YunDaAddressQuery yunDaAddressQuery= new YunDaAddressQuery();
         yunDaAddressQuery.setBuyerProvince(address.getProvince());
         yunDaAddressQuery.setBuyerCity(address.getCity());

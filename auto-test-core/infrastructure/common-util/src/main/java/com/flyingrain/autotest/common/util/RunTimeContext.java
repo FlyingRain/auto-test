@@ -7,7 +7,7 @@ public class RunTimeContext {
 
     private static final InheritableThreadLocal<Map<String, Object>> runtimeContext = new InheritableThreadLocal<>();
 
-
+    public static String yundaCookie;
     public static void put(String key, Object value) {
         Map<String, Object> cache = runtimeContext.get();
         if (cache == null) {

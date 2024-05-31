@@ -1,9 +1,25 @@
 package com.flyingrain.autotest.service.model;
 
 
+import com.alibaba.fastjson.JSONObject;
+import com.flyingrain.autotest.common.util.HttpUtil;
+import com.flyingrain.autotest.common.util.ObjectToMapUtil;
+import com.flyingrain.autotest.common.util.RunTimeContext;
 import com.flyingrain.autotest.facade.intf.model.oder.SendOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class YunDaPriceQuery {
+
+    private static final Logger logger = LoggerFactory.getLogger(YunDaPriceQuery.class);
+
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private String GoodsType;
     private String ServiceType;
@@ -55,7 +71,72 @@ public class YunDaPriceQuery {
     public static YunDaPriceQuery fromSendOrder(SendOrder sendOrder) {
         YunDaPriceQuery yunDaPriceQuery = new YunDaPriceQuery();
 
+        YunDaAddressQuery yunDaDesAddressQuery = YunDaAddressQuery.fromAddress(sendOrder.getReceiverInfo().getAddress());
+        YunDaAddressQuery yunDaFromAddressQuery = YunDaAddressQuery.fromAddress(sendOrder.getSendInfo().getAddress());
+        String queryUrl = "http://inms.yunda56.com:3351/ky_inms/public/index.php/joinlgs/MakeLogisticsApi/getAchieveSiteByAddress.html";
+        Map<String, String> headers = new HashMap<>();
+        headers.putIfAbsent("Cookie", "PHPSESSID=" + RunTimeContext.yundaCookie);
+        YunDaAddressInfo yunDaDesAddressInfo = getYunDaAddressInfo(queryUrl, headers, yunDaDesAddressQuery);
+        YunDaAddressInfo yunDaFromAddressInfo = getYunDaAddressInfo(queryUrl, headers, yunDaFromAddressQuery);
+        logger.info("query yunda info:[{}]", yunDaDesAddressInfo);
+
+        String weightQueryUrl = "http://inms.yunda56.com:3351/ky_inms/public/index.php/weight.html";
+        YunDaWeightCalcu yunDaWeightCalcu = YunDaWeightCalcu.fromSendOrder(sendOrder);
+        yunDaWeightCalcu.setBuyerDestinationDotCode(yunDaDesAddressInfo.getTarget_center_code());
+        String weight = HttpUtil.postFormUrlEncoded(weightQueryUrl, headers, ObjectToMapUtil.ObjToMap(yunDaWeightCalcu));
+        logger.info("query yunda weight :[{}]", weight);
+        YunDaWeight yunDaWeight = JSONObject.parseObject(weight,YunDaWeight.class);
+
+
+        yunDaPriceQuery.setCreatedDotCode("56572779");
+        yunDaPriceQuery.setGoodsType("184");
+        yunDaPriceQuery.setServiceType("111");
+        yunDaPriceQuery.setProductType("24");
+        yunDaPriceQuery.setPaymentType("102");
+        yunDaPriceQuery.setLogisticsId("0");
+        yunDaPriceQuery.setBuyerDestinationDotCode(yunDaDesAddressInfo.getTarget_center_code());
+        yunDaPriceQuery.setSenderDistributionCode(yunDaFromAddressInfo.getBusiness_center_code());
+        yunDaPriceQuery.setSettlementTotalNumber(yunDaWeight.getTfr());
+        yunDaPriceQuery.setCurrent_time(simpleDateFormat.format(new Date()));
+        yunDaPriceQuery.setItemTotalNumber(sendOrder.getGoodsInfo().getCount() + "");
+        yunDaPriceQuery.setFreight("0.00");
+        yunDaPriceQuery.setShippingMethods("180");
+        yunDaPriceQuery.setInsuredAmount(sendOrder.getAddedValue().getInsureAmount() + "");
+        yunDaPriceQuery.setDeliversReturn("0");
+        yunDaPriceQuery.setVipService("0");
+        yunDaPriceQuery.setIsCod("0");
+        yunDaPriceQuery.setBuyerTown(yunDaDesAddressInfo.getBuyerTownCode());
+        yunDaPriceQuery.setBuyerArea(yunDaDesAddressInfo.getBuyerAreaCode());
+        yunDaPriceQuery.setExtendField6("0");
+        yunDaPriceQuery.setCreatedByCode("56572779002");
+        yunDaPriceQuery.setIsPreferential("0");
+        yunDaPriceQuery.setIsDiscount("2");
+        yunDaPriceQuery.setIsFbzp("0");
+        yunDaPriceQuery.setBuyerProvince(yunDaDesAddressInfo.getBuyerProvinceCode());
+        yunDaPriceQuery.setBuyerCity(yunDaDesAddressInfo.getBuyerCityCode());
+        yunDaPriceQuery.setBuyerAddress(sendOrder.getReceiverInfo().getAddress().getDetailAddr());
+        yunDaPriceQuery.setDestinationDotScope(yunDaDesAddressInfo.getBusiness_center_code());
+        yunDaPriceQuery.setPageType("3");
+        yunDaPriceQuery.setVolume(sendOrder.getGoodsInfo().getVolume() + "");
+        yunDaPriceQuery.setGrossWeight(sendOrder.getGoodsInfo().getWeight() + "");
+        yunDaPriceQuery.setCheckHeavyWeight("0");
+        yunDaPriceQuery.setCheckFixedCost("0");
+        yunDaPriceQuery.setCheckSafeArrive("0");
         return yunDaPriceQuery;
+    }
+
+    private static YunDaAddressInfo getYunDaAddressInfo(String queryUrl, Map<String, String> headers, YunDaAddressQuery yunDaAddressQuery) {
+        String result = HttpUtil.postFormUrlEncoded(queryUrl, headers, ObjectToMapUtil.ObjToMap(yunDaAddressQuery));
+        JSONObject jsonObject = JSONObject.parseObject(result);
+        JSONObject data = jsonObject.getJSONObject("data");
+        Set<String> keySet = data.keySet();
+        YunDaAddressInfo yunDaDesAddressInfo = null;
+        if (keySet.size() == 1) {
+            for (String key : keySet) {
+                yunDaDesAddressInfo = data.getObject(key, YunDaAddressInfo.class);
+            }
+        }
+        return yunDaDesAddressInfo;
     }
 
     public String getGoodsType() {

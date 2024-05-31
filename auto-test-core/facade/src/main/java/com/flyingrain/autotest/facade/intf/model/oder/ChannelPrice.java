@@ -14,4 +14,19 @@ public class ChannelPrice {
         this.total = total;
     }
 
+    public String getOtherDetail() {
+        return otherDetail;
+    }
+
+    public void setOtherDetail(String otherDetail) {
+        this.otherDetail = otherDetail;
+    }
+
+    @Override
+    public String toString() {
+        return "ChannelPrice{" +
+                "total=" + total +
+                ", otherDetail='" + otherDetail + '\'' +
+                '}';
+    }
 }

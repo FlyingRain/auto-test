@@ -20,4 +20,12 @@ public class CityService {
     public List<CityModel> queryCityByRelativeId(Integer relativeId) {
         return cityMapper.queryRelativeCity(relativeId);
     }
+
+    public CityModel queryCityByName(String cityName){
+        return cityMapper.queryCityByName(cityName);
+    }
+
+    public CityModel queryById(Integer id){
+        return cityMapper.queryCityById(id);
+    }
 }

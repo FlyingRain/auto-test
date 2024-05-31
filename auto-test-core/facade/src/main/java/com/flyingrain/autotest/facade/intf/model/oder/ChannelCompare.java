@@ -8,7 +8,13 @@ public class ChannelCompare {
 
     private String siteAddress;
 
+    private String siteDes;
+
     private String sitePhone;
+
+    private String queryGoodPhone;
+
+    private String distance;
 
     private String siteManagerName;
 
@@ -16,7 +22,15 @@ public class ChannelCompare {
 
     private String targetSite;
 
-    private ChannelPrice channelPrice;
+    private ChannelPrice channelPrice = new ChannelPrice();
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
 
     public String getChannelCode() {
         return channelCode;
@@ -48,6 +62,22 @@ public class ChannelCompare {
 
     public void setSitePhone(String sitePhone) {
         this.sitePhone = sitePhone;
+    }
+
+    public String getQueryGoodPhone() {
+        return queryGoodPhone;
+    }
+
+    public String getSiteDes() {
+        return siteDes;
+    }
+
+    public void setSiteDes(String siteDes) {
+        this.siteDes = siteDes;
+    }
+
+    public void setQueryGoodPhone(String queryGoodPhone) {
+        this.queryGoodPhone = queryGoodPhone;
     }
 
     public String getSiteManagerName() {
