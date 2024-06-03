@@ -53,6 +53,11 @@ public class Address {
         this.detailAddr = detailAddr;
     }
 
+
+    public String contactDetail() {
+        return province + city + area + detailAddr;
+    }
+
     @Override
     public String toString() {
         return "Address{" +

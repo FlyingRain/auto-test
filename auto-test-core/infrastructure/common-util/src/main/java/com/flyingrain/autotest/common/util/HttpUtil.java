@@ -7,8 +7,11 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -18,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,8 +75,49 @@ public class HttpUtil {
 
     }
 
-    private static void initHeader(HttpPost httpPost, Map<String, String> headers) {
-        headers.forEach(httpPost::setHeader);
+    public static String get(String url,Map<String,String> headers){
+        HttpGet httpget = new HttpGet(url);
+        initHeader(httpget,headers);
+        try (CloseableHttpResponse response = httpClient.execute(httpget,
+                HttpClientContext.create());) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            HttpEntity entity = response.getEntity();
+            String result = EntityUtils.toString(entity, "utf-8");
+            EntityUtils.consume(entity);
+            if (statusCode == HttpStatus.SC_OK) {
+                return result;
+            } else {
+                logger.error("http send status error!statusCode:[{}],result:[{}]", statusCode, result);
+                return result;
+            }
+        } catch (IOException e) {
+            logger.error("send http get error!", e);
+            throw new AutoTestException(AutoTestResultCodeEnum.NETWORK_ERROR.getCode(), e.getMessage());
+        }
+
+    }
+
+    private static void initHeader(HttpRequestBase httpRequest, Map<String, String> headers) {
+        headers.forEach(httpRequest::setHeader);
+    }
+
+    public static String post(String url ,Map<String,String> headers,String content){
+        HttpPost httppost = new HttpPost(url);
+        httppost.setEntity(new StringEntity(content, StandardCharsets.UTF_8));
+        try (CloseableHttpResponse response = httpClient.execute(httppost, HttpClientContext.create());) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            HttpEntity entity = response.getEntity();
+            String result = EntityUtils.toString(entity, "utf-8");
+            if (statusCode == HttpStatus.SC_OK) {
+                return result;
+            } else {
+                logger.error("send http post error!return status:[{}],result:[{}]", statusCode, result);
+                return result;
+            }
+        } catch (Exception e) {
+            logger.error("send http error!", e);
+            throw new AutoTestException(AutoTestResultCodeEnum.NETWORK_ERROR.getCode(), e.getMessage());
+        }
     }
 
 

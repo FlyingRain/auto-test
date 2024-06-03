@@ -1,8 +1,10 @@
 package com.flyingrain.autotest.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.flyingrain.autotest.common.util.*;
+import com.flyingrain.autotest.common.util.exception.AutoTestException;
 import com.flyingrain.autotest.domain.AutoTestModuleManager;
 import com.flyingrain.autotest.domain.service.CityService;
 import com.flyingrain.autotest.facade.intf.TestFacade;
@@ -13,6 +15,10 @@ import com.flyingrain.autotest.infrastructure.datasource.model.CityModel;
 import com.flyingrain.autotest.mvc.jersey.AutoTestService;
 import com.flyingrain.autotest.mvc.jersey.Resource;
 import com.flyingrain.autotest.service.model.*;
+import com.flyingrain.autotest.service.model.baishi.BaishiAddressInfo;
+import com.flyingrain.autotest.service.model.baishi.BaishiPriceDetail;
+import com.flyingrain.autotest.service.model.baishi.BaishiPriceQuery;
+import com.flyingrain.autotest.service.model.baishi.SpecialArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,11 +53,19 @@ public class TestFacadeImpl implements TestFacade, Resource {
         String cookieStr = param.getIn();
         MyChromeCookie myChromeCookie = JSONObject.parseObject(cookieStr, MyChromeCookie.class);
         List<ChromeCookieUnit> cookieUnitList = myChromeCookie.getData();
-        for (ChromeCookieUnit chromeCookieUnit : cookieUnitList) {
-            if ("PHPSESSID".equals(chromeCookieUnit.getName())) {
-                RunTimeContext.yundaCookie = chromeCookieUnit.getValue();
-                RunTimeContext.put("PHPSESSID", chromeCookieUnit.getValue());
+        if ("yunda".equals(myChromeCookie.getChannelCode())) {
+            for (ChromeCookieUnit chromeCookieUnit : cookieUnitList) {
+                if ("PHPSESSID".equals(chromeCookieUnit.getName())) {
+                    RunTimeContext.yundaCookie = chromeCookieUnit.getValue();
+                    RunTimeContext.put("PHPSESSID", chromeCookieUnit.getValue());
+                }
             }
+        } else if ("baishi".equals(myChromeCookie.getChannelCode())) {
+            StringBuilder cookie = new StringBuilder();
+            for (ChromeCookieUnit chromeCookieUnit : cookieUnitList) {
+                cookie.append(chromeCookieUnit.getName()).append("=").append(chromeCookieUnit.getValue()).append("; ");
+            }
+            RunTimeContext.globalPut("baishi", cookie.substring(0, cookie.length() - 2));
         }
         return param.getIn();
     }
@@ -60,11 +74,64 @@ public class TestFacadeImpl implements TestFacade, Resource {
     @Override
     public CommonResult<List<ChannelCompare>> compare(SendOrder sendOrder) {
         logger.info("send order:[{}]", sendOrder);
-        List<ChannelCompare> channelCompares = new ArrayList<>();
-        ChannelCompare channelCompare = new ChannelCompare();
         if (sendOrder.getSendInfo() == null || !addressCheck(sendOrder.getSendInfo().getAddress())) {
-            return CommonResult.fail("500", "请检查地址，确保省市区不为空");
+            throw new AutoTestException("500", "请检查地址，确保省市区不为空");
         }
+        List<ChannelCompare> channelCompares = new ArrayList<>();
+
+        ChannelCompare yundaCompare = yundaCompare(sendOrder);
+        ChannelCompare baishiCompare = baishiCompare(sendOrder);
+        channelCompares.add(yundaCompare);
+        channelCompares.add(baishiCompare);
+        return CommonResult.success(channelCompares);
+    }
+
+    private ChannelCompare baishiCompare(SendOrder sendOrder) {
+        ChannelCompare channelCompare = new ChannelCompare();
+        Address address = sendOrder.getReceiverInfo().getAddress();
+        String addressInfo = address.getProvince() + address.getCity() + address.getArea() + address.getCounty() + address.getDetailAddr();
+        String cookie = RunTimeContext.globalGet("baishi");
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Cookie", cookie);
+        BaishiPriceQuery baishiPriceQuery = BaishiPriceQuery.fromSendOrder(sendOrder);
+        String baishiPriceQueryUrl = "https://v5.800best.com/ltlv5-war/web/transOrder/measureCalcFeeForTransOrderNew";
+        String priceStr = HttpUtil.post(baishiPriceQueryUrl, headers, JSONObject.toJSONString(baishiPriceQuery));
+        JSONObject jsonObject = JSON.parseObject(priceStr);
+        JSONArray jsonArray = jsonObject.getJSONArray("voList");
+        List<BaishiPriceDetail> baishiPriceDetails = jsonArray.toJavaList(BaishiPriceDetail.class);
+
+        String addrQueryUrl = "https://v5.800best.com/ltlv5-war/web/site/parseSiteByAddressIntegrationNew?address=江苏省南京市鼓楼区&basicServiceId=1&sendSiteId=9600130";
+        String result = HttpUtil.get(addrQueryUrl, headers);
+        BaishiAddressInfo baishiAddressInfo = JSONObject.parseObject(result, BaishiAddressInfo.class);
+
+        Double total = 0.00;
+        StringBuilder priceDesc = new StringBuilder();
+        for (BaishiPriceDetail baishiPriceDetail : baishiPriceDetails) {
+            total = baishiPriceDetail.getMoney() + total;
+            priceDesc.append(baishiPriceDetail.getPriceType()).append(":").append(baishiPriceDetail.getMoney()).append(";");
+        }
+        channelCompare.setChannelName("百世");
+        ChannelPrice channelPrice = new ChannelPrice();
+        channelPrice.setTotal(total);
+        channelPrice.setOtherDetail(priceDesc.toString());
+        channelCompare.setSiteAddress(baishiAddressInfo.getSpecialServiceVo().getSiteName());
+        channelCompare.setSiteDes(baishiAddressInfo.getSpecialServiceVo().getSpecialServiceDisplay() + "," + baishiAddressInfo.getParseSiteVo().getDispatchRange());
+        channelCompare.setDistance("目的网点-收件地址：" + baishiAddressInfo.getSpecialServiceVo().getTownToAcceptAddressDistance());
+        channelCompare.setSiteManagerName(baishiAddressInfo.getParseSiteVo().getPrincipal());
+        channelCompare.setSitePhone(baishiAddressInfo.getParseSiteVo().getSalePhone());
+        List<SpecialArea> specialArea = baishiAddressInfo.getSpecialAreaList();
+        StringBuilder build = new StringBuilder();
+        for (SpecialArea area : specialArea) {
+            build.append(area.getStandardAddress()).append(":收费标准").append(area.getChargesStandard()).append("; ");
+        }
+        channelCompare.setChannelPrice(channelPrice);
+        channelCompare.setSpecialInfo(build.toString());
+        return channelCompare;
+    }
+
+    private ChannelCompare yundaCompare(SendOrder sendOrder) {
+        ChannelCompare channelCompare = new ChannelCompare();
+
         prehandle(sendOrder);
         YunDaAddressQuery yunDaDesAddressQuery = YunDaAddressQuery.fromAddress(sendOrder.getReceiverInfo().getAddress());
         String queryUrl = "http://inms.yunda56.com:3351/ky_inms/public/index.php/joinlgs/MakeLogisticsApi/getAchieveSiteByAddress.html";
@@ -82,7 +149,7 @@ public class TestFacadeImpl implements TestFacade, Resource {
             }
         }
         if (yunDaDesAddressInfo == null) {
-            return CommonResult.fail("500", "不支持的地址");
+            throw new AutoTestException("500", "不支持的地址");
         }
         YunDaPriceQuery yunDaPriceQuery = YunDaPriceQuery.fromSendOrder(sendOrder);
         String priceUrl = "http://inms.yunda56.com:3351/ky_inms/public/index.php/price.html";
@@ -116,9 +183,7 @@ public class TestFacadeImpl implements TestFacade, Resource {
             });
         }
         channelCompare.setSpecialInfo(specialInfo.toString());
-        channelCompares.add(channelCompare);
-
-        return CommonResult.success(channelCompares);
+        return channelCompare;
     }
 
     private String buildDistanceDescription(YunDaAddressInfo yunDaDesAddressInfo) {

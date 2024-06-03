@@ -34,4 +34,36 @@
             <artifactId>common-util</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jsonschema2pojo</groupId>
+                <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <sourceDirectory>${project.basedir}/src/main/resources/jsonschemas</sourceDirectory>
+                    <targetPackage>com.flyingrain.autotest.service.model.baishi.generate</targetPackage>
+                    <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                    <sourceType>json</sourceType>
+                    <annotationStyle>none</annotationStyle>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>target/generated-sources/jsonschema2pojo</directory>
+            </resource>
+        </resources>
+    </build>
 </project>
