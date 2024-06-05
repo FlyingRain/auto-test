@@ -1,20 +1,24 @@
 
 package com.flyingrain.autotest.service.model.baishi;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.flyingrain.autotest.common.util.HttpUtil;
 import com.flyingrain.autotest.common.util.RunTimeContext;
+import com.flyingrain.autotest.facade.intf.model.oder.Address;
 import com.flyingrain.autotest.facade.intf.model.oder.SendOrder;
 import com.flyingrain.autotest.facade.intf.model.oder.UserContactInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.processing.Generated;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import javax.annotation.processing.Generated;
 
 @Generated("jsonschema2pojo")
 public class BaishiPriceQuery {
-
+    private static final Logger logger = LoggerFactory.getLogger(BaishiPriceQuery.class);
     private Integer doubleRatio;
     private Integer sendSiteId;
     private String sendSiteName;
@@ -116,16 +120,23 @@ public class BaishiPriceQuery {
         baishiPriceQuery.setAcceptAddressDetail(receiveInfo.getAddress().getDetailAddr());
         baishiPriceQuery.setAcceptParseType("CP_ONLY_AS___CP");
 
-
-        String addrQueryUrl = "https://v5.800best.com/ltlv5-war/web/site/parseSiteByAddressIntegrationNew?address=江苏省南京市鼓楼区&basicServiceId=1&sendSiteId=9600130";
+        Address address = sendOrder.getReceiverInfo().getAddress();
+        String addressInfo = address.getProvince() + address.getCity() + address.getArea() + address.getCounty() + address.getDetailAddr();
+        String addrQueryUrl = "https://v5.800best.com/ltlv5-war/web/site/parseSiteByAddressIntegrationNew?address=" + addressInfo + "&basicServiceId=1&sendSiteId=9600130";
         String cookie = RunTimeContext.globalGet("baishi");
         Map<String, String> headers = new HashMap<>();
         headers.put("Cookie", cookie);
         String result = HttpUtil.get(addrQueryUrl, headers);
-        BaishiAddressInfo baishiAddressInfo = JSONObject.parseObject(result, BaishiAddressInfo.class);
+        logger.info("query baishi price result:[{}]", result);
+        JSONObject jsonObject = JSON.parseObject(result);
+        BaishiAddressInfo baishiAddressInfo = jsonObject.getObject("vo", BaishiAddressInfo.class);
         ParseTownVo parseTownVo = baishiAddressInfo.getParseTownVo();
 
-        baishiPriceQuery.setAcceptCanton(parseTownVo.getNamePath());
+        String caton = parseTownVo.getNamePath();
+        if (caton.contains("中国")) {
+            caton = caton.substring(3);
+        }
+        baishiPriceQuery.setAcceptCanton(caton);
         baishiPriceQuery.setTreePath(parseTownVo.getTreePath());
 
         baishiPriceQuery.setDispSiteId(baishiAddressInfo.getCbSiteRouteVo().getDispSiteId());

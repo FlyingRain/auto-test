@@ -104,6 +104,11 @@ public class HttpUtil {
     public static String post(String url ,Map<String,String> headers,String content){
         HttpPost httppost = new HttpPost(url);
         httppost.setEntity(new StringEntity(content, StandardCharsets.UTF_8));
+        if(CollectionUtils.isEmpty(headers)){
+            headers = new HashMap<>();
+        }
+        headers.put("Content-Type","application/json");
+        initHeader(httppost,headers);
         try (CloseableHttpResponse response = httpClient.execute(httppost, HttpClientContext.create());) {
             int statusCode = response.getStatusLine().getStatusCode();
             HttpEntity entity = response.getEntity();

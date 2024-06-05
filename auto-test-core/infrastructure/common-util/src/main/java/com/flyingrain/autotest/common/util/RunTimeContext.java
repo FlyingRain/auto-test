@@ -10,12 +10,14 @@ public class RunTimeContext {
 
     private static final Map<String, String> globalParams = new ConcurrentHashMap<>();
 
+    public  static  final Map<String, Object> globalCache = new HashMap<>();
     public static String yundaCookie;
 
-    public static void globalPut(String key,String value){
-        globalParams.put(key,value);
+    public static void globalPut(String key, String value) {
+        globalParams.put(key, value);
     }
-    public static String globalGet(String key){
+
+    public static String globalGet(String key) {
         return globalParams.get(key);
     }
 

@@ -19,10 +19,15 @@ import com.flyingrain.autotest.service.model.baishi.BaishiAddressInfo;
 import com.flyingrain.autotest.service.model.baishi.BaishiPriceDetail;
 import com.flyingrain.autotest.service.model.baishi.BaishiPriceQuery;
 import com.flyingrain.autotest.service.model.baishi.SpecialArea;
+import com.flyingrain.autotest.service.model.yimi.YimiAddress;
+import com.flyingrain.autotest.service.model.yimi.YimiMessage;
+import com.flyingrain.autotest.service.model.yimi.YimiPriceResult;
+import com.flyingrain.autotest.service.model.yimi.YimiPriceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -65,7 +70,22 @@ public class TestFacadeImpl implements TestFacade, Resource {
             for (ChromeCookieUnit chromeCookieUnit : cookieUnitList) {
                 cookie.append(chromeCookieUnit.getName()).append("=").append(chromeCookieUnit.getValue()).append("; ");
             }
-            RunTimeContext.globalPut("baishi", cookie.substring(0, cookie.length() - 2));
+            if (cookieUnitList.size() > 1)
+                RunTimeContext.globalPut("baishi", cookie.substring(0, cookie.length() - 2));
+        } else if ("yimi".equals(myChromeCookie.getChannelCode())) {
+            StringBuilder cookie = new StringBuilder();
+            Map<String, Object> globalCache = RunTimeContext.globalCache;
+            Map<String, String> yimiCache = (Map<String, String>) globalCache.get("yimi");
+            if (CollectionUtils.isEmpty(yimiCache)) {
+                yimiCache = new HashMap<>();
+                globalCache.put("yimi", yimiCache);
+            }
+            for (ChromeCookieUnit chromeCookieUnit : cookieUnitList) {
+                yimiCache.put(chromeCookieUnit.getName(), chromeCookieUnit.getValue());
+                cookie.append(chromeCookieUnit.getName()).append("=").append(chromeCookieUnit.getValue()).append("; ");
+            }
+            if (cookieUnitList.size() > 1)
+                yimiCache.put("yimiCookie", cookie.substring(0, cookie.length() - 2));
         }
         return param.getIn();
     }
@@ -81,109 +101,160 @@ public class TestFacadeImpl implements TestFacade, Resource {
 
         ChannelCompare yundaCompare = yundaCompare(sendOrder);
         ChannelCompare baishiCompare = baishiCompare(sendOrder);
-        channelCompares.add(yundaCompare);
-        channelCompares.add(baishiCompare);
+        ChannelCompare yimiCompare = yimiCompare(sendOrder);
+        if (yundaCompare != null)
+            channelCompares.add(yundaCompare);
+        if (baishiCompare != null)
+            channelCompares.add(baishiCompare);
+        if (yimiCompare != null) {
+            channelCompares.add(yimiCompare);
+        }
         return CommonResult.success(channelCompares);
     }
 
+    private ChannelCompare yimiCompare(SendOrder sendOrder) {
+        try {
+            ChannelCompare channelCompare = new ChannelCompare();
+            YimiMessage yimiMessage = YimiPriceUtil.queryYimi(sendOrder);
+            YimiPriceResult yimiPriceResult = yimiMessage.getYimiPriceResult();
+            YimiAddress yimiAddress = yimiMessage.getYimiAddress();
+
+            ChannelPrice channelPrice = new ChannelPrice();
+            channelPrice.setTotal(yimiPriceResult.getSrcDeptPayFeeAmt());
+            List<List<String>> priceDetails = yimiPriceResult.getSrcDeptPayFeeDetailConfigs();
+            StringBuilder builder = new StringBuilder();
+            for (List<String> detail : priceDetails) {
+                builder.append(detail.get(3)).append(":").append(detail.get(2)).append(";");
+            }
+            channelPrice.setOtherDetail(builder.toString());
+            channelCompare.setChannelPrice(channelPrice);
+
+            channelCompare.setSpecialInfo(yimiAddress.getSpeOtherDescribe() + ";" + yimiAddress.getSpeSelfDescribe());
+            channelCompare.setSitePhone(yimiAddress.getServicePhone());
+            channelCompare.setSiteAddress(yimiAddress.getAddress());
+            channelCompare.setSiteManagerName(yimiAddress.getContactor());
+            channelCompare.setChannelName("壹米");
+            channelCompare.setSiteDes(yimiAddress.getDeptName());
+            channelCompare.setDistance("目的网点-收件地址：" + yimiAddress.getDistance() / 100);
+            return channelCompare;
+        } catch (Exception e) {
+            logger.error("query yimi errro!", e);
+        }
+        return null;
+    }
+
     private ChannelCompare baishiCompare(SendOrder sendOrder) {
-        ChannelCompare channelCompare = new ChannelCompare();
-        Address address = sendOrder.getReceiverInfo().getAddress();
-        String addressInfo = address.getProvince() + address.getCity() + address.getArea() + address.getCounty() + address.getDetailAddr();
-        String cookie = RunTimeContext.globalGet("baishi");
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Cookie", cookie);
-        BaishiPriceQuery baishiPriceQuery = BaishiPriceQuery.fromSendOrder(sendOrder);
-        String baishiPriceQueryUrl = "https://v5.800best.com/ltlv5-war/web/transOrder/measureCalcFeeForTransOrderNew";
-        String priceStr = HttpUtil.post(baishiPriceQueryUrl, headers, JSONObject.toJSONString(baishiPriceQuery));
-        JSONObject jsonObject = JSON.parseObject(priceStr);
-        JSONArray jsonArray = jsonObject.getJSONArray("voList");
-        List<BaishiPriceDetail> baishiPriceDetails = jsonArray.toJavaList(BaishiPriceDetail.class);
+        try {
+            ChannelCompare channelCompare = new ChannelCompare();
+            Address address = sendOrder.getReceiverInfo().getAddress();
+            String addressInfo = address.getProvince() + address.getCity() + address.getArea() + address.getCounty() + address.getDetailAddr();
+            String cookie = RunTimeContext.globalGet("baishi");
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Cookie", cookie);
+            BaishiPriceQuery baishiPriceQuery = BaishiPriceQuery.fromSendOrder(sendOrder);
+            String baishiPriceQueryUrl = "https://v5.800best.com/ltlv5-war/web/transOrder/measureCalcFeeForTransOrderNew";
+            String priceStr = HttpUtil.post(baishiPriceQueryUrl, headers, JSONObject.toJSONString(baishiPriceQuery));
+            logger.info("price query reuslt:[{}]", priceStr);
+            JSONObject jsonObject = JSON.parseObject(priceStr);
+            JSONArray jsonArray = jsonObject.getJSONArray("voList");
+            List<BaishiPriceDetail> baishiPriceDetails = jsonArray.toJavaList(BaishiPriceDetail.class);
 
-        String addrQueryUrl = "https://v5.800best.com/ltlv5-war/web/site/parseSiteByAddressIntegrationNew?address=江苏省南京市鼓楼区&basicServiceId=1&sendSiteId=9600130";
-        String result = HttpUtil.get(addrQueryUrl, headers);
-        BaishiAddressInfo baishiAddressInfo = JSONObject.parseObject(result, BaishiAddressInfo.class);
+            String addrQueryUrl = "https://v5.800best.com/ltlv5-war/web/site/parseSiteByAddressIntegrationNew?address=" + addressInfo + "&basicServiceId=1&sendSiteId=9600130";
+            String result = HttpUtil.get(addrQueryUrl, headers);
+            JSONObject addrJsonObject = JSON.parseObject(result);
+            BaishiAddressInfo baishiAddressInfo = addrJsonObject.getObject("vo", BaishiAddressInfo.class);
 
-        Double total = 0.00;
-        StringBuilder priceDesc = new StringBuilder();
-        for (BaishiPriceDetail baishiPriceDetail : baishiPriceDetails) {
-            total = baishiPriceDetail.getMoney() + total;
-            priceDesc.append(baishiPriceDetail.getPriceType()).append(":").append(baishiPriceDetail.getMoney()).append(";");
+            Double total = 0.00;
+            StringBuilder priceDesc = new StringBuilder();
+            for (BaishiPriceDetail baishiPriceDetail : baishiPriceDetails) {
+                if (baishiPriceDetail.getMoney() != null) {
+                    total = baishiPriceDetail.getMoney() + total;
+                    priceDesc.append(baishiPriceDetail.getPriceType()).append(":").append(baishiPriceDetail.getMoney()).append(";");
+                }
+            }
+            channelCompare.setChannelName("百世");
+            ChannelPrice channelPrice = new ChannelPrice();
+            channelPrice.setTotal(total);
+            channelPrice.setOtherDetail(priceDesc.toString());
+            channelCompare.setSiteAddress(baishiAddressInfo.getSpecialServiceVo().getSiteName());
+            channelCompare.setSiteDes(baishiAddressInfo.getSpecialServiceVo().getSpecialServiceDisplay() + "," + baishiAddressInfo.getParseSiteVo().getDispatchRange());
+            channelCompare.setDistance("目的网点-收件地址：" + baishiAddressInfo.getSpecialServiceVo().getTownToAcceptAddressDistance());
+            channelCompare.setSiteManagerName(baishiAddressInfo.getParseSiteVo().getPrincipal());
+            channelCompare.setSitePhone(baishiAddressInfo.getParseSiteVo().getSalePhone());
+            List<SpecialArea> specialArea = baishiAddressInfo.getSpecialAreaList();
+            StringBuilder build = new StringBuilder();
+            for (SpecialArea area : specialArea) {
+                build.append(area.getStandardAddress()).append(":收费标准").append(area.getChargesStandard()).append("; ");
+            }
+            channelCompare.setChannelPrice(channelPrice);
+            channelCompare.setSpecialInfo(build.toString());
+            return channelCompare;
+        } catch (Exception e) {
+            logger.error("query baishi price failed", e);
         }
-        channelCompare.setChannelName("百世");
-        ChannelPrice channelPrice = new ChannelPrice();
-        channelPrice.setTotal(total);
-        channelPrice.setOtherDetail(priceDesc.toString());
-        channelCompare.setSiteAddress(baishiAddressInfo.getSpecialServiceVo().getSiteName());
-        channelCompare.setSiteDes(baishiAddressInfo.getSpecialServiceVo().getSpecialServiceDisplay() + "," + baishiAddressInfo.getParseSiteVo().getDispatchRange());
-        channelCompare.setDistance("目的网点-收件地址：" + baishiAddressInfo.getSpecialServiceVo().getTownToAcceptAddressDistance());
-        channelCompare.setSiteManagerName(baishiAddressInfo.getParseSiteVo().getPrincipal());
-        channelCompare.setSitePhone(baishiAddressInfo.getParseSiteVo().getSalePhone());
-        List<SpecialArea> specialArea = baishiAddressInfo.getSpecialAreaList();
-        StringBuilder build = new StringBuilder();
-        for (SpecialArea area : specialArea) {
-            build.append(area.getStandardAddress()).append(":收费标准").append(area.getChargesStandard()).append("; ");
-        }
-        channelCompare.setChannelPrice(channelPrice);
-        channelCompare.setSpecialInfo(build.toString());
-        return channelCompare;
+        return null;
     }
 
     private ChannelCompare yundaCompare(SendOrder sendOrder) {
-        ChannelCompare channelCompare = new ChannelCompare();
+        try {
+            ChannelCompare channelCompare = new ChannelCompare();
 
-        prehandle(sendOrder);
-        YunDaAddressQuery yunDaDesAddressQuery = YunDaAddressQuery.fromAddress(sendOrder.getReceiverInfo().getAddress());
-        String queryUrl = "http://inms.yunda56.com:3351/ky_inms/public/index.php/joinlgs/MakeLogisticsApi/getAchieveSiteByAddress.html";
-        Map<String, String> headers = new HashMap<>();
-        headers.putIfAbsent("Cookie", "PHPSESSID=" + RunTimeContext.yundaCookie);
-        String result = HttpUtil.postFormUrlEncoded(queryUrl, headers, ObjectToMapUtil.ObjToMap(yunDaDesAddressQuery));
-        JSONObject addr = JSONObject.parseObject(result).getJSONObject("data");
-        YunDaAddressInfo yunDaDesAddressInfo = null;
-        Set<String> keySet = addr.keySet();
-        JSONObject addrJSON = null;
-        if (keySet.size() == 1) {
-            for (String key : keySet) {
-                addrJSON = addr.getJSONObject(key);
-                yunDaDesAddressInfo = addr.getObject(key, YunDaAddressInfo.class);
+            prehandle(sendOrder);
+            YunDaAddressQuery yunDaDesAddressQuery = YunDaAddressQuery.fromAddress(sendOrder.getReceiverInfo().getAddress());
+            String queryUrl = "http://inms.yunda56.com:3351/ky_inms/public/index.php/joinlgs/MakeLogisticsApi/getAchieveSiteByAddress.html";
+            Map<String, String> headers = new HashMap<>();
+            headers.putIfAbsent("Cookie", "PHPSESSID=" + RunTimeContext.yundaCookie);
+            String result = HttpUtil.postFormUrlEncoded(queryUrl, headers, ObjectToMapUtil.ObjToMap(yunDaDesAddressQuery));
+            JSONObject addr = JSONObject.parseObject(result).getJSONObject("data");
+            YunDaAddressInfo yunDaDesAddressInfo = null;
+            Set<String> keySet = addr.keySet();
+            JSONObject addrJSON = null;
+            if (keySet.size() == 1) {
+                for (String key : keySet) {
+                    addrJSON = addr.getJSONObject(key);
+                    yunDaDesAddressInfo = addr.getObject(key, YunDaAddressInfo.class);
+                }
             }
-        }
-        if (yunDaDesAddressInfo == null) {
-            throw new AutoTestException("500", "不支持的地址");
-        }
-        YunDaPriceQuery yunDaPriceQuery = YunDaPriceQuery.fromSendOrder(sendOrder);
-        String priceUrl = "http://inms.yunda56.com:3351/ky_inms/public/index.php/price.html";
-        String yunDaPriceStr = HttpUtil.postFormUrlEncoded(priceUrl, headers, ObjectToMapUtil.ObjToMap(yunDaPriceQuery));
-        logger.info("query yunda info:[{}]", yunDaPriceStr);
-        JSONObject jsonObject = JSONObject.parseObject(yunDaPriceStr);
-        JSONObject priceDetailList = jsonObject.getJSONObject("showCost");
-        JSONArray jsonArray = priceDetailList.getJSONArray("classifyCost");
-        List<YunDaPriceDetail> yunDaPriceDetails = jsonArray.toJavaList(YunDaPriceDetail.class);
-        Map<String, String> prices = new HashMap<>();
-        for (YunDaPriceDetail detail : yunDaPriceDetails) {
-            if ("TotalMoney".equals(detail.getParentCode())) {
-                channelCompare.getChannelPrice().setTotal(Double.parseDouble(detail.getTwoTotal()) + 0.05);
-            } else {
-                prices.put(detail.getName(), detail.getTwoTotal());
+            if (yunDaDesAddressInfo == null) {
+                throw new AutoTestException("500", "不支持的地址");
             }
+            YunDaPriceQuery yunDaPriceQuery = YunDaPriceQuery.fromSendOrder(sendOrder);
+            String priceUrl = "http://inms.yunda56.com:3351/ky_inms/public/index.php/price.html";
+            String yunDaPriceStr = HttpUtil.postFormUrlEncoded(priceUrl, headers, ObjectToMapUtil.ObjToMap(yunDaPriceQuery));
+            logger.info("query yunda info:[{}]", yunDaPriceStr);
+            JSONObject jsonObject = JSONObject.parseObject(yunDaPriceStr);
+            JSONObject priceDetailList = jsonObject.getJSONObject("showCost");
+            JSONArray jsonArray = priceDetailList.getJSONArray("classifyCost");
+            List<YunDaPriceDetail> yunDaPriceDetails = jsonArray.toJavaList(YunDaPriceDetail.class);
+            Map<String, String> prices = new HashMap<>();
+            for (YunDaPriceDetail detail : yunDaPriceDetails) {
+                if ("TotalMoney".equals(detail.getParentCode())) {
+                    channelCompare.getChannelPrice().setTotal(Double.parseDouble(detail.getTwoTotal()) + 0.05);
+                } else {
+                    prices.put(detail.getName(), detail.getTwoTotal());
+                }
+            }
+            channelCompare.getChannelPrice().setOtherDetail(MapToStrUtil.mapToStr(prices));
+            channelCompare.setChannelName("韵达");
+            channelCompare.setDistance(buildDistanceDescription(yunDaDesAddressInfo));
+            channelCompare.setQueryGoodPhone(yunDaDesAddressInfo.getQry_phone());
+            channelCompare.setSiteDes(yunDaDesAddressInfo.getTownMsg());
+            channelCompare.setSiteAddress(yunDaDesAddressInfo.getSiteAddress());
+            channelCompare.setSitePhone(yunDaDesAddressInfo.getSite_manager_phone());
+            channelCompare.setSiteManagerName(yunDaDesAddressInfo.getSite_manager_name() + "(" + yunDaDesAddressInfo.getSite_manager_phone() + ")");
+            JSONObject special = addrJSON.getJSONObject("SpecialArea");
+            StringBuilder specialInfo = new StringBuilder();
+            if (special != null) {
+                special.forEach((k, v) -> {
+                    specialInfo.append(k).append(":").append(special.getJSONObject(k).get("remark")).append(",");
+                });
+            }
+            channelCompare.setSpecialInfo(specialInfo.toString());
+            return channelCompare;
+        } catch (Exception e) {
+            logger.error("query yunda error", e);
         }
-        channelCompare.getChannelPrice().setOtherDetail(MapToStrUtil.mapToStr(prices));
-        channelCompare.setChannelName("韵达");
-        channelCompare.setDistance(buildDistanceDescription(yunDaDesAddressInfo));
-        channelCompare.setQueryGoodPhone(yunDaDesAddressInfo.getQry_phone());
-        channelCompare.setSiteDes(yunDaDesAddressInfo.getTownMsg());
-        channelCompare.setSiteAddress(yunDaDesAddressInfo.getSiteAddress());
-        channelCompare.setSitePhone(yunDaDesAddressInfo.getSite_manager_phone());
-        channelCompare.setSiteManagerName(yunDaDesAddressInfo.getSite_manager_name() + "(" + yunDaDesAddressInfo.getSite_manager_phone() + ")");
-        JSONObject special = addrJSON.getJSONObject("SpecialArea");
-        StringBuilder specialInfo = new StringBuilder();
-        if (special != null) {
-            special.forEach((k, v) -> {
-                specialInfo.append(k).append(":").append(special.getJSONObject(k).get("remark")).append(",");
-            });
-        }
-        channelCompare.setSpecialInfo(specialInfo.toString());
-        return channelCompare;
+        return null;
     }
 
     private String buildDistanceDescription(YunDaAddressInfo yunDaDesAddressInfo) {
