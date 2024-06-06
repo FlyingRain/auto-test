@@ -23,6 +23,7 @@ import com.flyingrain.autotest.service.model.yimi.YimiAddress;
 import com.flyingrain.autotest.service.model.yimi.YimiMessage;
 import com.flyingrain.autotest.service.model.yimi.YimiPriceResult;
 import com.flyingrain.autotest.service.model.yimi.YimiPriceUtil;
+import com.flyingrain.autotest.service.model.zhongtong.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,7 @@ public class TestFacadeImpl implements TestFacade, Resource {
         String cookieStr = param.getIn();
         MyChromeCookie myChromeCookie = JSONObject.parseObject(cookieStr, MyChromeCookie.class);
         List<ChromeCookieUnit> cookieUnitList = myChromeCookie.getData();
+        Map<String, Object> globalCache = RunTimeContext.globalCache;
         if ("yunda".equals(myChromeCookie.getChannelCode())) {
             for (ChromeCookieUnit chromeCookieUnit : cookieUnitList) {
                 if ("PHPSESSID".equals(chromeCookieUnit.getName())) {
@@ -74,7 +76,6 @@ public class TestFacadeImpl implements TestFacade, Resource {
                 RunTimeContext.globalPut("baishi", cookie.substring(0, cookie.length() - 2));
         } else if ("yimi".equals(myChromeCookie.getChannelCode())) {
             StringBuilder cookie = new StringBuilder();
-            Map<String, Object> globalCache = RunTimeContext.globalCache;
             Map<String, String> yimiCache = (Map<String, String>) globalCache.get("yimi");
             if (CollectionUtils.isEmpty(yimiCache)) {
                 yimiCache = new HashMap<>();
@@ -86,6 +87,13 @@ public class TestFacadeImpl implements TestFacade, Resource {
             }
             if (cookieUnitList.size() > 1)
                 yimiCache.put("yimiCookie", cookie.substring(0, cookie.length() - 2));
+        } else if ("zhongtong".equals(myChromeCookie.getChannelCode())) {
+            StringBuilder cookie = new StringBuilder();
+            for (ChromeCookieUnit chromeCookieUnit : cookieUnitList) {
+                cookie.append(chromeCookieUnit.getName()).append("=").append(chromeCookieUnit.getValue()).append("; ");
+            }
+            if (cookieUnitList.size() > 1)
+                globalCache.put("zhongtong", cookie.substring(0, cookie.length() - 2));
         }
         return param.getIn();
     }
@@ -102,6 +110,7 @@ public class TestFacadeImpl implements TestFacade, Resource {
         ChannelCompare yundaCompare = yundaCompare(sendOrder);
         ChannelCompare baishiCompare = baishiCompare(sendOrder);
         ChannelCompare yimiCompare = yimiCompare(sendOrder);
+        ChannelCompare zhongtongCompare = zhongtongCompare(sendOrder);
         if (yundaCompare != null)
             channelCompares.add(yundaCompare);
         if (baishiCompare != null)
@@ -109,7 +118,38 @@ public class TestFacadeImpl implements TestFacade, Resource {
         if (yimiCompare != null) {
             channelCompares.add(yimiCompare);
         }
+        if (zhongtongCompare != null) {
+            channelCompares.add(zhongtongCompare);
+        }
         return CommonResult.success(channelCompares);
+    }
+
+    private ChannelCompare zhongtongCompare(SendOrder sendOrder) {
+        try {
+            ChannelCompare channelCompare = new ChannelCompare();
+            ZhongtongMessage zhongtongMessage = ZhongtongUtil.zhongtongQuery(sendOrder);
+            ZhongtongPriceResult zhongtongPriceResult = zhongtongMessage.getZhongtongPriceResult();
+            ZhongtongAddressInfo zhongtongAddressInfo = zhongtongMessage.getZhongtongAddressInfo();
+            AddressSite addressSite = zhongtongAddressInfo.getAddressSiteList().get(0);
+            Site site = addressSite.getSiteList().get(0);
+            channelCompare.setDistance(addressSite.getDistance());
+            channelCompare.setSiteAddress(site.getSiteAddress());
+            channelCompare.setSpecialInfo(site.getSiteSpecialRange());
+            channelCompare.setSiteManagerName(site.getSiteQryEmployeeName());
+            channelCompare.setSitePhone(site.getSiteQryEmployeePhone());
+            channelCompare.setTargetSite(addressSite.getTownDeliveryType());
+            channelCompare.setChannelName("中通");
+            channelCompare.setSiteDes(site.getSiteName());
+            ChannelPrice channelPrice = new ChannelPrice();
+            channelPrice.setTotal(Double.parseDouble(zhongtongPriceResult.getLblCostTotalCount()));
+            String detail = ":";
+            channelPrice.setOtherDetail(detail);
+            channelCompare.setChannelPrice(channelPrice);
+
+        } catch (Exception e) {
+            logger.error("query zhongtongfailed!", e);
+        }
+        return null;
     }
 
     private ChannelCompare yimiCompare(SendOrder sendOrder) {

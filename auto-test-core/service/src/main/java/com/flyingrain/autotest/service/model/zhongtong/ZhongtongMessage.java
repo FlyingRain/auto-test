@@ -6,6 +6,16 @@ public class ZhongtongMessage {
 
     private ZhongtongAddressResult zhongtongAddressResult;
 
+    private ZhongtongAddressInfo zhongtongAddressInfo;
+
+    public ZhongtongAddressInfo getZhongtongAddressInfo() {
+        return zhongtongAddressInfo;
+    }
+
+    public void setZhongtongAddressInfo(ZhongtongAddressInfo zhongtongAddressInfo) {
+        this.zhongtongAddressInfo = zhongtongAddressInfo;
+    }
+
     public ZhongtongPriceResult getZhongtongPriceResult() {
         return zhongtongPriceResult;
     }
