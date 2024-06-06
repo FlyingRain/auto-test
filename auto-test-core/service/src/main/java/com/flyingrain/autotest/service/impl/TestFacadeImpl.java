@@ -142,10 +142,10 @@ public class TestFacadeImpl implements TestFacade, Resource {
             channelCompare.setSiteDes(site.getSiteName());
             ChannelPrice channelPrice = new ChannelPrice();
             channelPrice.setTotal(Double.parseDouble(zhongtongPriceResult.getLblCostTotalCount()));
-            String detail = ":";
+            String detail = "转运费:" + zhongtongPriceResult.getTransAmount() + ";收派费:" + zhongtongPriceResult.getDispatchAmount() + ";收寄站操作费:" + zhongtongPriceResult.getOptAmount() + ";特殊服务费:" + zhongtongPriceResult.getDobSpecialServiceFee() + ";服务保障费:" + zhongtongPriceResult.getCargoServiceAmount() + ";会务费:" + zhongtongPriceResult.getMeetingAmount() + ";其他:" + zhongtongPriceResult.getDobOtherFee() + ";出港派件管理费:" + zhongtongPriceResult.getOutDipsMgrAmount();
             channelPrice.setOtherDetail(detail);
             channelCompare.setChannelPrice(channelPrice);
-
+            return channelCompare;
         } catch (Exception e) {
             logger.error("query zhongtongfailed!", e);
         }

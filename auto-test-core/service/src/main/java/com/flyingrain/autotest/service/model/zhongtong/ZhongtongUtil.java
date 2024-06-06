@@ -20,7 +20,7 @@ public class ZhongtongUtil {
         ZhongtongMessage zhongtongMessage = new ZhongtongMessage();
         Map<String, Object> globalCache = RunTimeContext.globalCache;
         Address receiveAddr = sendOrder.getReceiverInfo().getAddress();
-        Address sendAddr = sendOrder.getReceiverInfo().getAddress();
+        Address sendAddr = sendOrder.getSendInfo().getAddress();
         String receiveAddrDetail = receiveAddr.getProvince() + receiveAddr.getCity() + receiveAddr.getArea() + receiveAddr.getDetailAddr();
         String sendAddrDetail = sendAddr.getProvince() + sendAddr.getCity() + sendAddr.getArea() + sendAddr.getDetailAddr();
         String addrUrl = "https://gis-prod.zto56.com/app/v2/addressSiteInfo?address=" + receiveAddrDetail;
@@ -32,6 +32,7 @@ public class ZhongtongUtil {
         String AddressUrl = "https://ws.zto56.com/sinoEwbInputController/getGisAddressAnalysis";
         Map<String, String> params = new HashMap<>();
         params.put("params", receiveAddrDetail);
+        headers.putIfAbsent("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
         String addressStr = HttpUtil.postFormUrlEncoded(AddressUrl, headers, params);
         ZhongtongAddressResult zhongtongAddressResult = JSON.parseObject(addressStr).getJSONObject("result").getJSONObject("data").toJavaObject(ZhongtongAddressResult.class);
 

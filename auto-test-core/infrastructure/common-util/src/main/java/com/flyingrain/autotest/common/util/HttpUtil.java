@@ -48,7 +48,7 @@ public class HttpUtil {
         if (headers == null) {
             headers = new HashMap<>();
         }
-        headers.put("Content-Type", "application/x-www-form-urlencoded");
+        headers.putIfAbsent("Content-Type", "application/x-www-form-urlencoded");
         initHeader(httpPost, headers);
         if (!CollectionUtils.isEmpty(params)) {
             List<NameValuePair> body = new ArrayList<>();

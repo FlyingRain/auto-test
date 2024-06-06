@@ -29,7 +29,9 @@
         <div class="card-title"><span class="tip">基础信息 </span></div>
         <div class="element">
           <span class="tip">运单号：</span>
-          <el-input size="small" style="width: 160px !important;" placeholder="运单号" v-model="sendOrder.orderNo"/>
+          <el-input size="small" style="width: 80px !important;" placeholder="运单号" v-model="sendOrder.orderNo"/>
+          <span class="tip">客户单号：</span>
+          <el-input size="small" style="width: 80px !important;" placeholder="运单号" v-model="sendOrder.customerNo"/>
           <span class="tip">业务类型：</span>
           <el-select size="small" style="width: 160px !important;" placeholder="零担/专业/整车"
                      v-model="sendOrder.businessType">
@@ -54,7 +56,7 @@
             <el-option key="1" label="自提" value="1"/>
             <el-option key="2" label="派送" value="2"/>
           </el-select>
-          <span class="tip">收件员：</span>
+          <span class="tip">业务员：</span>
           <el-select size="small" style="width: 150px !important;" allow-create
                      v-model="sendOrder.sendInfo.customerId"
                      filterable placeholder="选择业务员">
@@ -271,15 +273,14 @@
                       :value="item.value">
                   </el-option>
                 </el-select>
-                <span class="tip">件数：</span>
+                <span class="tip">总件数：</span>
                 <el-input size="small" type="text" placeholder="件数" v-model="sendOrder.goodsInfo.count"/>
-                <span class="tip">重量(kg)：</span>
+                <span class="tip" style="width: 75px">实际重量(kg)：</span>
                 <el-input size="small" type="text" placeholder="重量" v-model="sendOrder.goodsInfo.weight"/>
+                <span class="tip" style="width: 75px">计费重量(kg)：</span>
+                <el-input size="small" type="text" placeholder="重量" disabled v-model="sendOrder.goodsInfo.weight"/>
                 <span class="tip">体积(M³)：</span>
                 <el-input size="small" type="text" placeholder="体积" v-model="sendOrder.goodsInfo.volume"/>
-
-                <el-button size="small" type="primary" style="margin-left: 10px" @click="addGood">新增</el-button>
-                <el-button size="small" type="danger" style="margin-left: 10px">删除</el-button>
               </div>
             </div>
           </div>
@@ -299,8 +300,8 @@
                 <span class="tip">上楼类型：</span>
                 <el-select size="small" v-model="sendOrder.addedValue.backOrderType" placeholder="上楼">
                   <el-option key="0" label="不上楼" value="0"/>
-                  <el-option key="1" label="电梯" value="1"/>
-                  <el-option key="2" label="爬楼" value="2"/>
+                  <el-option key="1" label="普通上楼" value="1"/>
+                  <el-option key="2" label="大件上楼" value="2"/>
                 </el-select>
                 <span class="tip">楼层：</span>
                 <el-input size="small" type="text" placeholder="楼层">
@@ -309,6 +310,7 @@
                 <el-select size="small" v-model="sendOrder.addedValue.backOrderType" placeholder="结算方式">
                   <el-option key="1" label="到付" value="1"/>
                   <el-option key="2" label="寄付" value="2"/>
+                  <el-option key="3" label="月结" value="3"/>
                 </el-select>
                 <span class="tip">保价额：</span>
                 <el-input size="small" type="text" placeholder="保价" v-model="sendOrder.addedValue.insureAmount"
@@ -325,26 +327,26 @@
             <div class="card-title"><span class="tip">成本</span></div>
             <div class="card-content">
               <div class="element">
-                <span class="tip">总成本：</span>
+                <span class="tip"  style="width: 70px">预估总成本：</span>
                 <el-input size="small" type="text" placeholder="总计">
                 </el-input>
               </div>
               <div class="element">
-                <span class="tip">回单费：</span>
+                <span class="tip">平台运费：</span>
                 <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
                 </el-input>
-                <span class="tip">保险费：</span>
+                <span class="tip">派费：</span>
                 <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
                 </el-input>
-                <span class="tip">送货费：</span>
+                <span class="tip">客户返点：</span>
                 <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
                 </el-input>
               </div>
               <div class="element">
-                <span class="tip">上楼费：</span>
+                <span class="tip">赔款理赔：</span>
                 <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
                 </el-input>
-                <span class="tip">装车费：</span>
+                <span class="tip">奖罚：</span>
                 <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
                 </el-input>
                 <span class="tip">其他：</span>
@@ -366,23 +368,26 @@
             <div class="card-title"><span class="tip">收入</span></div>
             <div class="card-content">
               <div class="element">
-                <span class="tip">总收入：</span>
+                <span class="tip" style="width: 70px">预估总收入：</span>
                 <el-input size="small" type="text" placeholder="总计">
                 </el-input>
               </div>
               <div class="element">
-                <span class="tip">运输费：</span>
+                <span class="tip">运费：</span>
                 <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
                 </el-input>
-                <span class="tip">装车费：</span>
+                <span class="tip">保价费：</span>
                 <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
                 </el-input>
-                <span class="tip">卸货费：</span>
+                <span class="tip">上楼费：</span>
                 <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
                 </el-input>
               </div>
               <div class="element">
-                <span class="tip">操作费：</span>
+                <span class="tip">大件服务：</span>
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
+                </el-input>
+                <span class="tip">回单费：</span>
                 <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
                 </el-input>
                 <span class="tip">其他：</span>
