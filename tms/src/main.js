@@ -12,7 +12,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8081/autotest',
+    baseURL: 'http://111.231.64.229:8081/autotest',
     timeout: 10000,
 });
 app.config.globalProperties.$axios = axiosInstance;

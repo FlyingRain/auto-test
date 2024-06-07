@@ -19,15 +19,25 @@ public class YimiPriceUtil {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         YimiMessage yimiMessage = new YimiMessage();
         Address address = sendOrder.getReceiverInfo().getAddress();
+        Address sendAddress = sendOrder.getSendInfo().getAddress();
+        ;
         String addrDetail = address.getProvince() + address.getCity() + address.getArea() + address.getDetailAddr();
+        String sendAddrDetail = sendAddress.getProvince() + sendAddress.getCity() + sendAddress.getArea() + sendAddress.getDetailAddr();
         String addrQueryUrl = "https://yh.yimidida.com/galaxy-gis-business/map/getTownByAddress?address=" + addrDetail + "&bizSystem=ludan&method=getTownByGis";
+        String sendAddrQueryUrl = "https://yh.yimidida.com/galaxy-gis-business/map/getTownByAddress?address=" + sendAddrDetail + "&bizSystem=ludan&method=getTownByGis";
         Map<String, String> headers = new HashMap<>();
-        Map<String,String> yimiCache = (Map<String,String>) RunTimeContext.globalCache.get("yimi");
+        Map<String, String> yimiCache = (Map<String, String>) RunTimeContext.globalCache.get("yimi");
         headers.put("Cookie", yimiCache.get("yimiCookie"));
         String result = HttpUtil.get(addrQueryUrl, headers);
-
+        String comCode = yimiCache.get("CompCode");
+        String deptCode = yimiCache.get("DeptCode");
         JSONObject yimiCommonAddr = JSON.parseObject(result);
         YimiAddressCommon yimiAddressCommon = yimiCommonAddr.getObject("data", YimiAddressCommon.class);
+
+        String sendResult = HttpUtil.get(sendAddrQueryUrl, headers);
+        JSONObject sendYimiCommonAddr = JSON.parseObject(sendResult);
+        YimiAddressCommon sendYimiAddressCommon = sendYimiCommonAddr.getObject("data", YimiAddressCommon.class);
+
 
         String locAddrUrl = "https://yh.yimidida.com/galaxy-gis-business/gisService/getLocationByThreeMapNew?address=" + addrDetail + "&bizSystem=YH-GIS-PC";
         String locResult = HttpUtil.get(locAddrUrl, headers);
@@ -36,13 +46,17 @@ public class YimiPriceUtil {
         Double lat = loc.getDouble("lat");
         Double bdLat = loc.getDouble("lng");
 
-        String comCode = yimiCache.get("CompCode");
-        String deptCode = yimiCache.get("DeptCode");
+
+        String decideAddrUrl = "https://yh.yimidida.com/galaxy-addressdb-business/addlib/http/queryDeptCodeB?receiveDiscrictCode=" + sendYimiAddressCommon.getProvinceCode() + "," + sendYimiAddressCommon.getCityCode() + "&detailAddress=" + sendAddress.getDetailAddr() + "&sourceComp=" + comCode + "&deptAttr=1&otherAttr=2&areaCode=" + yimiAddressCommon.getStreetCode() + "&coordinate=" + bdLat + "," + lat + "&sourceDeptCode=" + deptCode + "&bizSystem=YH-GIS-PC&useServerPointA=1&gaoProvince=" + address.getProvince() + "&gaoCity=" + address.getCity() + "&receiveName=&receivePhone=&dataSourceType=1&customerName=&provinceCode=" + yimiAddressCommon.getProvinceCode();
+        String decideAddrResult = HttpUtil.get(decideAddrUrl, headers);
+        JSONObject jsonObject = JSON.parseObject(decideAddrResult);
+        String targetDeptCode = jsonObject.getJSONObject("data").getString("targetDeptCode");
+
         String addressChooseUrl = "https://yh.yimidida.com/galaxy-gis-business/map/getNetworkMapList2?provinceCode=" + yimiAddressCommon.getProvinceCode() + "&cityCode=" + yimiAddressCommon.getCityCode() + "&dictCode=&bizType=2&compCode=" + comCode + "&sreType=1&lng=" + bdLat + "&lat=" + lat + "&deptCode=" + deptCode + "&mapType=2&num=10";
         String addressChooseResultStr = HttpUtil.get(addressChooseUrl, headers);
         JSONObject addrChooseJson = JSON.parseObject(addressChooseResultStr);
         List<YimiAddress> yimiAddressList = addrChooseJson.getJSONObject("data").getJSONArray("deptList").toJavaList(YimiAddress.class);
-        YimiAddress yimiAddress = yimiAddressList.get(0);
+        YimiAddress yimiAddress = chooseAddr(yimiAddressList,targetDeptCode);
         yimiMessage.setYimiAddress(yimiAddress);
 
         String lineQueryUrl = "https://yh.yimidida.com/galaxy-route-business/lineHttp/lineOnlyFusionNew?sourceZoneCode=" + deptCode + "&destZoneCode=" + yimiAddress.getDeptCode() + "&productType=CP02&productCategories=1";
@@ -58,8 +72,8 @@ public class YimiPriceUtil {
 
         YimiPriceQueryRequest yimiPriceQueryRequest = new YimiPriceQueryRequest();
         yimiPriceQueryRequest.setCompCode(comCode);
-        yimiPriceQueryRequest.setBusinessModel(2);
-        yimiPriceQueryRequest.setBizType(3);
+        yimiPriceQueryRequest.setBusinessModel(1);
+        yimiPriceQueryRequest.setBizType(1);
         yimiPriceQueryRequest.setSourceZoneCode(deptCode);
         yimiPriceQueryRequest.setDestZoneCode(yimiAddress.getDeptCode());
         yimiPriceQueryRequest.setServiceType(1);
@@ -86,6 +100,15 @@ public class YimiPriceUtil {
         YimiPriceResult yimiPriceResult = JSON.parseObject(priceResultStr).getJSONObject("data").toJavaObject(YimiPriceResult.class);
         yimiMessage.setYimiPriceResult(yimiPriceResult);
         return yimiMessage;
+    }
+
+    private static YimiAddress chooseAddr(List<YimiAddress> yimiAddressList, String targetDeptCode) {
+        for (YimiAddress addr : yimiAddressList) {
+            if(targetDeptCode.equals(addr.getDeptCode())){
+                return addr;
+            }
+        }
+        return null;
     }
 
 }

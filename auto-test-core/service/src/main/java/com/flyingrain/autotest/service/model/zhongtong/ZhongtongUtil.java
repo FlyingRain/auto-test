@@ -6,6 +6,9 @@ import com.flyingrain.autotest.common.util.HttpUtil;
 import com.flyingrain.autotest.common.util.RunTimeContext;
 import com.flyingrain.autotest.facade.intf.model.oder.Address;
 import com.flyingrain.autotest.facade.intf.model.oder.SendOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,6 +17,7 @@ import java.util.Map;
 
 public class ZhongtongUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(ZhongtongUtil.class);
 
     public static ZhongtongMessage zhongtongQuery(SendOrder sendOrder) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -54,7 +58,8 @@ public class ZhongtongUtil {
         priceQueryRequest.setChkReturnFlag(false);
         priceQueryRequest.setChkBackFlag(false);
         priceQueryRequest.setCbxTown(zhongtongAddressResult.getTownshipId());
-        priceQueryRequest.setInsuredAmount(sendOrder.getAddedValue().getInsureAmount() + "");
+        String insureAmount = sendOrder.getAddedValue().getInsureAmount() == null ? "0.00" : sendOrder.getAddedValue().getInsureAmount() + "";
+        priceQueryRequest.setInsuredAmount(insureAmount);
         priceQueryRequest.setInsuredScheme(2);
         priceQueryRequest.setActualTotalAmount("0.00");
         priceQueryRequest.setFreightCharge("0.00");
@@ -77,6 +82,7 @@ public class ZhongtongUtil {
         priceParams.put("params", JSONObject.toJSONString(priceQueryRequest));
         String priceQueryUrl = "https://ws.zto56.com/sinoEwbInputController/executeRecountCharge";
         String priceQueryStr = HttpUtil.postFormUrlEncoded(priceQueryUrl, headers, priceParams);
+        logger.info("zhongtong price query result:[{}]", priceQueryStr);
         ZhongtongPriceResult zhongtongPriceResult = JSON.parseObject(priceQueryStr).getJSONObject("result").toJavaObject(ZhongtongPriceResult.class);
         zhongtongMessage.setZhongtongAddressInfo(zhongtongAddressInfo);
         zhongtongMessage.setZhongtongPriceResult(zhongtongPriceResult);

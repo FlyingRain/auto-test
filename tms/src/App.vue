@@ -24,7 +24,12 @@
   </el-dialog>
   <el-form :model="sendOrder">
     <div class="global-back">
-
+      <div class="box-card" style="width: 1408px;height: 25px;padding: 10px">
+        <el-button size="small" type="primary">新增</el-button>
+        <el-button size="small" type="primary">保存</el-button>
+        <el-button size="small" type="primary">打印</el-button>
+        <el-button size="small" type="primary"  @click="comparePrice">一键比价</el-button>
+      </div>
       <div class="box-card" style="width: 1428px;height: 80px">
         <div class="card-title"><span class="tip">基础信息 </span></div>
         <div class="element">
@@ -32,21 +37,8 @@
           <el-input size="small" style="width: 80px !important;" placeholder="运单号" v-model="sendOrder.orderNo"/>
           <span class="tip">客户单号：</span>
           <el-input size="small" style="width: 80px !important;" placeholder="运单号" v-model="sendOrder.customerNo"/>
-          <span class="tip">业务类型：</span>
-          <el-select size="small" style="width: 160px !important;" placeholder="零担/专业/整车"
-                     v-model="sendOrder.businessType">
-            <el-option key="1" value="1" label="零担"/>
-            <el-option key="2" value="2" label="专线"/>
-            <el-option key="3" value="3" label="整车"/>
-            <el-option key="4" value="4" label="自提"/>
-          </el-select>
-          <span class="tip">寄件时间：</span>
-          <el-input size="small" style="width: 160px !important;" disabled v-model="sendOrder.sendTime"/>
-          <div style="height: 24px;display: flex;align-items: center;margin-left: 5px">
-            <el-icon style="vertical-align: middle;color: blue">
-              <RefreshRight/>
-            </el-icon>
-          </div>
+
+
           <span class="tip">开单人：</span>
           <el-input size="small" style="width: 160px !important;" placeholder="开单人"
                     v-model="sendOrder.receiveAccNo"/>
@@ -67,7 +59,21 @@
                 :value="item.value">
             </el-option>
           </el-select>
-
+          <span class="tip">业务类型：</span>
+          <el-select size="small" style="width: 160px !important;" placeholder="零担/拼车/整车"
+                     v-model="sendOrder.businessType">
+            <el-option key="1" value="1" label="零担"/>
+            <el-option key="2" value="2" label="专线"/>
+            <el-option key="3" value="3" label="整车"/>
+            <el-option key="4" value="4" label="拼车"/>
+          </el-select>
+          <span class="tip">寄件时间：</span>
+          <el-input size="small" style="width: 160px !important;" disabled v-model="sendOrder.sendTime"/>
+          <div style="height: 24px;display: flex;align-items: center;margin-left: 5px">
+            <el-icon style="vertical-align: middle;color: blue">
+              <RefreshRight/>
+            </el-icon>
+          </div>
         </div>
       </div>
       <div style="display: flex;flex-wrap: nowrap">
@@ -155,16 +161,16 @@
                 </div>
                 <div class="element">
                   <span class="tip">证件类型：</span>
-                  <el-select size="small" v-model="province" filterable placeholder="省">
+                  <el-select size="small" v-model="sendOrder.sendInfo.certificateType" filterable placeholder="证件类型">
                     <el-option
-                        v-for="item in provinces"
+                        v-for="item in certificateType"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
                     </el-option>
                   </el-select>
                   <span class="tip">证件号：</span>
-                  <el-input size="small" style="width: 250px !important;" placeholder="证件号"/>
+                  <el-input size="small" style="width: 250px !important;" placeholder="证件号" v-model="sendOrder.sendInfo.certificateValue"/>
                 </div>
               </div>
 
@@ -278,7 +284,7 @@
                 <span class="tip" style="width: 75px">实际重量(kg)：</span>
                 <el-input size="small" type="text" placeholder="重量" v-model="sendOrder.goodsInfo.weight"/>
                 <span class="tip" style="width: 75px">计费重量(kg)：</span>
-                <el-input size="small" type="text" placeholder="重量" disabled v-model="sendOrder.goodsInfo.weight"/>
+                <el-input size="small" type="text" placeholder="重量" v-model="sendOrder.goodsInfo.weight"/>
                 <span class="tip">体积(M³)：</span>
                 <el-input size="small" type="text" placeholder="体积" v-model="sendOrder.goodsInfo.volume"/>
               </div>
@@ -324,94 +330,102 @@
 
         <div>
           <div class="box-card" style="width: 400px;height: 215px">
-            <div class="card-title"><span class="tip">成本</span></div>
-            <div class="card-content">
-              <div class="element">
-                <span class="tip"  style="width: 70px">预估总成本：</span>
-                <el-input size="small" type="text" placeholder="总计">
-                </el-input>
-              </div>
-              <div class="element">
-                <span class="tip">平台运费：</span>
-                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
-                </el-input>
-                <span class="tip">派费：</span>
-                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
-                </el-input>
-                <span class="tip">客户返点：</span>
-                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
-                </el-input>
-              </div>
-              <div class="element">
-                <span class="tip">赔款理赔：</span>
-                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
-                </el-input>
-                <span class="tip">奖罚：</span>
-                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
-                </el-input>
-                <span class="tip">其他：</span>
-                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
-                </el-input>
-              </div>
-              <div class="element" style="margin-top: 5px">
-                <span class="tip"  style="width: 80px;">其他费用明细：</span>
-
-              </div>
-              <div class="element" style="margin-top: 0">
-                <el-input size="small" type="textarea" style="width: 345px!important;margin-left: 10px"  rows="2" placeholder="其他费用明细">
-                </el-input>
-              </div>
-
-            </div>
-          </div>
-          <div class="box-card" style="width: 400px;height: 215px">
             <div class="card-title"><span class="tip">收入</span></div>
             <div class="card-content">
               <div class="element">
                 <span class="tip" style="width: 70px">预估总收入：</span>
                 <el-input size="small" type="text" placeholder="总计">
                 </el-input>
+                <span class="tip" style="width: 80px">特殊区域加收：</span>
+                <el-input size="small" type="text" placeholder="费用">
+                </el-input>
               </div>
               <div class="element">
                 <span class="tip">运费：</span>
-                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="费用">
                 </el-input>
                 <span class="tip">保价费：</span>
-                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="费用">
                 </el-input>
                 <span class="tip">上楼费：</span>
-                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="费用">
                 </el-input>
               </div>
               <div class="element">
                 <span class="tip">大件服务：</span>
-                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="费用">
                 </el-input>
                 <span class="tip">回单费：</span>
-                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="费用">
                 </el-input>
                 <span class="tip">其他：</span>
-                <el-input size="small" style="width: 45px!important;" type="text" placeholder="总计">
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="费用">
                 </el-input>
 
               </div>
               <div class="element" style="margin-top: 5px">
-                <span class="tip"  style="width: 80px;">其他费用明细：</span>
+                <span class="tip" style="width: 80px;">其他费用明细：</span>
 
               </div>
               <div class="element" style="margin-top: 0">
-                <el-input size="small" type="textarea" style="width: 345px!important;margin-left: 10px"  rows="2" placeholder="其他费用明细">
+                <el-input size="small" type="textarea" style="width: 345px!important;margin-left: 10px" rows="2"
+                          placeholder="其他费用明细">
                 </el-input>
               </div>
             </div>
           </div>
+          <div class="box-card" style="width: 400px;height: 215px">
+            <div class="card-title"><span class="tip">成本</span></div>
+            <div class="card-content">
+              <div class="element">
+                <span class="tip" style="width: 70px">预估总成本：</span>
+                <el-input size="small" type="text" placeholder="总计">
+                </el-input>
+              </div>
+              <div class="element">
+                <span class="tip">平台运费：</span>
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="费用">
+                </el-input>
+                <span class="tip">派费：</span>
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="费用">
+                </el-input>
+                <span class="tip">客户返点：</span>
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="费用">
+                </el-input>
+              </div>
+              <div class="element">
+                <span class="tip">赔款理赔：</span>
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="费用">
+                </el-input>
+                <span class="tip">奖罚：</span>
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="费用">
+                </el-input>
+                <span class="tip">其他：</span>
+                <el-input size="small" style="width: 45px!important;" type="text" placeholder="费用">
+                </el-input>
+              </div>
+              <div class="element" style="margin-top: 5px">
+                <span class="tip" style="width: 80px;">其他费用明细：</span>
+
+              </div>
+              <div class="element" style="margin-top: 0">
+                <el-input size="small" type="textarea" style="width: 345px!important;margin-left: 10px" rows="2"
+                          placeholder="其他费用明细">
+                </el-input>
+              </div>
+
+            </div>
+          </div>
+
         </div>
 
       </div>
-      <div class="box-card" style="width: 1428px;">
+      <div class="box-card" style="width: 1428px;height: auto">
         <div class="card-title"><span class="tip">承运商 </span></div>
         <div class="card-content">
-          <el-table ref="table" :data="tableData" style="font-size: 11px;margin-top: 10px" stripe border>
+          <span>承运商选择:</span><el-input size="small" style="margin-left: 10px" v-model="sendOrder.thirdBusiness"></el-input>
+          <el-table ref="table" :data="tableData" style="font-size: 11px;margin-top: 10px" v-loading="loading"
+                    element-loading-text="Loading..." stripe border>
             <el-table-column prop="channelName" label="渠道名称" width="100" show-overflow-tooltip/>
             <el-table-column prop="channelPrice.total" label="总成本" width="80" show-overflow-tooltip/>
             <el-table-column prop="channelPrice.total" label="平台报价" width="80" show-overflow-tooltip/>
@@ -422,15 +436,16 @@
             <el-table-column prop="name" label="操作" show-overflow-tooltip>
               <template v-slot="row">
                 <el-button type="primary" size="small" @click="detail(row.row)"> 详情</el-button>
-                <el-button type="success" size="small" @click="deleteCase(row.row.id)"> 选择</el-button>
+                <el-button type="success" size="small" @click="choose(row.row)"> 选择</el-button>
               </template>
             </el-table-column>
           </el-table>
-          <div style="display: flex; margin-top: 10px; width: 100%; justify-content: flex-end ">
-            <el-button size="small" type="primary" @click="comparePrice">一键比价</el-button>
+          <div style="display: flex; margin-top: 10px;margin-bottom: 10px; width: 100%; justify-content: flex-end ">
+<!--            <el-button size="small" type="primary" @click="comparePrice">一键比价</el-button>-->
           </div>
         </div>
       </div>
+
     </div>
   </el-form>
 </template>
@@ -443,7 +458,7 @@ export default {
   data() {
     return {
       sendOrder: {
-        businessType: '',
+        businessType: '1',
         serviceType: '',
         orderNo: '',
         customerNo: '',
@@ -454,6 +469,8 @@ export default {
           customerId: '',
           sendName: '',
           sendCompany: '',
+          certificateType:'',
+          certificateValue:'',
           sendAreaList: '',
           address: {
             province: '',
@@ -502,7 +519,8 @@ export default {
           loadVehicleFee: '',
           otherFee: ''
         },
-        cost: {}
+        cost: {},
+        thirdBusiness:''
       },
       dialogVisible: false,
       tableData: [],
@@ -514,6 +532,10 @@ export default {
       customer_list: [{key: '1', label: '老王', value: '1'}],
       val: '',
       provinces: [],
+      certificateType:[
+        {value: 1, label: '身份证'},
+        {value: 2, label: '驾驶证'},
+      ],
       cities: [],
       areas: [],
       counties: [],
@@ -526,7 +548,11 @@ export default {
         {value: 2, label: '托盘'},
         {value: 3, label: '塑料桶'},
         {value: 4, label: '纸筒'},
-        {value: 5, label: '木箱'}, {value: 6, label: '泡沫箱'}, {value: 7, label: '铁桶'},],
+        {value: 5, label: '木箱'},
+        {value: 6, label: '泡沫箱'},
+        {value: 7, label: '铁桶'},
+        {value: 8, label: '编织袋'},
+      ],
       dialogData: {
         channelName: '',
         siteAddress: '',
@@ -543,6 +569,9 @@ export default {
       console.log(row)
       this.dialogData = row
       this.dialogVisible = true
+    },
+    choose(row){
+      this.sendOrder.thirdBusiness = row.channelName
     },
     filterResults() {
       console.log('asdfasfd')
@@ -671,12 +700,14 @@ export default {
 
     },
     async comparePrice() {
+      this.loading = true
       const result = await this.$axios.post('/compare', this.sendOrder)
       if (result.data.success) {
         this.tableData = result.data.data
       } else {
         this.$message.error(result.data.message)
       }
+      this.loading = false
     },
     addGood() {
       this.dialogVisible = true
@@ -738,6 +769,7 @@ export default {
     }
   },
   created() {
+    this.sendOrder.orderNo = new Date().getTime();
     this.sendOrder.sendTime = this.formatDate(new Date())
     this.queryCity(0, true, '0')
   }
