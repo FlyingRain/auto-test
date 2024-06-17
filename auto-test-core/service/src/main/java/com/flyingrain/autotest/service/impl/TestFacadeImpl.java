@@ -15,6 +15,7 @@ import com.flyingrain.autotest.infrastructure.datasource.model.CityModel;
 import com.flyingrain.autotest.mvc.jersey.AutoTestService;
 import com.flyingrain.autotest.mvc.jersey.Resource;
 import com.flyingrain.autotest.service.model.*;
+import com.flyingrain.autotest.service.model.anneng.AnnengUtil;
 import com.flyingrain.autotest.service.model.baishi.BaishiAddressInfo;
 import com.flyingrain.autotest.service.model.baishi.BaishiPriceDetail;
 import com.flyingrain.autotest.service.model.baishi.BaishiPriceQuery;
@@ -27,6 +28,7 @@ import com.flyingrain.autotest.service.model.yunda.*;
 import com.flyingrain.autotest.service.model.zhongtong.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -37,7 +39,7 @@ import java.util.stream.Collectors;
 
 @Component
 @AutoTestService
-public class TestFacadeImpl implements TestFacade, Resource {
+public class TestFacadeImpl implements TestFacade, Resource, InitializingBean {
 
     private final Logger logger = LoggerFactory.getLogger(TestFacadeImpl.class);
 
@@ -112,6 +114,7 @@ public class TestFacadeImpl implements TestFacade, Resource {
         ChannelCompare baishiCompare = baishiCompare(sendOrder);
         ChannelCompare yimiCompare = yimiCompare(sendOrder);
         ChannelCompare zhongtongCompare = zhongtongCompare(sendOrder);
+        ChannelCompare annengCompare = annengCompare(sendOrder);
         if (yundaCompare != null)
             channelCompares.add(yundaCompare);
         if (baishiCompare != null)
@@ -122,7 +125,14 @@ public class TestFacadeImpl implements TestFacade, Resource {
         if (zhongtongCompare != null) {
             channelCompares.add(zhongtongCompare);
         }
+        if(annengCompare!=null){
+            channelCompares.add(annengCompare);
+        }
         return CommonResult.success(channelCompares);
+    }
+
+    private ChannelCompare annengCompare(SendOrder sendOrder) {
+        return AnnengUtil.compare(sendOrder);
     }
 
     private ChannelCompare zhongtongCompare(SendOrder sendOrder) {
@@ -194,7 +204,7 @@ public class TestFacadeImpl implements TestFacade, Resource {
             headers.put("Cookie", cookie);
             BaishiPriceQuery baishiPriceQuery = BaishiPriceQuery.fromSendOrder(sendOrder);
             String baishiPriceQueryUrl = "https://v5.800best.com/ltlv5-war/web/transOrder/measureCalcFeeForTransOrderNew";
-            String priceStr = HttpUtil.post(baishiPriceQueryUrl, headers, JSONObject.toJSONString(baishiPriceQuery));
+            String priceStr = HttpUtil.postJson(baishiPriceQueryUrl, headers, JSONObject.toJSONString(baishiPriceQuery));
             logger.info("price query reuslt:[{}]", priceStr);
             JSONObject jsonObject = JSON.parseObject(priceStr);
             JSONArray jsonArray = jsonObject.getJSONArray("voList");
@@ -386,4 +396,7 @@ public class TestFacadeImpl implements TestFacade, Resource {
     }
 
 
+    public void afterPropertiesSet() throws Exception {
+        AnnengUtil.annengLogin();
+    }
 }

@@ -43,7 +43,7 @@
                 <version>1.2.1</version>
                 <configuration>
                     <sourceDirectory>${project.basedir}/src/main/resources/jsonschemas</sourceDirectory>
-                    <targetPackage>com.flyingrain.autotest.service.model.zhongtong.generate</targetPackage>
+                    <targetPackage>com.flyingrain.autotest.service.model.anneng.generate</targetPackage>
                     <outputDirectory>${basedir}/src/main/java</outputDirectory>
                     <sourceType>json</sourceType>
                     <annotationStyle>none</annotationStyle>

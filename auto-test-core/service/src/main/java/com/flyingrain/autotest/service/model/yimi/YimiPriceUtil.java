@@ -98,7 +98,7 @@ public class YimiPriceUtil {
 
 
         String yimiPriceQueryUrl = "https://yh.yimidida.com/galaxy-stl-business/api/stl/cost/calcWayCostFeeAndSendFee";
-        String priceResultStr = HttpUtil.post(yimiPriceQueryUrl, headers, JSONObject.toJSONString(yimiPriceQueryRequest));
+        String priceResultStr = HttpUtil.postJson(yimiPriceQueryUrl, headers, JSONObject.toJSONString(yimiPriceQueryRequest));
 
         YimiPriceResult yimiPriceResult = JSON.parseObject(priceResultStr).getJSONObject("data").toJavaObject(YimiPriceResult.class);
         yimiMessage.setYimiPriceResult(yimiPriceResult);

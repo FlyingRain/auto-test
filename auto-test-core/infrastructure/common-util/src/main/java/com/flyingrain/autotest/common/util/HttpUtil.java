@@ -101,14 +101,28 @@ public class HttpUtil {
         headers.forEach(httpRequest::setHeader);
     }
 
-    public static String post(String url ,Map<String,String> headers,String content){
+    public static String postJson(String url , Map<String,String> headers, String content){
         HttpPost httppost = new HttpPost(url);
         httppost.setEntity(new StringEntity(content, StandardCharsets.UTF_8));
         if(CollectionUtils.isEmpty(headers)){
             headers = new HashMap<>();
         }
         headers.put("Content-Type","application/json");
-        initHeader(httppost,headers);
+        return post(headers, httppost);
+    }
+
+    public static String commonPost(String url , Map<String,String> headers, String content){
+        HttpPost httppost = new HttpPost(url);
+        httppost.setEntity(new StringEntity(content, StandardCharsets.UTF_8));
+        if(CollectionUtils.isEmpty(headers)){
+            headers = new HashMap<>();
+        }
+        return post(headers, httppost);
+    }
+
+
+    private static String post(Map<String, String> headers, HttpPost httppost) {
+        initHeader(httppost, headers);
         try (CloseableHttpResponse response = httpClient.execute(httppost, HttpClientContext.create());) {
             int statusCode = response.getStatusLine().getStatusCode();
             HttpEntity entity = response.getEntity();
