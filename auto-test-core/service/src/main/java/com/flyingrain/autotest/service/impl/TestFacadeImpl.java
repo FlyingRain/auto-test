@@ -23,6 +23,7 @@ import com.flyingrain.autotest.service.model.yimi.YimiAddress;
 import com.flyingrain.autotest.service.model.yimi.YimiMessage;
 import com.flyingrain.autotest.service.model.yimi.YimiPriceResult;
 import com.flyingrain.autotest.service.model.yimi.YimiPriceUtil;
+import com.flyingrain.autotest.service.model.yunda.*;
 import com.flyingrain.autotest.service.model.zhongtong.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -374,6 +375,14 @@ public class TestFacadeImpl implements TestFacade, Resource {
             logger.error("parse data failed!", e);
         }
         return CommonResult.fail("500", "请输入规范地址");
+    }
+
+
+    @Override
+    public CommonResult<String> placeOder(SendOrder sendOrder) {
+            return null;
+
+
     }
 
 

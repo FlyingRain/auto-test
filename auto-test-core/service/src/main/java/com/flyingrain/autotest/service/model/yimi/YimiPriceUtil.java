@@ -56,7 +56,7 @@ public class YimiPriceUtil {
         String addressChooseResultStr = HttpUtil.get(addressChooseUrl, headers);
         JSONObject addrChooseJson = JSON.parseObject(addressChooseResultStr);
         List<YimiAddress> yimiAddressList = addrChooseJson.getJSONObject("data").getJSONArray("deptList").toJavaList(YimiAddress.class);
-        YimiAddress yimiAddress = chooseAddr(yimiAddressList,targetDeptCode);
+        YimiAddress yimiAddress = chooseAddr(yimiAddressList, targetDeptCode);
         yimiMessage.setYimiAddress(yimiAddress);
 
         String lineQueryUrl = "https://yh.yimidida.com/galaxy-route-business/lineHttp/lineOnlyFusionNew?sourceZoneCode=" + deptCode + "&destZoneCode=" + yimiAddress.getDeptCode() + "&productType=CP02&productCategories=1";
@@ -70,9 +70,12 @@ public class YimiPriceUtil {
         double num = Math.ceil(weight);
         weight = num > sendOrder.getGoodsInfo().getWeight() ? num : sendOrder.getGoodsInfo().getWeight();
 
+        String[] roots = rout.split("-");
+        int businessModel = roots[0].substring(0, 2).equals(roots[roots.length - 1].substring(0, 2)) ? 1 : 2;
+
         YimiPriceQueryRequest yimiPriceQueryRequest = new YimiPriceQueryRequest();
         yimiPriceQueryRequest.setCompCode(comCode);
-        yimiPriceQueryRequest.setBusinessModel(1);
+        yimiPriceQueryRequest.setBusinessModel(businessModel);
         yimiPriceQueryRequest.setBizType(1);
         yimiPriceQueryRequest.setSourceZoneCode(deptCode);
         yimiPriceQueryRequest.setDestZoneCode(yimiAddress.getDeptCode());
@@ -104,7 +107,7 @@ public class YimiPriceUtil {
 
     private static YimiAddress chooseAddr(List<YimiAddress> yimiAddressList, String targetDeptCode) {
         for (YimiAddress addr : yimiAddressList) {
-            if(targetDeptCode.equals(addr.getDeptCode())){
+            if (targetDeptCode.equals(addr.getDeptCode())) {
                 return addr;
             }
         }

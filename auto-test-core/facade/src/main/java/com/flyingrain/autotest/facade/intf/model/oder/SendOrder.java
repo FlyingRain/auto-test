@@ -20,6 +20,12 @@ public class SendOrder {
 
     private AddedValue addedValue;
 
+    private Income income;
+
+    private Cost cost;
+
+    private String thirdBusiness;
+
 
     public String getCustomerId() {
         return customerId;
@@ -93,17 +99,45 @@ public class SendOrder {
         this.goodsInfo = goodsInfo;
     }
 
+    public Income getIncome() {
+        return income;
+    }
+
+    public void setIncome(Income income) {
+        this.income = income;
+    }
+
+    public Cost getCost() {
+        return cost;
+    }
+
+    public void setCost(Cost cost) {
+        this.cost = cost;
+    }
+
+    public String getThirdBusiness() {
+        return thirdBusiness;
+    }
+
+    public void setThirdBusiness(String thirdBusiness) {
+        this.thirdBusiness = thirdBusiness;
+    }
+
     @Override
     public String toString() {
-        return "sendOrder{" +
+        return "SendOrder{" +
                 "customerId='" + customerId + '\'' +
                 ", orderNo='" + orderNo + '\'' +
                 ", customerNo='" + customerNo + '\'' +
                 ", sendTime='" + sendTime + '\'' +
                 ", receiveNo='" + receiveNo + '\'' +
                 ", sendInfo=" + sendInfo +
-                ", receiveInfo=" + receiverInfo +
+                ", receiverInfo=" + receiverInfo +
                 ", goodsInfo=" + goodsInfo +
+                ", addedValue=" + addedValue +
+                ", income=" + income +
+                ", cost=" + cost +
+                ", thirdBusiness='" + thirdBusiness + '\'' +
                 '}';
     }
 }

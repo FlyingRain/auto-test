@@ -38,4 +38,8 @@ public interface TestFacade {
     @Path("/analysis/addr")
     CommonResult<UserContactInfo> analysisAddr(@QueryParam("addr") String address);
 
+
+    @POST
+    @Path("/placeOrder")
+    CommonResult<String> placeOder(SendOrder sendOrder);
 }

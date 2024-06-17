@@ -1,9 +1,6 @@
-package com.flyingrain.autotest.service.model;
+package com.flyingrain.autotest.service.model.yunda;
 
 import com.flyingrain.autotest.facade.intf.model.oder.Address;
-
-import java.util.List;
-import java.util.Map;
 
 public class YunDaAddressQuery {
     private String BuyerProvince;

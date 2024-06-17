@@ -1,4 +1,4 @@
-package com.flyingrain.autotest.service.model;
+package com.flyingrain.autotest.service.model.yunda;
 
 import com.alibaba.fastjson.annotation.JSONField;
 

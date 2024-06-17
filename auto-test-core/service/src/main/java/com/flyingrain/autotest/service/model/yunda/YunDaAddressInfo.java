@@ -1,4 +1,4 @@
-package com.flyingrain.autotest.service.model;
+package com.flyingrain.autotest.service.model.yunda;
 
 public class YunDaAddressInfo {
     private String info;

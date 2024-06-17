@@ -28,7 +28,7 @@
         <el-button size="small" type="primary">新增</el-button>
         <el-button size="small" type="primary">保存</el-button>
         <el-button size="small" type="primary">打印</el-button>
-        <el-button size="small" type="primary"  @click="comparePrice">一键比价</el-button>
+        <el-button size="small" type="primary" @click="comparePrice">一键比价</el-button>
       </div>
       <div class="box-card" style="width: 1428px;height: 80px">
         <div class="card-title"><span class="tip">基础信息 </span></div>
@@ -161,7 +161,8 @@
                 </div>
                 <div class="element">
                   <span class="tip">证件类型：</span>
-                  <el-select size="small" v-model="sendOrder.sendInfo.certificateType" filterable placeholder="证件类型">
+                  <el-select size="small" v-model="sendOrder.sendInfo.certificateType" filterable
+                             placeholder="证件类型">
                     <el-option
                         v-for="item in certificateType"
                         :key="item.value"
@@ -170,7 +171,8 @@
                     </el-option>
                   </el-select>
                   <span class="tip">证件号：</span>
-                  <el-input size="small" style="width: 250px !important;" placeholder="证件号" v-model="sendOrder.sendInfo.certificateValue"/>
+                  <el-input size="small" style="width: 250px !important;" placeholder="证件号"
+                            v-model="sendOrder.sendInfo.certificateValue"/>
                 </div>
               </div>
 
@@ -304,7 +306,7 @@
                 <el-input size="small" type="text" style="width: 130px !important;" placeholder="回单号">
                 </el-input>
                 <span class="tip">上楼类型：</span>
-                <el-select size="small" v-model="sendOrder.addedValue.backOrderType" placeholder="上楼">
+                <el-select size="small" v-model="sendOrder.addedValue.upstairsType" placeholder="上楼">
                   <el-option key="0" label="不上楼" value="0"/>
                   <el-option key="1" label="普通上楼" value="1"/>
                   <el-option key="2" label="大件上楼" value="2"/>
@@ -423,7 +425,13 @@
       <div class="box-card" style="width: 1428px;height: auto">
         <div class="card-title"><span class="tip">承运商 </span></div>
         <div class="card-content">
-          <span>承运商选择:</span><el-input size="small" style="margin-left: 10px" v-model="sendOrder.thirdBusiness"></el-input>
+          <span>承运商选择:</span>
+          <el-select size="small" v-model="sendOrder.thirdBusiness" placeholder="承运商">
+            <el-option v-for="item in transactions"
+                       :key="item.value"
+                       :label="item.label"
+                       :value="item.value"/>
+          </el-select>
           <el-table ref="table" :data="tableData" style="font-size: 11px;margin-top: 10px" v-loading="loading"
                     element-loading-text="Loading..." stripe border>
             <el-table-column prop="channelName" label="渠道名称" width="100" show-overflow-tooltip/>
@@ -441,7 +449,7 @@
             </el-table-column>
           </el-table>
           <div style="display: flex; margin-top: 10px;margin-bottom: 10px; width: 100%; justify-content: flex-end ">
-<!--            <el-button size="small" type="primary" @click="comparePrice">一键比价</el-button>-->
+            <!--            <el-button size="small" type="primary" @click="comparePrice">一键比价</el-button>-->
           </div>
         </div>
       </div>
@@ -469,8 +477,8 @@ export default {
           customerId: '',
           sendName: '',
           sendCompany: '',
-          certificateType:'',
-          certificateValue:'',
+          certificateType: '',
+          certificateValue: '',
           sendAreaList: '',
           address: {
             province: '',
@@ -504,7 +512,7 @@ export default {
         addedValue: {
           backOrderType: '',
           backOrderNo: '',
-          upstairs: '',
+          upstairsType: '0',
           insureAmount: '',
           upstairsLayer: '',
           settleType: '',
@@ -520,8 +528,13 @@ export default {
           otherFee: ''
         },
         cost: {},
-        thirdBusiness:''
+        thirdBusiness: ''
       },
+      transactions: [{key: '1', label: '韵达', value: 'yunda'}, {key: '2', label: '壹米', value: 'yimi'}, {
+        key: '3',
+        label: '百世',
+        value: 'baishi'
+      }, {key: '4', label: '中通', value: 'zhongtong'}, {key: '5', label: '安能', value: 'anneng'}],
       dialogVisible: false,
       tableData: [],
       loading: false,
@@ -532,7 +545,7 @@ export default {
       customer_list: [{key: '1', label: '老王', value: '1'}],
       val: '',
       provinces: [],
-      certificateType:[
+      certificateType: [
         {value: 1, label: '身份证'},
         {value: 2, label: '驾驶证'},
       ],
@@ -570,8 +583,12 @@ export default {
       this.dialogData = row
       this.dialogVisible = true
     },
-    choose(row){
-      this.sendOrder.thirdBusiness = row.channelName
+    choose(row) {
+      for (let tra of this.transactions) {
+        if(tra.label === row.channelName){
+          this.sendOrder.thirdBusiness = tra.value
+        }
+      }
     },
     filterResults() {
       console.log('asdfasfd')
